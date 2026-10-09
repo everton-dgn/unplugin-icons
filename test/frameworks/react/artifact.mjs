@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -34,7 +34,11 @@ export function hashes(directory) {
 }
 
 export function pack(root, run) {
-  const distBackup = existsSync(join(root, 'dist')) ? backup(join(root, 'dist'), 'dist') : null
+  const dist = join(root, 'dist')
+  const distBackup = existsSync(dist) ? backup(dist, 'dist') : null
+  const retainedDist = distBackup ? join(mkdtempSync(join(root, 'node_modules/.unplugin-icons-dist-')), 'dist') : null
+  if (retainedDist)
+    renameSync(dist, retainedDist)
   execFileSync('pnpm', ['exec', 'tsdown', '--no-clean', '--no-exports'], { cwd: root, stdio: 'inherit' })
   execFileSync('pnpm', ['pack', '--pack-destination', run], { cwd: root, stdio: 'inherit' })
   const archive = readdirSync(run).find(name => name.endsWith('.tgz'))
@@ -49,5 +53,5 @@ export function pack(root, run) {
   delete manifest.scripts
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
   assert.deepEqual(hashes(join(run, 'package')), expected)
-  return { archive, distBackup, manifestBackup, expected }
+  return { archive, distBackup, retainedDist, manifestBackup, expected }
 }

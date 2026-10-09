@@ -69,11 +69,23 @@ without `--resolve-lock` to prove frozen installation works.
 To verify that a fresh frozen installation receives changed package bytes at
 the same version, run `node test/frameworks/react/replay.mjs /path/to/completed-run`.
 The replay retains a new temporary consumer, backs up one extracted module,
-appends a harmless comment, repacks it, and asserts that installed hashes match
-that modified tarball while the lock remains byte-identical. All other module
+appends a harmless comment, and asserts that installed hashes match the modified
+`file:./package` directory while the package version and lock remain byte-identical. All other module
 and declaration hashes must remain unchanged. It does not modify source or the
 original run; evidence is written to `replay-evidence.json`.
 
 This fixture does not cover Next.js, React Server Components, development HMR,
 multiple-instance SVG ID isolation, or Firefox/WebKit. It does not certify the
 library's execution under the Bun runtime or replace the root ESLint rules.
+
+Before building, the packaging helper backs up existing `dist` externally, then
+renames it to a fresh `node_modules/.unplugin-icons-dist-*/dist` directory. Both
+copies are retained. The build starts without a `dist` directory, so obsolete
+entries and chunks cannot enter the new package. A failed rename stops the run
+before the build; it never falls back to deleting or reusing the old output.
+
+The standalone replay requires Bun 1.4.2. It validates updates using a fresh
+`file:directory` consumer; it does not test tarball-file cache invalidation.
+
+The runner compiles the checked-in code and icon catalog. It does not run
+`prebuild`, regenerate the catalog, or validate release preparation.
