@@ -845,6 +845,40 @@ See the [Ember (with Webpack)](examples/webpack-ember) or [Ember vite example](e
 
 Import icons as raw SVG strings by adding `?raw` to the import path. Useful for embedding SVG directly in HTML templates.
 
+For TypeScript projects that use both components and raw SVG strings, use the
+`~icons-raw/` or `virtual:icons-raw/` prefix:
+
+```ts
+import otherSvg from 'virtual:icons-raw/mdi/alarm-off?raw=false&width=2em'
+import svg from '~icons-raw/mdi/alarm-off?width=4em&height=4em'
+import Icon from '~icons/mdi/alarm-off'
+```
+
+Both raw prefixes always export a string, regardless of the configured compiler
+or the position and value of a `raw` query parameter. In particular, `raw=false`
+does not switch these imports to components. Other query parameters keep their
+usual behavior. Existing component imports and `?raw` imports are unchanged.
+
+Use `~icons-raw/` with webpack. Its current adapter rejects the `virtual:` URI
+scheme before the icon loader runs. The `virtual:icons-raw/` alias is supported
+with Vite and esbuild.
+
+Include the dedicated declaration alongside your framework's types, for example:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["unplugin-icons/types/vue", "unplugin-icons/types/raw-prefix"]
+  }
+}
+```
+
+Keep your existing framework entry in place of `unplugin-icons/types/vue`. The
+raw-prefix declaration is framework-independent and can also be included alone.
+It does not change component props or the types of legacy `?raw` imports. Do not
+use `unplugin-icons/types/raw` alongside component declarations: that entry is
+for projects using the raw compiler for all legacy icon imports.
+
 **Example (Vue 3):**
 
 ```vue

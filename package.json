@@ -38,6 +38,9 @@
     "./types/qwik": {
       "types": "./types/qwik.d.ts"
     },
+    "./types/raw-prefix": {
+      "types": "./types/raw-prefix.d.ts"
+    },
     "./types/raw": {
       "types": "./types/raw.d.ts"
     },

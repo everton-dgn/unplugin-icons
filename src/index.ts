@@ -1,13 +1,16 @@
 import type { Options } from './types'
+import { Buffer } from 'node:buffer'
 import { extname } from 'node:path'
+import { normalizePath } from '@iconify/utils/lib/loader/hmr-utils'
 import { createUnplugin } from 'unplugin'
-import { generateComponentFromPath, isIconPath, normalizeIconPath, resolveIconsPath } from './core/loader'
+import { generateComponentFromPath, isIconPath, isRawIconPath, normalizeIconPath, resolveIconsPath } from './core/loader'
 import { resolveOptions } from './core/options'
 
 const RE_EXTENSION = /\.\w+$/
 const RE_LEADING_SLASH = /^\//
 const RE_VITE_ESBUILD_EXTENSION = /\.(?:m?ts|[jt]sx)$/
 const VIRTUAL_ICON_PREFIX = '\0unplugin-icons/'
+const VIRTUAL_RAW_ICON_PREFIX = '\0unplugin-icons-raw/'
 // Match unplugin's esbuild and Bun loader inference, ignoring query values.
 const EXTENSION_LOADERS = {
   '.js': 'js',
@@ -33,7 +36,7 @@ function getLoader(_code: string, id: string) {
 }
 
 function resolveIconId(id: string, compilerOption: Options['compiler'], webpackLike: boolean, vite: boolean) {
-  if (id.startsWith(VIRTUAL_ICON_PREFIX))
+  if (id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX))
     return id
   if (isIconPath(id)) {
     const normalizedId = normalizeIconPath(id)
@@ -55,6 +58,10 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
       return `${res}.${extension}${query}`
     }
     const resolved = resolveIconsPath(`${res}${query}`)
+    // Keep ?raw away from Vite's filesystem handling, and use URL-safe bytes
+    // so HTTP decoding cannot change percent-encoded query values.
+    if (vite && isRawIconPath(normalizedId))
+      return `${VIRTUAL_RAW_ICON_PREFIX}${Buffer.from(`${res}${query}`).toString('base64url')}/icon.js`
     // accept raw compiler from query params
     const compiler = resolved?.query?.raw === 'true' ? 'raw' : compilerOption
     if (compiler && typeof compiler !== 'string') {
@@ -86,6 +93,7 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
 const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
   const resolved = resolveOptions(options)
   const webpackLike = meta.framework === 'webpack' || meta.framework === 'rspack'
+  const rawWatchIds = new Map<string, Set<string>>()
 
   return {
     name: 'unplugin-icons',
@@ -94,10 +102,13 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
       return resolveIconId(id, options.compiler, webpackLike, meta.framework === 'vite')
     },
     loadInclude(id) {
-      return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX)
+      return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX)
     },
     async load(id) {
-      if (id.startsWith(VIRTUAL_ICON_PREFIX))
+      const moduleId = id
+      if (id.startsWith(VIRTUAL_RAW_ICON_PREFIX))
+        id = Buffer.from(id.slice(VIRTUAL_RAW_ICON_PREFIX.length, id.lastIndexOf('/')), 'base64url').toString()
+      else if (id.startsWith(VIRTUAL_ICON_PREFIX))
         id = decodeURIComponent(id.slice(VIRTUAL_ICON_PREFIX.length, id.lastIndexOf('/')))
       const {
         config,
@@ -117,6 +128,12 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
         )
         if (path) {
           this.addWatchFile(path)
+          if (meta.framework === 'vite' && isRawIconPath(id)) {
+            const file = normalizePath(path)
+            const ids = rawWatchIds.get(file) || new Set<string>()
+            ids.add(moduleId)
+            rawWatchIds.set(file, ids)
+          }
         }
         return {
           code: result.code,
@@ -144,7 +161,22 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
           ctx.file,
           id => mGraph.getModuleById(id),
         ))
-        return modules?.length ? modules : undefined
+        const file = normalizePath(ctx.file)
+        const ids = rawWatchIds.get(file)
+        if (!ids?.size)
+          return modules?.length ? modules : undefined
+
+        const updated = new Set([...ctx.modules, ...modules || []])
+        for (const id of ids) {
+          const module = mGraph.getModuleById(id)
+          if (module)
+            updated.add(module)
+          else
+            ids.delete(id)
+        }
+        if (!ids.size)
+          rawWatchIds.delete(file)
+        return updated.size ? [...updated] : undefined
       },
     },
   }
