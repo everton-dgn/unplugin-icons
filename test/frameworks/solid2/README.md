@@ -45,3 +45,12 @@ The icon deliberately keeps literal IDs. Three instances produce three copies of
 The custom SVG's existing `width="16"` survives raw dimension queries. In this fixture, `width=31` adds `height="31"`, while an explicit `height=32` produces that height. This is recorded separately from component props, which do override the SVG defaults.
 
 Observed environment: macOS arm64, Node 24.21.0, Bun 1.4.2 and Chromium headless shell 156.0.8078.4. This covers production builds, SSR and hydration. Linux, Windows, development HMR, streaming SSR, other browsers and older Solid/plugin combinations are not verified. The broader Node16 type matrix remains covered by the separate packed-consumer type tests.
+
+Before building, the packaging helper backs up existing `dist` externally, then
+renames it to a fresh `node_modules/.unplugin-icons-dist-*/dist` directory. Both
+copies are retained. The build starts without a `dist` directory, so obsolete
+entries and chunks cannot enter the new package. A failed rename stops the run
+before the build; it never falls back to deleting or reusing the old output.
+
+The runner compiles the checked-in code and icon catalog. It does not run
+`prebuild`, regenerate the catalog, or validate release preparation.

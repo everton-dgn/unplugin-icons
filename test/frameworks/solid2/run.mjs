@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { cpSync, mkdtempSync, readFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdtempSync, readFileSync, renameSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -23,7 +23,11 @@ function command(binary, args, cwd = run) {
   assert.equal(result.status, 0, `${binary} ${args.join(' ')}`)
 }
 process.stdout.write(`Retained fixture: ${run}\n`)
-backup(join(root, 'dist'))
+const dist = join(root, 'dist')
+if (existsSync(dist)) {
+  backup(dist)
+  renameSync(dist, join(mkdtempSync(join(root, 'node_modules/.unplugin-icons-dist-')), 'dist'))
+}
 command('pnpm', ['exec', 'tsdown', '--no-clean', '--no-exports'], root)
 command('pnpm', ['pack', '--pack-destination', run], root)
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
