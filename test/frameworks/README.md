@@ -30,6 +30,12 @@ with Vue 3.5.43 and Vapor 3.6.0-rc.10. The broader Vapor probe still exposes
 rc.10 SVG width fallthrough. ID rewriting remains limited to the references
 recognized by the Vue helper; other frameworks are not covered by this fix.
 
+A separate [Astro instance ID regression](../astro-ids/runtime/README.md) checks
+Astro 7.3.8 development and production SSR with JavaScript disabled. It verifies
+private per-instance IDs, local CSS/ARIA/SMIL references, literal SVG content and
+consumer prop precedence. It does not replace the failing Astro strict type gate
+described below.
+
 ## Diagnostic consumers with upstream type failures
 
 The following draft fixtures preserve failing strict type gates while exercising
