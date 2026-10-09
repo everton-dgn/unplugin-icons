@@ -9,8 +9,9 @@ import { rawCases, rawTypes } from '../raw';
 export default class Application extends Component {
   @tracked count = 0;
   @tracked visible = true;
+  @tracked width = 99;
   label = 'A & B <safe> "quoted"';
-  increment = () => { this.count++; };
+  increment = () => { this.count++; this.width++; };
   toggle = () => { this.visible = !this.visible; };
 
   <template>
@@ -18,7 +19,7 @@ export default class Application extends Component {
       <button id="toggle" type="button" {{on "click" this.toggle}}>Toggle icon</button>
       <output id="count">{{this.count}}</output>
       {{#if this.visible}}
-        <Icon id="component" width="99" height="98" fill="blue" class="consumer"
+        <Icon id="component" width={{this.width}} height="98" fill="blue" class="consumer"
           aria-label={{this.label}} data-count={{this.count}} {{capture}} {{on "click" this.increment}} />
       {{/if}}
       <VirtualIcon id="virtual" />

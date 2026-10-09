@@ -26,11 +26,10 @@ TypeScript 6.0.3, within Glint's declared `>=5.6.0` peer range.
 From the repository root:
 
 ```sh
-pnpm install --frozen-lockfile --offline
+pnpm install --frozen-lockfile
 node test/frameworks/ember/run.mjs
 ```
 
-The pnpm store must already contain the root dependencies for offline bootstrap.
 Bun installation and the initial Chromium download may need network access.
 The runner prints the retained temporary consumer directory. It runs strict
 `.gts` checking, builds with Vite+, and tests the production output. A type
@@ -75,10 +74,10 @@ It never reuses an existing server or connects to the user's browser.
 - Both component aliases and both raw prefixes; legacy raw queries in first,
   middle and last positions; repeated and encoded values and `raw=false`.
 - SVG namespaces, case-sensitive attributes, title entities and consumer
-  attribute escaping. Literal width, height and fill win over `...attributes`;
-  class names combine, following Ember's current behavior.
+  attribute escaping. Consumer width, height and fill override SVG defaults;
+  omitted attributes retain their defaults, and class names combine.
 - An SVG modifier captures the actual `SVGSVGElement`. A real click updates
-  state and an attribute on the same node. Removal disposes the modifier and
+  state and the consumer width on the same node. Removal disposes the modifier and
   listener; remount creates a new node without losing component state.
 - Known IDs and fragment references remain intact, including duplicate IDs
   across instances. No uniqueness guarantee is claimed.
@@ -89,7 +88,9 @@ The strict gate keeps `skipLibCheck: false`. The public icon declaration uses
 `Element: SVGElement`, which makes Glint reject the valid root SVG `width` and
 `height` attributes in `application.gts`. `types/upstream.gts` supplies an
 independent `ComponentLike<{ Element: SVGSVGElement }>` control that accepts
-those dimensions. The production declarations are not patched or shimmed here.
+those dimensions. The separate SVG root types fix changes both aliases to `SVGSVGElement`.
+That fix must be included in the package under test to remove these additional
+consumer diagnostics; this fixture does not copy or shim the declarations.
 
 The dependency declarations also fail independently of unplugin-icons, including
 missing `@glimmer/interfaces` exports and unresolved Glimmer internal subpaths.

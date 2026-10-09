@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test'
 
-test('SVG attributes, escaping and literal precedence', async ({ page }) => {
+test('SVG attributes, escaping and consumer precedence', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/')
   const icon = page.locator('#component')
   await expect(icon).toHaveAttribute('viewBox', '0 0 24 24')
-  await expect(icon).toHaveAttribute('width', '24')
-  await expect(icon).toHaveAttribute('height', '24')
-  await expect(icon).toHaveAttribute('fill', 'none')
+  await expect(icon).toHaveAttribute('width', '99')
+  await expect(icon).toHaveAttribute('height', '98')
+  await expect(icon).toHaveAttribute('fill', 'blue')
   expect((await icon.getAttribute('class'))?.split(' ').sort()).toEqual(['consumer', 'original'])
   await expect(icon).toHaveAttribute('aria-label', 'A & B <safe> "quoted"')
   await expect(icon.locator('title')).toHaveText('Fish & Chips <safe> "quoted"')
@@ -18,6 +18,9 @@ test('SVG attributes, escaping and literal precedence', async ({ page }) => {
   await expect(icon.locator('use')).toHaveAttribute('href', '#known-path')
   expect(await icon.locator('use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('#known-path')
   await expect(page.locator('#virtual')).toHaveAttribute('data-probe', '2.5em')
+  await expect(page.locator('#virtual')).toHaveAttribute('width', '24')
+  await expect(page.locator('#virtual')).toHaveAttribute('height', '24')
+  await expect(page.locator('#virtual')).toHaveAttribute('fill', 'none')
   expect(errors).toEqual([])
 })
 
@@ -27,6 +30,7 @@ test('SVG modifier, event updates and disposal use the same live node', async ({
   await expect(icon).toBeVisible()
   expect(await page.evaluate(() => window.iconProbe.current instanceof SVGSVGElement)).toBe(true)
   await icon.click({ position: { x: 4, y: 4 } })
+  await expect(icon).toHaveAttribute('width', '100')
   await expect(icon).toHaveAttribute('data-count', '1')
   await expect(page.locator('#count')).toHaveText('1')
   expect(await page.evaluate(() => window.iconProbe.current === document.querySelector('#component'))).toBe(true)
@@ -36,6 +40,7 @@ test('SVG modifier, event updates and disposal use the same live node', async ({
   await page.evaluate(() => window.iconProbe.detached?.dispatchEvent(new MouseEvent('click', { bubbles: true })))
   await expect(page.locator('#count')).toHaveText('1')
   await page.locator('#toggle').click()
+  await expect(icon).toHaveAttribute('width', '100')
   await expect(icon).toHaveAttribute('data-count', '1')
   expect(await page.evaluate(() => window.iconProbe.current !== window.iconProbe.detached)).toBe(true)
   expect(await page.evaluate(() => window.iconProbe.mounted)).toBe(2)
