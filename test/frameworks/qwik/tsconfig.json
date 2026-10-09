@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@builder.io/qwik",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node", "@builder.io/qwik", "unplugin-icons/types/qwik", "unplugin-icons/types/raw-prefix"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false
+  },
+  "include": ["app", "types.tsx"]
+}
