@@ -1,0 +1,50 @@
+{
+  "name": "unplugin-icons-ember-runtime-fixture",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "exports": {
+    "./*": "./app/*"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "ember-tsc --noEmit",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@embroider/router": "3.0.6",
+    "@glimmer/component": "2.1.1",
+    "ember-modifier": "4.3.0",
+    "ember-source": "7.3.0",
+    "ember-strict-application-resolver": "0.1.1",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@babel/plugin-transform-runtime": "7.29.7",
+    "@babel/plugin-transform-typescript": "7.29.9",
+    "@babel/runtime": "7.29.10",
+    "@ember/test-helpers": "5.7.0",
+    "@embroider/core": "4.6.9",
+    "@embroider/macros": "1.21.3",
+    "@embroider/vite": "1.7.15",
+    "@glint/ember-tsc": "1.11.6",
+    "@glint/template": "1.9.0",
+    "@playwright/test": "1.64.0",
+    "@rollup/plugin-babel": "7.1.0",
+    "@types/node": "24.19.2",
+    "@types/rsvp": "4.0.9",
+    "babel-plugin-ember-template-compilation": "4.0.1",
+    "decorator-transforms": "2.4.0",
+    "typescript": "6.0.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  },
+  "patchedDependencies": {
+    "ember-source@7.3.0": "patches/ember-source@7.3.0.patch"
+  }
+}
