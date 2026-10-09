@@ -1102,6 +1102,20 @@ import MdiAlarmOff2 from 'virtual:icons/mdi/alarm-off?width=1em&height=1em'
 
 See the [Vue 3 example](examples/vite-vue3) for a complete implementation.
 
+### Icon dimensions
+
+Set one dimension to calculate the other from the `viewBox` aspect ratio. For example, `fa-solid/comments` is 576 × 512, so `?height=2em` generates `width="2.25em"` and `height="2em"`.
+
+Use `unset` or `none` to omit generated dimensions, either in query parameters or in `iconCustomizer`:
+
+```ts
+import Comments from '~icons/fa-solid/comments?width=unset&height=unset'
+```
+
+Setting only one side to `unset` or `none` omits both dimensions unless the other side is explicitly set. `auto` remains an SVG attribute value; it does not remove the attribute. Query parameters take precedence over `iconCustomizer`.
+
+For custom SVGs, leave the original root `width` and `height` attributes out: existing attributes are preserved, even when `unset` is requested. Custom SVGs with only a `viewBox` currently receive square default dimensions; set one dimension explicitly to preserve the aspect ratio, or omit both generated dimensions and size the SVG with CSS. `scale: 0` disables generated default dimensions, but explicit dimensions still apply.
+
 ## Global Icon Transformation
 
 Apply transformations to all custom icons during loading. Useful for adding default attributes like `fill="currentColor"`.
