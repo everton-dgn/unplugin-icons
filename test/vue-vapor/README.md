@@ -25,7 +25,6 @@ imports the SSR bundle, then checks SVG node identity across hydration,
 reactive data attributes, click events, aliases and raw queries. It uses the
 real installed package and peers, with no production-source aliases.
 
-This regression does not claim a public Vapor ref contract, a fix for rc.10
-SVG width fallthrough, or SSR-safe random IDs (#344). The hydrated icons contain
-no IDs. A separate Vue 3.6 SSR render checks two gradient instances for distinct
+This regression does not claim a public Vapor ref contract or a fix for rc.10
+SVG width fallthrough. The separate [ID regression](../vue-ids/README.md) covers #344. The hydrated icons here contain no IDs. A separate Vue 3.6 SSR render checks two gradient instances for distinct
 IDs and matching references; it does not hydrate those instances.

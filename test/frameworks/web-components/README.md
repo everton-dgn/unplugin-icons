@@ -6,7 +6,7 @@ the local manifest and lock. No UI framework or SSR is involved.
 
 ## Run
 
-From the repository root, after `pnpm install --frozen-lockfile --offline`:
+From the repository root, after `pnpm install --frozen-lockfile`:
 
 ```sh
 node test/frameworks/web-components/prepare.mjs
