@@ -1183,7 +1183,13 @@ For custom SVGs, leave the original root `width` and `height` attributes out: ex
 
 ## Global Icon Transformation
 
-Apply transformations to all custom icons during loading. Useful for adding default attributes like `fill="currentColor"`.
+The `transform` option runs for SVG strings from `customCollections`, including
+string entries and loaders that return SVG strings. Callbacks that return
+`IconifyJSON` and installed Iconify collections do not run this callback.
+Use `iconCustomizer` for attribute
+overrides across collection types, or return SVG strings from a custom loader
+when you need to transform their markup. The example below transforms a custom icon.
+
 ```ts
 Icons({
   customCollections: {
