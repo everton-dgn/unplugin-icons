@@ -1,0 +1,55 @@
+import { expect, test } from '@playwright/test'
+
+test('SVG attributes, escaping and literal precedence', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('/')
+  const icon = page.locator('#component')
+  await expect(icon).toHaveAttribute('viewBox', '0 0 24 24')
+  await expect(icon).toHaveAttribute('width', '24')
+  await expect(icon).toHaveAttribute('height', '24')
+  await expect(icon).toHaveAttribute('fill', 'none')
+  expect((await icon.getAttribute('class'))?.split(' ').sort()).toEqual(['consumer', 'original'])
+  await expect(icon).toHaveAttribute('aria-label', 'A & B <safe> "quoted"')
+  await expect(icon.locator('title')).toHaveText('Fish & Chips <safe> "quoted"')
+  await expect(icon.locator('linearGradient')).toHaveAttribute('gradientUnits', 'userSpaceOnUse')
+  await expect(icon.locator('path[stroke]')).toHaveAttribute('stroke-width', '2')
+  await expect(icon.locator('path[stroke]')).toHaveAttribute('stroke-linecap', 'round')
+  await expect(icon.locator('use')).toHaveAttribute('href', '#known-path')
+  expect(await icon.locator('use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('#known-path')
+  await expect(page.locator('#virtual')).toHaveAttribute('data-probe', '2.5em')
+  expect(errors).toEqual([])
+})
+
+test('SVG modifier, event updates and disposal use the same live node', async ({ page }) => {
+  await page.goto('/')
+  const icon = page.locator('#component')
+  await expect(icon).toBeVisible()
+  expect(await page.evaluate(() => window.iconProbe.current instanceof SVGSVGElement)).toBe(true)
+  await icon.click({ position: { x: 4, y: 4 } })
+  await expect(icon).toHaveAttribute('data-count', '1')
+  await expect(page.locator('#count')).toHaveText('1')
+  expect(await page.evaluate(() => window.iconProbe.current === document.querySelector('#component'))).toBe(true)
+  await page.locator('#toggle').click()
+  await expect(icon).toHaveCount(0)
+  await expect.poll(() => page.evaluate(() => window.iconProbe.disposed)).toBe(1)
+  await page.evaluate(() => window.iconProbe.detached?.dispatchEvent(new MouseEvent('click', { bubbles: true })))
+  await expect(page.locator('#count')).toHaveText('1')
+  await page.locator('#toggle').click()
+  await expect(icon).toHaveAttribute('data-count', '1')
+  expect(await page.evaluate(() => window.iconProbe.current !== window.iconProbe.detached)).toBe(true)
+  expect(await page.evaluate(() => window.iconProbe.mounted)).toBe(2)
+})
+
+test('raw prefixes and legacy queries export strings with preserved values', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('#raw-types')).toHaveText(JSON.stringify(Array.from({ length: 7 }).fill('string')))
+  for (const [index, value] of ['first', 'middle', 'first', 'middle', 'last', 'last', '%2E'].entries())
+    await expect(page.locator(`#raw [data-index="${index}"] svg`)).toHaveAttribute('data-probe', value)
+})
+
+test('known fragment IDs are preserved without a uniqueness claim', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('[id="known-gradient"]')).toHaveCount(9)
+  await expect(page.locator('#component path[stroke]')).toHaveAttribute('stroke', 'url(#known-gradient)')
+})
