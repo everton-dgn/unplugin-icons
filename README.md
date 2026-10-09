@@ -694,6 +694,14 @@ import 'unplugin-icons/types/svelte'
 
 See [the Svelte example](examples/vite-svelte) for a complete setup.
 
+When publishing a Svelte library, inspect the files you distribute. If they still
+import `~icons/` or `virtual:icons/`, the consuming application must run
+unplugin-icons with `compiler: 'svelte'` and provide the required icon collections.
+Type declarations alone do not resolve these virtual modules.
+
+To avoid that consumer requirement, resolve the icons during your library build
+with a bundler that runs unplugin-icons, and distribute the generated output.
+
 <br></details>
 
 <details>
