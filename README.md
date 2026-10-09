@@ -460,6 +460,15 @@ See [the Astro + Vue example](examples/astro-vue) for a working example project.
 
 Configure the `compiler` option based on your framework. Some frameworks may require additional peer dependencies.
 
+Each plugin instance selects one component compiler. It does not switch compiler
+according to the framework of the importing file. For example, the Astro + Vue
+configuration above produces Vue components for its icon imports.
+
+For framework-independent SVG content, use a [raw import](#raw-svg-import) or the typed
+`~icons-raw/` and `virtual:icons-raw/` prefixes. These return strings; the importing
+framework is responsible for rendering them. Registering two instances with the
+same icon prefixes does not select a compiler per import.
+
 See the [framework compatibility checks](./test/frameworks/README.md) for pinned
 versions, reproducible consumer tests and their validation limits.
 
