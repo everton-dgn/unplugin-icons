@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "preserve",
+    "jsxImportSource": "@solidjs/web",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "unplugin-icons/types/solid2",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false
+  },
+  "files": [
+    "App.tsx",
+    "raw.ts",
+    "types.tsx"
+  ]
+}
