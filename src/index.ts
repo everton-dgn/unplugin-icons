@@ -93,7 +93,7 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
 const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
   const resolved = resolveOptions(options)
   const webpackLike = meta.framework === 'webpack' || meta.framework === 'rspack'
-  const rawWatchIds = new Map<string, Set<string>>()
+  const iconWatchIds = new Map<string, Set<string>>()
 
   return {
     name: 'unplugin-icons',
@@ -128,11 +128,11 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
         )
         if (path) {
           this.addWatchFile(path)
-          if (meta.framework === 'vite' && isRawIconPath(id)) {
+          if (meta.framework === 'vite') {
             const file = normalizePath(path)
-            const ids = rawWatchIds.get(file) || new Set<string>()
+            const ids = iconWatchIds.get(file) || new Set<string>()
             ids.add(moduleId)
-            rawWatchIds.set(file, ids)
+            iconWatchIds.set(file, ids)
           }
         }
         return {
@@ -162,7 +162,7 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
           id => mGraph.getModuleById(id),
         ))
         const file = normalizePath(ctx.file)
-        const ids = rawWatchIds.get(file)
+        const ids = iconWatchIds.get(file)
         if (!ids?.size)
           return modules?.length ? modules : undefined
 
@@ -175,7 +175,7 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
             ids.delete(id)
         }
         if (!ids.size)
-          rawWatchIds.delete(file)
+          iconWatchIds.delete(file)
         return updated.size ? [...updated] : undefined
       },
     },
