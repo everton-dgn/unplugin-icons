@@ -1,7 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { createServer } from 'node:net'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -14,14 +13,9 @@ async function main() {
     throw new Error('Usage: node verify.mjs RUN_DIR [node|bun]')
   if (existsSync(resolve(run, 'build')))
     throw new Error('Use a freshly prepared run directory to preserve previous builds')
-  const server = createServer()
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
-  const port = server.address().port
-  await new Promise(resolve => server.close(resolve))
   const env = {
     ...process.env,
     RUNTIME: runtime,
-    PORT: String(port),
     PLAYWRIGHT_BROWSERS_PATH: process.env.PLAYWRIGHT_BROWSERS_PATH ?? resolve(dirname(fileURLToPath(import.meta.url)), 'node_modules/browsers'),
     PLAYWRIGHT_SKIP_BROWSER_GC: '1',
   }

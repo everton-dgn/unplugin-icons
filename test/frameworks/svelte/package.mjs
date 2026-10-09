@@ -1,11 +1,14 @@
 import { execFileSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
 
 export function preparePackage(repo, run, backup) {
-  if (existsSync(join(repo, 'dist')))
-    cpSync(join(repo, 'dist'), mkdtempSync(join(backup, 'svelte-dist-')), { recursive: true })
+  const dist = join(repo, 'dist')
+  if (existsSync(dist)) {
+    cpSync(dist, mkdtempSync(join(backup, 'svelte-dist-')), { recursive: true })
+    renameSync(dist, join(mkdtempSync(join(repo, 'node_modules/.unplugin-icons-dist-')), 'dist'))
+  }
   execFileSync('pnpm', ['exec', 'tsdown', '--no-clean', '--no-exports'], { cwd: repo, stdio: 'inherit' })
   const packed = join(run, 'packed')
   mkdirSync(packed)

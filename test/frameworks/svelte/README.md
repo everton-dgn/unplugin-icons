@@ -33,7 +33,11 @@ node test/frameworks/svelte/verify.mjs <NEW_RUN_DIR> node
 
 The verifier runs Svelte diagnostics, builds the real Kit app with the selected
 runtime and adapter, installs local Chromium, and runs two headless browser tests
-against the production server. The server uses a dynamically allocated port.
+against the production server. The browser launcher selects a free port immediately before each launch, after
+typechecking, building and browser installation. It retries at most twice, only
+for `EADDRINUSE` or Playwright reporting that the selected URL is already occupied.
+`reuseExistingServer: false` prevents reuse of an unknown server. Every attempt
+retains a unique output directory and browser log.
 The verifier rejects directories with an existing build. Runs and their build/test
 artifacts remain in `os.tmpdir()`, outside the checkout and its ancestors' peer
 resolution paths. The downloaded browser is cached in this module's ignored
@@ -100,3 +104,12 @@ the aliased package. This validates the core, not every command in the `vp` CLI.
 
 Validated on macOS arm64 with Chromium 156.0.8078.4 / Playwright 1.64.0.
 Other operating systems, browser engines and development HMR are not covered.
+
+Before building, the packaging helper backs up existing `dist` externally, then
+renames it to a fresh `node_modules/.unplugin-icons-dist-*/dist` directory. Both
+copies are retained. The build starts without a `dist` directory, so obsolete
+entries and chunks cannot enter the new package. A failed rename stops the run
+before the build; it never falls back to deleting or reusing the old output.
+
+The runner compiles the checked-in code and icon catalog. It does not run
+`prebuild`, regenerate the catalog, or validate release preparation.
