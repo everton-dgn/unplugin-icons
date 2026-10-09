@@ -684,6 +684,7 @@ Component props override the SVG root defaults. Omit a prop to keep its default;
 explicit `null` or `undefined` removes it. Other values follow Astro's attribute
 serialization, without falling back to the default. Each root attribute is emitted once.
 Custom SVG root attributes must use quoted XML values and XML entities.
+DOCTYPE declarations are omitted from inline SVG output; DTD entities are not expanded.
 
 **TypeScript Support:**
 

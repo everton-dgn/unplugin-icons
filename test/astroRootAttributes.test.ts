@@ -20,6 +20,41 @@ function execute(code: string, input: Record<string, unknown> = {}) {
 }
 
 describe('astro SVG root attributes', () => {
+  it.each([
+    '<!DOCTYPE svg>',
+    '<!DOCTYPE svg SYSTEM "https://example.invalid/a>b.dtd">',
+    '<!DOCTYPE svg PUBLIC "SVG > public" \'https://example.invalid/a>b.dtd\'>',
+    '<!DOCTYPE svg [<!ELEMENT svg ANY><!ENTITY label "a > b [ ]"><!-- ]> <svg --><?test ]> ?>]>',
+  ])('omits the complete DOCTYPE returned by the loader transform: %s', async (declaration) => {
+    const before = '<?xml version="1.0"?>\n<!-- before declaration -->\n'
+    const after = '\n<!-- before root -->\n'
+    const prefix = `${before}${declaration}${after}`
+    const body = '\n<title>&amp; café ` \\</title>\r\n<path />\n'
+    const { config } = await resolveOptions({
+      compiler: 'astro',
+      customCollections: { fixture: { sample: `<svg fill="red">${body}</svg>` } },
+      transform: svg => `${prefix}${svg}`,
+    })
+    const result = await generateComponentFromPath('~icons/fixture/sample', config)
+    const { props, template } = execute(result!.code, { fill: 'blue' })
+    expect(props.fill).toBe('blue')
+    expect(template).toBe(`${before}${after}<svg {...props}>${body}</svg>`)
+  })
+
+  it.each(['<!DOCTYPE svg', '<!DOCTYPE svg SYSTEM "unterminated>', '<!DOCTYPE svg [<!ELEMENT svg ANY>>'])('rejects an unterminated declaration: %s', async (prefix) => {
+    await expect(compile(`${prefix}<svg/>`)).rejects.toMatchObject({
+      message: 'Failed to compile icon `fixture/sample` for Astro',
+      cause: expect.objectContaining({ message: 'Invalid SVG root for Astro' }),
+    })
+  })
+
+  it('keeps DTD entity references as data without expanding them', async () => {
+    const prefix = '<!DOCTYPE svg [<!ENTITY label "expanded"><!ENTITY external SYSTEM "https://example.invalid/entity">]>'
+    const { props, template } = await compile(`${prefix}<svg data-label="&label; &external;">&label;</svg>`)
+    expect(props['data-label']).toBe('&label; &external;')
+    expect(template).toBe('<svg {...props}>&label;</svg>')
+  })
+
   it('identifies the icon and preserves the parser error as its cause', async () => {
     await expect(compile('<svg width="24>')).rejects.toMatchObject({
       message: 'Failed to compile icon `fixture/sample` for Astro',
