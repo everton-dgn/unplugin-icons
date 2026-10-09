@@ -511,6 +511,9 @@ Emits [Vapor mode](https://github.com/vuejs/core/tree/minor/packages/runtime-vap
 Icons({ compiler: 'vue-vapor' })
 ```
 
+SSR compilation is supported through the Vite adapter. Other adapters emit
+client components. See the [runtime checks and known limitations](test/frameworks/vue/README.md).
+
 **Peer Dependency:**
 
 Requires Vue 3.6+:

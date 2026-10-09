@@ -75,10 +75,10 @@ node test/frameworks/vue/verify.mjs <NEW_RUN_DIR> bun --client-only
 ```
 
 The server entry uses `createSSRApp`; only the browser entry registers
-`vaporInteropPlugin`. Types and both builds pass, but the generated icon module
-still imports DOM helpers such as `child` from Vue's Node entry. SSR execution
-fails before browser tests. The icon compiler lacks the separate SSR compilation
-path that plugin-vue uses for native Vapor SFCs.
+`vaporInteropPlugin`. The icon plugin selects a separate SSR compiler for Vite
+server loads. The focused [SSR regression](../../vue-vapor/README.md) verifies
+server execution and hydration of generated icons with the same plugin instance.
+The broader probe here retains the unresolved rc.10 width fallthrough checks.
 
 The client-only width test remains failing: `width=24` stays at the compiled
 `1.2em`. A native Vapor SFC reproduces this on rc.10. Runtime fallthrough calls
@@ -92,11 +92,11 @@ Vapor refs without `defineExpose` do not promise a DOM element or `$el`:
 the native control and generated icon both return `undefined`. Only the stable
 Vue test asserts the public `$el` ref. The Vapor test uses DOM queries and does
 not claim public ref support. Native controls with explicit exposure successfully
-rendered on the server and hydrated the same SVG nodes; these results do not
-establish SSR compatibility for generated icons.
+rendered on the server and hydrated the same SVG nodes. Generated icons have
+their own focused SSR regression, linked above.
 
-No tests are skipped or marked as expected failures. Width and icon SSR remain
-open failures, while #344 remains a separate unresolved characterization.
+No tests are skipped or marked as expected failures. Width remains an open
+failure, while #344 remains a separate unresolved characterization.
 
 ## Versions and limits
 
