@@ -87,8 +87,11 @@ normal runs never regenerate it.
   The parsed DOM also checks these overrides and defaults on an unmodified icon.
   Embedded custom SVG dimensions remain unchanged by Iconify query customization,
   so query decoding is checked with `data-probe`.
-- Known IDs and fragment references remain intact. Repeated instances retain
-  duplicate IDs. This characterizes the existing behavior, not a fix for #321.
+- Component assertions require distinct internal IDs across three instances,
+  including two uses of the same import. Each SVG must reference its own gradient
+  and path through `stroke`, `href` and namespace-aware `xlink:href`. The seven raw
+  SVGs must retain their literal IDs and references. These assertions await
+  integration of #321 and a new runtime run; no passing result is claimed yet.
 - Strict component/raw consumer types with `skipLibCheck: false`, including
   invalid component props and non-callable raw strings.
 

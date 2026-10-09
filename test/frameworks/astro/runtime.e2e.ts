@@ -18,8 +18,6 @@ test('SSR contains components and raw strings before browser scripts', async ({ 
   await expect(page.locator('#component linearGradient')).toHaveAttribute('gradientUnits', 'userSpaceOnUse')
   await expect(page.locator('#component path[stroke]')).toHaveAttribute('stroke-width', '2')
   await expect(page.locator('#component path[stroke]')).toHaveAttribute('stroke-linecap', 'round')
-  await expect(page.locator('#component use')).toHaveAttribute('href', '#known-path')
-  expect(await page.locator('#component use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('#known-path')
 })
 
 test('emits each root attribute once with consumer props taking precedence', async ({ request, page }) => {
@@ -47,9 +45,34 @@ test('raw aliases preserve query decoding and return strings', async ({ page }) 
     await expect(page.locator(`#raw [data-index="${index}"] svg`)).toHaveAttribute('data-probe', width)
 })
 
-test('known IDs are retained, including collisions across instances', async ({ page }) => {
+test('component instances have distinct IDs and local fragment references', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('[id="known-gradient"]')).toHaveCount(9)
-  await expect(page.locator('[id="known-path"]')).toHaveCount(9)
-  await expect(page.locator('#component path[stroke]')).toHaveAttribute('stroke', 'url(#known-gradient)')
+  const ids: string[] = []
+  for (const selector of ['#component', '#repeated', '#virtual']) {
+    const icon = page.locator(selector)
+    const gradient = await icon.locator('defs linearGradient').getAttribute('id')
+    const path = await icon.locator('defs path').getAttribute('id')
+    expect(gradient).toBeTruthy()
+    expect(path).toBeTruthy()
+    ids.push(gradient!, path!)
+    await expect(icon.locator('path[stroke]')).toHaveAttribute('stroke', `url(#${gradient})`)
+    await expect(icon.locator('use')).toHaveAttribute('href', `#${path}`)
+    expect(await icon.locator('use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe(`#${path}`)
+  }
+  expect(new Set(ids).size).toBe(6)
+  expect(ids).not.toContain('known-gradient')
+  expect(ids).not.toContain('known-path')
+})
+
+test('raw SVGs retain literal IDs and fragment references', async ({ page }) => {
+  await page.goto('/')
+  const icons = page.locator('#raw svg')
+  await expect(icons).toHaveCount(7)
+  for (const icon of await icons.all()) {
+    await expect(icon.locator('defs linearGradient')).toHaveAttribute('id', 'known-gradient')
+    await expect(icon.locator('defs path')).toHaveAttribute('id', 'known-path')
+    await expect(icon.locator('path[stroke]')).toHaveAttribute('stroke', 'url(#known-gradient)')
+    await expect(icon.locator('use')).toHaveAttribute('href', '#known-path')
+    expect(await icon.locator('use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('#known-path')
+  }
 })

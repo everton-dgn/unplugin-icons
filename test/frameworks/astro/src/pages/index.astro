@@ -14,6 +14,7 @@ const label = 'A & B <safe> "quoted"';
 <html lang="en"><head><title>Astro icon compatibility</title></head><body>
   <main>
     <Icon id="component" width="99" height="98" fill="blue" class="consumer" aria-label={label} />
+    <Icon id="repeated" />
     <VirtualIcon id="virtual" />
     <section id="raw">{raw.map((value, index) => <div data-index={index}><Fragment set:html={value} /></div>)}</section>
     <pre id="raw-types">{JSON.stringify(raw.map(value => typeof value))}</pre>
