@@ -7,7 +7,7 @@ export default defineConfig({
   entry: ['src/*.ts'],
   dts: true,
   external: ['vue', 'vite', 'rollup', '@iconify/json/package.json'],
-  inlineOnly: ['@antfu/utils'],
+  inlineOnly: ['@antfu/utils', 'css-tree'],
   exports: {
     async customExports(exp) {
       // replace this for await with `import { glob } from 'node:fs/promises'

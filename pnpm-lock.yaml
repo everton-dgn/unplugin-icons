@@ -126,12 +126,18 @@ catalogs:
     '@svgx/core':
       specifier: ^1.0.2
       version: 1.0.2
+    '@types/css-tree':
+      specifier: 3.2.0
+      version: 3.2.0
     '@types/node':
       specifier: ^25.9.6
       version: 25.9.6
     bumpp:
       specifier: ^10.4.1
       version: 10.4.1
+    css-tree:
+      specifier: 3.2.1
+      version: 3.2.1
     esbuild:
       specifier: 0.28.2
       version: 0.28.2
@@ -531,6 +537,9 @@ importers:
       '@svgx/core':
         specifier: catalog:build
         version: 1.0.2(supports-color@8.1.1)
+      '@types/css-tree':
+        specifier: catalog:build
+        version: 3.2.0
       '@types/node':
         specifier: catalog:build
         version: 25.9.6
@@ -543,6 +552,9 @@ importers:
       bumpp:
         specifier: catalog:build
         version: 10.4.1(magicast@0.5.4)
+      css-tree:
+        specifier: catalog:build
+        version: 3.2.1
       esbuild:
         specifier: catalog:build
         version: 0.28.2
@@ -4197,6 +4209,9 @@ packages:
 
   '@types/cors@2.8.19':
     resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
+
+  '@types/css-tree@3.2.0':
+    resolution: {integrity: sha512-J5KXmk6BFIepOT7280FdFyNs4c5fh0Uee0otjKEvzchrRs38Ii9qminqc4ds0L19X8Zd/rT+brR9jkBthygjWw==}
 
   '@types/debug@4.1.13':
     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
@@ -14557,6 +14572,8 @@ snapshots:
   '@types/cors@2.8.19':
     dependencies:
       '@types/node': 22.20.2
+
+  '@types/css-tree@3.2.0': {}
 
   '@types/debug@4.1.13':
     dependencies:
