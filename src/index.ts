@@ -11,6 +11,8 @@ const RE_LEADING_DOT = /^\./
 const RE_VITE_ESBUILD_EXTENSION = /\.(?:m?ts|[jt]sx)$/
 const VIRTUAL_ICON_PREFIX = '\0unplugin-icons/'
 const VIRTUAL_RAW_ICON_PREFIX = '\0unplugin-icons-raw/'
+// Transform filters such as Babel's createFilter reject IDs containing a null byte.
+const ROLLDOWN_ICON_PREFIX = 'virtual:unplugin-icons/'
 // Match unplugin's esbuild and Bun loader inference, ignoring query values.
 const EXTENSION_LOADERS = {
   '.js': 'js',
@@ -42,8 +44,8 @@ function getLoader(_code: string, id: string, compiler: Options['compiler']) {
   return extension === '.jsx' || extension === '.tsx' ? EXTENSION_LOADERS[extension] : 'js'
 }
 
-function resolveIconId(id: string, compilerOption: Options['compiler'], webpackLike: boolean, vite: boolean) {
-  if (id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX))
+function resolveIconId(id: string, compilerOption: Options['compiler'], queryPrefix: string | undefined, vite: boolean) {
+  if (id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX) || id.startsWith(ROLLDOWN_ICON_PREFIX))
     return id
   if (isIconPath(id)) {
     const normalizedId = normalizeIconPath(id)
@@ -54,10 +56,10 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
     const res = stripIconExtension(queryIndex > -1 ? normalizedId.slice(0, queryIndex) : normalizedId, extension)
       .replace(RE_LEADING_SLASH, '')
     const withExtension = (extension: string) => {
-      // These adapters encode the whole ID as a filename. Keep the extension
+      // These adapters infer the loader from the whole ID. Keep the extension
       // last for loader rules, and recover the untouched request in load().
-      if (webpackLike && query)
-        return `${VIRTUAL_ICON_PREFIX}${encodeURIComponent(`${res}${query}`)}/icon.${extension}`
+      if (queryPrefix && query)
+        return `${queryPrefix}${encodeURIComponent(`${res}${query}`)}/icon.${extension}`
       // Vite can mistake a decimal query value for the extension. Encoding dots
       // preserves URLSearchParams semantics and keeps its loader inference on the path.
       if (vite && RE_VITE_ESBUILD_EXTENSION.test(`.${extension}`))
@@ -99,24 +101,29 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
 
 const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
   const resolved = resolveOptions(options)
-  const webpackLike = meta.framework === 'webpack' || meta.framework === 'rspack'
+  const queryPrefix = meta.framework === 'rolldown'
+    ? ROLLDOWN_ICON_PREFIX
+    : meta.framework === 'webpack' || meta.framework === 'rspack' ? VIRTUAL_ICON_PREFIX : undefined
   const iconWatchIds = new Map<string, Set<string>>()
 
   return {
     name: 'unplugin-icons',
     enforce: 'pre',
     resolveId(id) {
-      return resolveIconId(id, options.compiler, webpackLike, meta.framework === 'vite')
+      return resolveIconId(id, options.compiler, queryPrefix, meta.framework === 'vite')
     },
     loadInclude(id) {
-      return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX)
+      return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX) || id.startsWith(ROLLDOWN_ICON_PREFIX)
     },
     async load(id) {
       const moduleId = id
-      if (id.startsWith(VIRTUAL_RAW_ICON_PREFIX))
+      if (id.startsWith(VIRTUAL_RAW_ICON_PREFIX)) {
         id = Buffer.from(id.slice(VIRTUAL_RAW_ICON_PREFIX.length, id.lastIndexOf('/')), 'base64url').toString()
-      else if (id.startsWith(VIRTUAL_ICON_PREFIX))
-        id = decodeURIComponent(id.slice(VIRTUAL_ICON_PREFIX.length, id.lastIndexOf('/')))
+      }
+      else if (id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(ROLLDOWN_ICON_PREFIX)) {
+        const prefix = id.startsWith(VIRTUAL_ICON_PREFIX) ? VIRTUAL_ICON_PREFIX : ROLLDOWN_ICON_PREFIX
+        id = decodeURIComponent(id.slice(prefix.length, id.lastIndexOf('/')))
+      }
       const {
         config,
         resolveVirtualIconPath,
