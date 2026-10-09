@@ -158,6 +158,15 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
         }
       }
     },
+    webpack(compiler) {
+      compiler.hooks.normalModuleFactory.tap('unplugin-icons', (factory) => {
+        factory.hooks.beforeResolve.tap('unplugin-icons', (data) => {
+          // Webpack dispatches URI schemes before unplugin's resolver can run.
+          if (data?.request.startsWith('virtual:') && isIconPath(data.request))
+            data.request = normalizeIconPath(data.request).replace(RE_LEADING_SLASH, '')
+        })
+      })
+    },
     esbuild: {
       loader: (code: string, id: string) => getLoader(code, id, options.compiler),
     },
