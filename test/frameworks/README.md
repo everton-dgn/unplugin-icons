@@ -24,9 +24,11 @@ fixture makes no claim of a public TypeScript declaration. The repository itself
 still uses pnpm.
 
 Vue Vapor 3.6.0-rc.10 has a separate [packed SSR and hydration regression](../vue-vapor/README.md)
-through the Vite adapter. The broader Vapor probe
-still exposes rc.10 SVG width fallthrough; Vue gradient IDs remain unsafe across
-SSR hydration. These limitations are documented beside the Vue fixture.
+through the Vite adapter. A separate [SVG ID regression](../vue-ids/README.md)
+checks distinct per-instance IDs, concurrent server applications and hydration
+with Vue 3.5.43 and Vapor 3.6.0-rc.10. The broader Vapor probe still exposes
+rc.10 SVG width fallthrough. ID rewriting remains limited to the references
+recognized by the Vue helper; other frameworks are not covered by this fix.
 
 ## Diagnostic consumers with upstream type failures
 

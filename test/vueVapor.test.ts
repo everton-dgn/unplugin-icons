@@ -28,7 +28,7 @@ it('emits a vapor component', async () => {
   expect(code).toContain('function render(')
   expect(code).not.toContain('export function render')
   expect(code).not.toContain('idMap')
-  expect(code).not.toContain('__randId')
+  expect(code).not.toContain('__useId')
 })
 
 it('binds svg ids per render call', async () => {
@@ -36,7 +36,7 @@ it('binds svg ids per render call', async () => {
 
   // the id map is per instance, so it must live inside `render`, not at module scope
   expect(code.indexOf('const idMap = {')).toBeGreaterThan(code.indexOf('function render('))
-  expect(code).toContain(`'ssvg-id-vitejsa':'uicons-'+__randId()`)
+  expect(code).toContain(`'ssvg-id-vitejsa':'uicons-'+__useId()`)
   // the map is a render local now, no longer read off the render context
   expect(code).not.toContain('_ctx.idMap')
   expect(code).toContain(`'url(#'+`)
