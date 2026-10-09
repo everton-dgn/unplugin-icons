@@ -115,7 +115,7 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
     loadInclude(id) {
       return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX) || id.startsWith(VIRTUAL_RAW_ICON_PREFIX) || id.startsWith(ROLLDOWN_ICON_PREFIX)
     },
-    async load(id) {
+    async load(id, loadOptions?: { ssr?: boolean }) {
       const moduleId = id
       if (id.startsWith(VIRTUAL_RAW_ICON_PREFIX)) {
         id = Buffer.from(id.slice(VIRTUAL_RAW_ICON_PREFIX.length, id.lastIndexOf('/')), 'base64url').toString()
@@ -134,7 +134,7 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
         config,
         resolveVirtualIconPath,
       }))
-      const result = await generateComponentFromPath(id, config)
+      const result = await generateComponentFromPath(id, config, meta.framework === 'vite' && loadOptions?.ssr === true)
       if (result) {
         const path = resolveVirtualIconPath(
           result.resolved.collection,

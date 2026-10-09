@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "unplugin-icons/types/preact",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false
+  },
+  "files": [
+    "App.tsx",
+    "raw.ts",
+    "types.tsx"
+  ]
+}
