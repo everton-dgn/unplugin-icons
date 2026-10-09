@@ -1,0 +1,11 @@
+import App from "./app.marko"
+client import ClientApp from "./app.marko"
+client window.mountFixture = () => ClientApp.mount({ prefix: "csr" }, document.getElementById("csr"))
+<!doctype html>
+<html>
+  <head><title>Marko icon fixture</title></head>
+  <body>
+    <App prefix="ssr"/>
+    <div id="csr"/>
+  </body>
+</html>

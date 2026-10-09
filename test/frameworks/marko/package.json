@@ -1,0 +1,25 @@
+{
+  "name": "unplugin-icons-marko-runtime-fixture",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "marko": "6.4.5",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@marko/compiler": "5.42.11",
+    "@marko/vite": "6.1.13",
+    "@playwright/test": "1.64.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  }
+}
