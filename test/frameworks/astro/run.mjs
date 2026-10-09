@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { backup, pack } from './artifact.mjs'
 import { prepare, verify } from './isolation.mjs'
 import { withServer } from './servers.mjs'
+import { typeGates } from './type-gates.mjs'
 
 async function main() {
   const fixture = dirname(fileURLToPath(import.meta.url))
@@ -47,16 +48,14 @@ async function main() {
   assert(!existsSync(join(run, 'package/dist', stale)))
   assert(existsSync(join(artifact.retainedDist, stale)))
   assert.deepEqual(readFileSync(join(root, 'src/core/icon-sets.json')), catalog)
-  command('bun', freshLock ? ['install'] : ['install', '--frozen-lockfile'])
+  const lock = freshLock ? null : readFileSync(join(run, 'bun.lock'))
+  command('bun', freshLock ? ['install', '--ignore-scripts'] : ['install', '--frozen-lockfile', '--ignore-scripts'])
+  if (lock)
+    assert.deepEqual(readFileSync(join(run, 'bun.lock')), lock)
   const peers = verify(run, artifact.expected)
   writeFileSync(join(run, 'evidence.json'), `${JSON.stringify({ ...artifact, peers, stale }, null, 2)}\n`, { flag: 'wx' })
   const failures = []
-  try {
-    command('bun', ['run', 'typecheck'])
-  }
-  catch {
-    failures.push('typecheck')
-  }
+  typeGates(command, failures)
   command(process.execPath, ['node_modules/@playwright/test/cli.js', 'install', 'chromium', '--only-shell'])
   try {
     await withServer(run, 'dev', url => command('bun', ['run', 'test'], { ...process.env, ASTRO_TEST_URL: url }))

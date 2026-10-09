@@ -1,0 +1,24 @@
+{
+  "astro": "7.3.8",
+  "astro2tsx": "0.1.2",
+  "typescript": "6.0.3",
+  "patch": "dd9df69268ec6b0127a277d274368a56bc1967d3e03a0f8742613f1637ef86ea",
+  "sources": {
+    "Image.astro": "d03873488acb42c95541c1026905a4d747b99357089edf989520f3c9d0224b3a",
+    "Picture.astro": "b869b08e61560879b724838fef857ba555139a2d3965391064b5fc0ac26ed23c",
+    "Font.astro": "4e0f510bb6f8a0abf37c1ad3762850cdf18feb4301e68678bda9a63d13ab131a",
+    "ClientRouter.astro": "e93f1ad54b2fd069acf777909b53ca1c99d531d1090796a907d13bef314c72bb"
+  },
+  "installed": {
+    "client.d.ts": "9a37296a1956f0362b657581109add6c50018ddde68ef7a68732591d6e83d2a9",
+    "components/ClientRouter.astro.d.ts": "4a3273f868b4fc76f4db8ef320eb622806eb0f66d82233d09ae3dd427e20c0de",
+    "components/Font.astro.d.ts": "829eed323e024fb08db9981a5094a2a0597edcdee76ad7e37fbaeb251c54d135",
+    "components/Image.astro.d.ts": "45d725d98d470bbf2270e98eebc2a18d1324f0bcc64cd42574679ab60273d141",
+    "components/Picture.astro.d.ts": "e3d46a7bb682a0139a6e793dba033c3e4abd08d493c6df62e2917934745827e3",
+    "dist/core/fetch/fetch-state.d.ts": "0f76ffb7862857bfd0050def5c878aa16f3fc9c2c6fc1826899d15667b51a885",
+    "dist/type-utils.d.ts": "64c6c214a063654b60d581489915544c30b0ae78bd3c10e9593f1f55d0c5ebfd",
+    "dist/types/public/integrations.d.ts": "49d4d5b8b7d0a0da84362c3dbacbd8977614cb8c62f0865429c7a1fc235827bb",
+    "package.json": "eb9ab32701460cfd0550fd476f61203187865f952aa739a4322bac068ca9c9c5",
+    "types/content.d.ts": "a3cb68694c26d3e9aadfaeba88ed6df15fdb8e97fffb315f220079494ea2f69c"
+  }
+}

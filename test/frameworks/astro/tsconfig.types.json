@@ -9,10 +9,15 @@
       "unplugin-icons/types/astro",
       "unplugin-icons/types/raw-prefix"
     ],
+    "allowImportingTsExtensions": true,
     "strict": true,
     "skipLibCheck": false
   },
   "files": [
-    "types.ts"
+    "types.ts",
+    "platform-types.d.ts",
+    "contracts/components.ts",
+    "contracts/declarations.ts",
+    "contracts/kebab.ts"
   ]
 }

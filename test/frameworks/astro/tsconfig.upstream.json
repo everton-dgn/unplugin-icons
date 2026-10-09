@@ -7,10 +7,15 @@
     "types": [
       "astro/client"
     ],
+    "allowImportingTsExtensions": true,
     "strict": true,
     "skipLibCheck": false
   },
   "files": [
-    "upstream-types.ts"
+    "upstream-types.ts",
+    "platform-types.d.ts",
+    "contracts/components.ts",
+    "contracts/declarations.ts",
+    "contracts/kebab.ts"
   ]
 }

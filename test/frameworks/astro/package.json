@@ -9,20 +9,56 @@
     "test": "playwright test"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "7.3.2",
     "@astrojs/node": "11.1.7",
     "astro": "7.3.8",
     "unplugin-icons": "file:./package"
   },
   "devDependencies": {
+    "@astrojs/astro2tsx": "0.1.2",
     "@astrojs/check": "0.9.10",
+    "@azure/app-configuration": "1.13.0",
+    "@azure/cosmos": "4.10.1",
+    "@azure/data-tables": "13.3.2",
+    "@azure/keyvault-secrets": "4.11.2",
+    "@azure/storage-blob": "12.34.0",
+    "@capacitor/preferences": "8.0.1",
+    "@cloudflare/workers-types": "4.20260702.1",
+    "@deno/kv": "0.13.0",
+    "@electric-sql/pglite": "0.5.8",
+    "@libsql/client": "0.18.0",
+    "@netlify/blobs": "10.7.13",
+    "@planetscale/database": "1.20.2",
     "@playwright/test": "1.64.0",
+    "@types/better-sqlite3": "9.6.0",
+    "@types/bun": "1.4.2",
+    "@types/deno": "2.7.0",
+    "@types/emscripten": "1.41.6",
     "@types/node": "24.19.2",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/ws": "8.18.2",
+    "@upstash/redis": "1.39.0",
+    "@vercel/functions": "3.9.11",
+    "@vercel/kv": "3.0.0",
+    "db0": "0.3.4",
+    "ioredis": "5.11.1",
+    "mongodb": "7.7.0",
+    "mysql2": "3.24.5",
+    "react": "19.3.0",
+    "solid-js": "1.9.17",
+    "sqlite3": "6.0.1",
     "typescript": "6.0.3",
+    "uploadthing": "7.7.4",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
-    "vite-plus": "1.1.0"
+    "vite-plus": "1.1.0",
+    "vue": "3.5.43"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
     "vitest": "5.0.3"
+  },
+  "patchedDependencies": {
+    "astro@7.3.8": "patches/astro@7.3.8.patch"
   }
 }

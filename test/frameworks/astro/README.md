@@ -1,156 +1,139 @@
 # Astro SSR compatibility fixture
 
-This fixture consumes a freshly built and packed `unplugin-icons` package in a
-new operating-system temporary directory. It tests Astro 7.3.8 with its Rust
-compiler, `@astrojs/node` 11.1.7 and Vite+/core 1.1.0. Bun 1.4.2 installs the
-consumer. Playwright 1.64.0 runs Chromium headlessly with JavaScript disabled.
+This fixture installs a freshly packed unplugin-icons in an isolated OS temporary
+directory. It uses Astro 7.3.8, @astrojs/node 11.1.7, Vite+/core 1.1.0,
+Bun 1.4.2, TypeScript 6.0.3 and Playwright 1.64.0. Support is conditional on
+the committed Astro declaration patch and the fixture's complete type dependencies.
+The registry package without these additions fails strict TypeScript checking.
 
 ## Run
 
-From the repository root, using Node 24.21.0 and Bun 1.4.2:
+From the repository root with Node 24.21.0 and Bun 1.4.2:
 
 ```sh
 pnpm install --frozen-lockfile
 node test/frameworks/astro/run.mjs
 ```
 
-The dependency installs and the Playwright browser download may require network access. The runner
-preserves a caller-provided `PLAYWRIGHT_BROWSERS_PATH`, disables browser garbage
-collection and otherwise stores its browser under the checkout's `node_modules`.
+Installations and the Chromium download can require network access. The runner
+preserves PLAYWRIGHT_BROWSERS_PATH, disables browser garbage collection and uses
+headless Chromium. Without an override, browsers live in the checkout's ignored
+node_modules. Set UNPLUGIN_ICONS_BACKUP_DIR to override the default backup path,
+os.tmpdir()/unplugin-icons-backups. Runs, previous dist directories, backups and
+logs are retained. The runner prints the run directory.
 
-The full command currently exits nonzero at the strict TypeScript gate because
-Astro 7.3.8 publishes inconsistent declarations. Runtime tests still execute;
-the runner never converts the failed gate to a successful result. In the latest
-run, `astro check` passed with zero errors, warnings or hints; the standalone
-`tsc` gate failed. TypeScript 6.0.3 matches the
-declared peer range of `@astrojs/check` 0.9.10; this fixture does not claim
-TypeScript 7 support. This is runtime validation with an upstream type-checking
-blocker, not a claim of complete Astro support.
+The runner executes patch provenance, astro check, the strict consumer, the
+Astro-only control, 19 negative type cases and the real toStyleString helper.
+It then runs five development browser tests, builds the Astro app and runs five
+production browser tests. Each type gate has its own command log; a failed gate
+remains in results.json and causes a nonzero final exit even if runtime passes.
+No TypeScript diagnostic is excluded. Both tsc configurations use strict: true
+and skipLibCheck: false. TypeScript 6.0.3 fits @astrojs/check 0.9.10's peer range;
+this fixture does not claim TypeScript 7 support.
 
-### Runtime commands only
+The retained run unplugin-astro-runtime-SiNIBW passed every gate and all ten
+browser tests, with an unchanged frozen lock. Its results.json contains an empty
+failures array. All 42 installed code/type hashes matched the packed library;
+patch-evidence.json and type-negatives.json retain the declaration proof and
+the 19 rejected cases. The previous dist marker remained outside the new package.
 
-The existing consumer scripts can run individual stages inside an isolated run:
+## Declaration patch and type dependencies
 
-```sh
-bun run build
-bun run test
+patches/astro@7.3.8.patch repairs the missing KebabKeys helper, two invalid
+ambient Zod declarations, two omitted internal interfaces and declarations for
+Image, Picture, Font and ClientRouter. A conditional types export resolves the
+component declarations without changing their runtime targets.
+
+The two interfaces are checked against their runtime consumers in
+dist/core/fetch/fetch-state.js and dist/core/build/plugins/plugin-manifest.js.
+
+KebabCase/KebabKeys are a local implementation, not a historical restoration.
+Their ASCII uppercase conversion matches the installed runtime's kebab helper
+in astro/dist/runtime/server/render/util.js. Tests cover camel case, vendor
+prefixes, acronyms, optional and readonly properties, symbol and numeric keys.
+The runtime control also preserves its special behavior for CSS custom properties;
+no broader generic string-normalization contract is claimed.
+
+The four component declarations come from the installed .astro sources via
+@astrojs/astro2tsx 0.1.2 and TypeScript declaration emission. Every run checks the
+source hashes, regenerates these declarations and compares them byte for byte.
+Their return type is inherited from the official generator; props retain the
+original contracts. patch-provenance.json also fixes the patch SHA-256 and all
+ten patched file hashes. Bun reapplies the patch during each frozen installation.
+
+The fixture includes @astrojs/markdown-remark 7.3.2, referenced by Astro's
+published declarations, plus 31 development dependencies for the complete
+optional storage-driver type graph. These SDKs/types are needed to check the
+declarations that Unstorage imports eagerly; the app does not exercise those
+drivers. Their versions and integrity remain fixed in package.json and bun.lock.
+These additions do not change the plugin's runtime dependencies or root manifest.
+
+platform-types.d.ts composes official Deno, Emscripten, Bun SQLite and Cloudflare
+types. It imports only bun-types/sqlite, avoiding Bun globals that conflict with
+Vite. Cloudflare KVNamespace and R2Bucket aliases retain their official types.
+The same composition is included in astro check and both standalone tsc gates.
+No substitute driver API or relaxed library checking is used.
+
+The negatives cover SVG props/raw strings, all four patched components, Zod,
+ContextProvider, adapter headers and KebabKeys. A separate generated consumer
+removes the expectation directives; the checker must report exactly one error
+at each of the 19 intended locations, with no additional diagnostics.
+
+## Applying the patch in a Bun consumer
+
+The published unplugin-icons package does not apply this patch automatically.
+Pin Astro 7.3.8 and copy patches/astro@7.3.8.patch into your project's patches
+directory. Merge this entry into package.json, preserving existing patches:
+
+```json
+{
+  "patchedDependencies": {
+    "astro@7.3.8": "patches/astro@7.3.8.patch"
+  }
+}
 ```
 
-Run the build only in a fresh run whose output directory does not exist yet.
-The test command requires an already-running fixture server and
-`ASTRO_TEST_URL` set to its localhost URL; it does not launch a server. Preserve
-the browser path used by the runner and set `PLAYWRIGHT_SKIP_BROWSER_GC=1`.
-These commands validate only their named runtime stages. They do not run the
-strict type gate and must not be reported as a successful full fixture run.
-The root-level runner above remains the complete validation command.
+For the strict declaration graph verified here, include the Markdown peer and
+the pinned SDK/type dependencies listed in this fixture's package.json. Copy
+platform-types.d.ts and include it in the project's TypeScript configuration,
+as tsconfig.types.json does. Keep strict checking and skipLibCheck: false.
+Resolve the project's lock with bun install, then retain the patch, manifest,
+platform types and lock together. Subsequent installs use bun install
+--frozen-lockfile. This fixture adds --ignore-scripts because native SDKs are
+used only for their declarations; preserve your application's lifecycle-script
+policy. Playwright and astro2tsx are fixture verification tools, not requirements
+for applying the patch. Run the project's own Astro and TypeScript checks after
+these changes. Upgrading Astro or a storage dependency requires reviewing the
+patch and its complete type graph again.
 
 ## Package isolation
 
-Before building, the runner backs up the previous `dist` externally and renames
-it into a unique retained directory under the checkout's `node_modules`. A stale
-marker must remain in that retained directory and be absent from the tarball.
-It then invokes `pnpm exec tsdown --no-clean --no-exports` and `pnpm pack`.
-It does not run `prebuild` or regenerate the versioned icon catalog; the catalog
-must remain byte-identical. The fixture uses its own SVG collection.
+Before building, the runner backs up dist externally and renames it into a unique
+retained directory under node_modules. A stale marker must remain there and be
+absent from the new tarball. The library build uses only pnpm exec tsdown
+--no-clean --no-exports followed by pnpm pack. The icon catalog must stay identical.
 
-The tarball is extracted into a fresh `package` directory. Only `devDependencies`
-and `scripts` are removed from the extracted manifest after backing it up.
-Runtime dependencies, optional peer declarations, exports, `dist` and `types`
-remain intact. This avoids installing library development dependencies and
-scripts as part of the `file:./package` consumer.
+The extracted manifest loses only devDependencies and scripts, after backup.
+The fixture installs file:./package with bun install --frozen-lockfile
+--ignore-scripts and asserts that the lock bytes stay unchanged. All installed
+dist/types hashes must match the fresh archive; peers must resolve inside the
+isolated consumer and must not resolve before installation. No source alias is used.
 
-The normal install uses `bun install --frozen-lockfile`. SHA-256 comparisons
-verify every installed `dist` and `types` file against the extracted tarball.
-Dependency resolution must fail before installation and resolve inside the
-isolated consumer afterwards. No production source alias is used.
+Use --resolve-lock only to deliberately resolve a new lock in a retained run.
+The existing fixture lock is backed up. Review the resulting dependency changes
+before copying it back; normal runs never regenerate the lock.
 
-Backups default to `os.tmpdir()/unplugin-icons-backups`. Set
-`UNPLUGIN_ICONS_BACKUP_DIR` to override this location. Runs, tarballs, logs,
-browser results and backups are retained. The runner prints the run directory.
-`evidence.json` records package hashes and dependency locations.
+## Runtime coverage and limits
 
-To deliberately regenerate the lock, run with `--resolve-lock`. This backs up
-the existing fixture lock, resolves in a fresh retained consumer and leaves the
-new lock there for review. Copy it back only after reviewing dependency changes;
-normal runs never regenerate it.
+HTTP SSR is tested before browser JavaScript in development and the built Node
+server. Coverage includes both component aliases, explicit .astro and decimal
+queries, both raw aliases, repeated/encoded queries and raw flags. Assertions
+check SVG namespaces, xlink references, title and attribute escaping, root
+attribute precedence and preserved embedded dimensions. Three component instances,
+including a repeated import, must have distinct IDs and local references; seven
+raw SVGs retain literal IDs and references.
 
-## Coverage
-
-- HTTP SSR in development and the built Node standalone server, bound to
-  `127.0.0.1`; ports are selected immediately before each launch, with at most
-  three collision attempts and no reuse of an existing server.
-- `~icons/` and `virtual:icons/`, including explicit `.astro` and decimal query
-  values; both typed raw aliases with `raw=false`, repeated and encoded queries,
-  and legacy raw queries in first, middle and last positions.
-- SVG case-sensitive attributes, namespace-aware `xlink:href`, title entities
-  and consumer attribute escaping. Raw HTML contains one `width`, `height` and
-  `fill` on the component root, with consumer props overriding SVG defaults.
-  The parsed DOM also checks these overrides and defaults on an unmodified icon.
-  Embedded custom SVG dimensions remain unchanged by Iconify query customization,
-  so query decoding is checked with `data-probe`.
-- Component assertions require distinct internal IDs across three instances,
-  including two uses of the same import. Each SVG must reference its own gradient
-  and path through `stroke`, `href` and namespace-aware `xlink:href`. The seven raw
-  SVGs retain their literal IDs and references. After integration of #321, all
-  five tests passed in development and all five passed against the production
-  server, with browser JavaScript disabled.
-- Strict component/raw consumer types with `skipLibCheck: false`, including
-  invalid component props and non-callable raw strings.
-
-`upstream-types.ts` imports only Astro. In a retained run, execute
-`bun x --no-install tsc --noEmit -p tsconfig.upstream.json` to reproduce the
-upstream declaration failures without importing unplugin-icons. In particular,
-`astro/astro-jsx.d.ts` references `KebabKeys`, which the published
-`astro/dist/type-utils.d.ts` does not export. Other diagnostics concern Astro
-declarations and optional storage driver types. No local type shim or
-`skipLibCheck` workaround is applied.
-
-## Post-#321 validation
-
-The run from commit `4feedc5424e3ddf6aa708a0a19cdd4a884094e93` retained
-its artifacts in `unplugin-astro-runtime-R6rJuo` under the OS temporary directory.
-Frozen installation, package provenance checks and the production build passed.
-All 42 installed code/type files matched the fresh package hashes. The stale
-dist marker remained in the retained old dist and was absent from the package;
-the checked-in icon catalog was unchanged.
-
-The complete runner exited 1 and recorded `failures: ["typecheck"]`. Its strict
-consumer check produced 63 diagnostics. The separate Astro-only command below
-exited 2 with the same 63 diagnostics, including the missing `KebabKeys` export;
-there were no additional consumer diagnostics. The run retains
-`command-1.log`, `upstream-control.log` and `type-comparison.json` for comparison,
-and `command-3.log`/`command-5.log` for the five development/five production passes.
-No type gate was bypassed, and the overall fixture remains failing.
-
-```sh
-bun x --no-install tsc --noEmit -p tsconfig.upstream.json
-```
-
-## Upstream patch comparison
-
-Separate temporary consumers compared the registry packages Astro 7.3.7 and
-7.3.8 with TypeScript 6.0.3 and `@types/node` 24.19.2. Both versions fail with
-`strict: true` and `skipLibCheck: false`. Their `astro-jsx.d.ts` and
-`dist/type-utils.d.ts` files have identical SHA-256 hashes: both reference the
-missing `KebabKeys` export. Downgrading to 7.3.7 does not fix this gate, so the
-fixture stays on 7.3.8.
-
-Bundler and NodeNext were checked separately. NodeNext also rejects the
-extensionless `import './astro-jsx'` in `astro/types.d.ts`; this can prevent that
-path from loading the problematic JSX declaration. A control using the public
-`astro/astro-jsx` entry explicitly reproduces `KebabKeys` without unplugin-icons
-in either mode. The internal `./dist/type-utils.js` import resolves to the
-installed `dist/type-utils.d.ts`, ruling out a different file being selected.
-
-Against that explicit Astro-only baseline, the unplugin-icons consumer adds
-zero diagnostics in either version or resolution mode. Removing its
-`@ts-expect-error` annotations produces the three intended errors: invalid SVG
-property (TS2353), calling a raw string (TS2349), and assigning a component to a
-string (TS2322). These checks exercise both component aliases and both raw
-aliases. They do not turn the upstream declaration failures into a passing gate.
-No shim, downgrade or relaxed library checking is used.
-
-This is server-rendered Astro, with no hydration claim. Vite+ is tested through
-`astro build`, not a replacement build pipeline. Results cover macOS arm64 only;
-Linux, Windows, other browsers, file-watcher HMR and deployment platforms are
-unverified. Source production code and the root manifest/lock are not modified.
+This is server-rendered Astro without a hydration claim. Vite+ runs through the
+real Astro build. Validation covers macOS arm64; Linux, Windows, other browsers,
+file-watcher HMR and deployment platforms are unverified. Optional storage drivers
+are type-checked but are not runtime-tested.
