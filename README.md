@@ -1344,6 +1344,24 @@ IconsResolver({
 </template>
 ```
 
+### Avoiding component name collisions
+
+Keep a distinct prefix when application components or SVG elements could match an icon collection. Removing the prefix allows names such as `LayoutHeader` to match collection `la` when strict matching is disabled.
+
+```ts
+IconsResolver({
+  prefix: 'icon',
+  enabledCollections: ['mdi', 'carbon'],
+  strict: true,
+})
+```
+
+This configuration resolves names such as `<icon-mdi-account />` and `<icon-carbon-accessibility />`.
+
+`strict` defaults to `false`. Setting it to `true` disables the fallback that matches a collection without a following hyphen in the normalized name. It prevents partial collection matches such as `LayoutHeader` becoming `la/yout-header`, but does not prevent every collision: without a prefix, `feGaussianBlur` normalizes to `fe-gaussian-blur` and still matches collection `fe`. Keep a prefix or exclude the conflicting collection in that case.
+
+`enabledCollections` selects the Iconify collections to match. Entries in `customCollections` and keys in `alias` are added to that list separately.
+
 ### Collection Aliases
 
 Create shorter aliases for long collection names:
