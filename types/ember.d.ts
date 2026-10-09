@@ -12,5 +12,5 @@ declare module '~icons/*' {
   const IconComponent: ComponentLike<{
     Element: SVGElement
   }>
-  export default component
+  export default IconComponent
 }
