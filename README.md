@@ -179,18 +179,11 @@ export default {
 <details>
 <summary>Nuxt</summary><br>
 
-Nuxt 2 and [Nuxt Bridge](https://github.com/nuxt/bridge)
-
-```ts
-// nuxt.config.ts
-export default {
-  buildModules: [
-    ['unplugin-icons/nuxt', { /* options */ }],
-  ],
-}
-```
-
 Nuxt 3/4
+
+The module uses the Vue 3 compiler and requires Vue runtime 3.5+ with a matching
+compiler. Upgrade applications using an older Vue runtime before using this
+version. Vue 2 applications, including Nuxt 2, are not supported.
 
 ```ts
 // nuxt.config.ts
@@ -483,13 +476,20 @@ Icons({ compiler: 'vue3' })
 
 **Peer Dependency:**
 
-> **Note**: As of Vue 3.2.13+, `@vue/compiler-sfc` is included in the main `vue` package, so no additional installation is needed.
+The `vue3` compiler requires Vue runtime 3.5+ and a matching compiler version.
+It uses Vue's `useId()` for the SVG ID references handled by the plugin, keeping
+them distinct per instance and stable across SSR and hydration. If multiple Vue
+apps share a page, set a different `app.config.idPrefix` for each app and use the
+same prefix on its server and client.
 
-If you're using an older version:
+`vue/compiler-sfc` is included in supported Vue versions. An explicitly installed
+`@vue/compiler-sfc` takes precedence; keep it aligned with the runtime version.
+This requirement applies to the Vue 3 compiler; no global `vue` peer is imposed
+on consumers of other compilers.
 
-```bash
-npm i -D @vue/compiler-sfc
-```
+Only the existing `url(#...)` attribute references and their matching `id`
+attributes are rewritten. This does not add support for CSS blocks, SMIL, ARIA
+references or IDs in other framework compilers.
 
 **TypeScript Support:**
 

@@ -2,19 +2,25 @@ import { expect, test } from '@playwright/test'
 import { hydrate } from './hydrate'
 
 const mismatch = /hydration.*mismatch/i
-test('characterizes #344: random defs IDs produce hydration diagnostics', async ({ page }, testInfo) => {
+test('preserves distinct gradient IDs and SVG identity during hydration', async ({ page }) => {
   const diagnostics: string[] = []
-  const errors: string[] = []
-  page.on('pageerror', error => errors.push(error.message))
+  page.on('pageerror', error => diagnostics.push(error.message))
   page.on('console', (message) => {
     if (mismatch.test(message.text()))
       diagnostics.push(message.text())
   })
   await hydrate(page, '/ids')
-  const id = await page.getByTestId('gradient').locator('linearGradient').getAttribute('id')
-  expect(id).toBeTruthy()
-  await expect(page.getByTestId('gradient').locator('path')).toHaveAttribute('fill', `url(#${id})`)
-  expect(diagnostics.length).toBeGreaterThan(0)
-  expect(errors).toEqual([])
-  await testInfo.attach('known-344-diagnostics', { body: diagnostics.join('\n'), contentType: 'text/plain' })
+  const result = await page.evaluate(() => {
+    const icons = [...document.querySelectorAll('svg')]
+    const originals = Reflect.get(window, 'ssrIcons') as Element[]
+    return {
+      ids: icons.map(icon => icon.querySelector('linearGradient')!.id),
+      identity: icons.every((icon, index) => icon === originals[index]),
+      linked: icons.every(icon => icon.querySelector('path')!.getAttribute('fill') === `url(#${icon.querySelector('linearGradient')!.id})`),
+    }
+  })
+  expect(new Set(result.ids).size).toBe(2)
+  expect(result.identity).toBe(true)
+  expect(result.linked).toBe(true)
+  expect(diagnostics).toEqual([])
 })

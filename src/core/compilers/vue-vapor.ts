@@ -30,7 +30,7 @@ export const VueVaporCompiler = (async (svg: string, collection: string, icon: s
   }
 
   // dropping `export` lets the module below close over `render` and export the component instead
-  code = `import { defineVaporComponent, markRaw } from 'vue'\n${code.replace(RE_EXPORT_STATEMENT, '')}`
+  code = `import { defineVaporComponent, markRaw${injectScripts ? ', useId as __useId' : ''} } from 'vue'\n${code.replace(RE_EXPORT_STATEMENT, '')}`
   code += `\n\nexport default markRaw(defineVaporComponent({ name: '${name}', render }))`
   code += '\n/* vite-plugin-components disabled */'
 
@@ -53,7 +53,7 @@ export const VueVaporSSRCompiler = (async (svg: string, collection: string, icon
   if (errors.length)
     throw errors[0]
 
-  return `import { markRaw } from 'vue'\n${code.replace(RE_EXPORT_STATEMENT, '')}
+  return `import { markRaw${injectScripts ? ', useId as __useId' : ''} } from 'vue'\n${code.replace(RE_EXPORT_STATEMENT, '')}
 export default markRaw({ name: '${collection}-${icon}', __vapor: true, ssrRender${
     injectScripts ? `, setup() {${injectScripts};return { idMap }}` : ''
   } })
