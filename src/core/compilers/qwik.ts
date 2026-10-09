@@ -12,6 +12,7 @@ export const QwikCompiler = (async (
   const defaultOptions: ToJsComponentOptions = {
     importSource: '@builder.io/qwik',
     runtime: 'automatic',
+    elementAttributeNameCase: 'html',
     componentName: camelize(`${collection}-${icon}`),
   }
   const mergedOptions = Object.assign({}, defaultOptions, options)
