@@ -460,6 +460,9 @@ See [the Astro + Vue example](examples/astro-vue) for a working example project.
 
 Configure the `compiler` option based on your framework. Some frameworks may require additional peer dependencies.
 
+See the [framework compatibility checks](./test/frameworks/README.md) for pinned
+versions, reproducible consumer tests and their validation limits.
+
 <details>
 <summary>Vue 3</summary><br>
 
@@ -507,6 +510,9 @@ Emits [Vapor mode](https://github.com/vuejs/core/tree/minor/packages/runtime-vap
 ```ts
 Icons({ compiler: 'vue-vapor' })
 ```
+
+SSR compilation is supported through the Vite adapter. Other adapters emit
+client components. See the [runtime checks and known limitations](test/frameworks/vue/README.md).
 
 **Peer Dependency:**
 

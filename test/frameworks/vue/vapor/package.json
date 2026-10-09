@@ -1,0 +1,44 @@
+{
+  "name": "unplugin-icons-vue-vapor",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@vue/server-renderer": "catalog:",
+    "unplugin-icons": "file:./package",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/compiler-sfc": "catalog:",
+    "@vue/compiler-vapor": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  },
+  "workspaces": {
+    "packages": [],
+    "catalog": {
+      "@playwright/test": "1.64.0",
+      "@types/node": "24.19.2",
+      "@vitejs/plugin-vue": "6.0.9",
+      "@vue/compiler-sfc": "3.6.0-rc.10",
+      "@vue/compiler-vapor": "3.6.0-rc.10",
+      "@vue/server-renderer": "3.6.0-rc.10",
+      "typescript": "6.0.3",
+      "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+      "vite-plus": "1.1.0",
+      "vue": "3.6.0-rc.10",
+      "vue-tsc": "3.3.12"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "unplugin-icons-svelte-runtime",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "catalog:",
+    "@sveltejs/kit": "catalog:",
+    "svelte": "catalog:",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@sveltejs/adapter-bun": "catalog:",
+    "@sveltejs/adapter-node": "catalog:",
+    "@sveltejs/vite-plugin-svelte": "catalog:",
+    "@types/node": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

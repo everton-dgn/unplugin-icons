@@ -1,0 +1,29 @@
+{
+  "name": "unplugin-icons-solid2-runtime",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@antfu/install-pkg": "1.1.0",
+    "@iconify/utils": "3.1.7",
+    "@solidjs/web": "2.0.0-rc.14",
+    "local-pkg": "1.2.1",
+    "obug": "2.2.1",
+    "solid-js": "2.0.0-rc.14",
+    "unplugin": "3.4.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@solidjs/vite-plugin": "3.0.0-next.49",
+    "typescript": "7.0.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  }
+}
