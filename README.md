@@ -1072,6 +1072,16 @@ Icons({
 
 See the [Vue 3 example](examples/vite-vue3) for a complete setup.
 
+### Dots in custom icon names
+
+An icon file such as `calendar.circle.fill.svg` can be imported as `~icons/my-icons/calendar.circle.fill`. Dots and numeric suffixes are preserved when passing the icon name to custom loaders.
+
+The suffixes `.svg`, `.jsx`, `.tsx`, `.svelte`, `.astro`, and `.marko` are reserved for explicit import extensions. The complete `extension` configured on a custom compiler, such as `.custom.ts`, is also recognized. These suffixes are removed before looking up the icon. Other suffixes are part of the icon name, so `icon.fill` no longer acts as an alias for `icon`.
+
+If you configure `IconsResolver({ extension })`, use one of these reserved suffixes or the extension configured on your custom compiler. Icon names ending in a reserved suffix need a different name to avoid ambiguity with explicit import extensions.
+
+Bundlers can also assign meaning to suffixes such as `.css` or `.json`. With a compiler that does not append an output extension, avoid these endings in component icon names: another bundler plugin may treat the generated module as CSS or JSON.
+
 ## Icon Customization
 
 Customize individual icons or entire collections using `iconCustomizer` in your config or query parameters when importing.

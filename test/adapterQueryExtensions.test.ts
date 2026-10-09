@@ -26,8 +26,9 @@ describe.each(['webpack', 'rspack'] as const)('%s virtual icon queries', (framew
 })
 
 it.each(['esbuild', 'bun'] as const)('%s selects loaders without query values', (framework) => {
-  const plugin = Icons.raw({}, { framework } as any) as UnpluginOptions
-  const loader = plugin[framework]!.loader as (code: string, id: string) => string
-  for (const [extension, expected] of [['jsx', 'jsx'], ['tsx', 'tsx'], ['ts', 'ts'], ['css', 'css'], ['json', 'json'], ['txt', 'text'], ['custom', 'js']])
+  for (const [extension, expected] of [['jsx', 'jsx'], ['tsx', 'tsx'], ['ts', 'ts'], ['css', 'css'], ['json', 'json'], ['txt', 'text'], ['custom', 'js']]) {
+    const plugin = Icons.raw({ compiler: { extension, compiler: svg => svg } }, { framework } as any) as UnpluginOptions
+    const loader = plugin[framework]!.loader as (code: string, id: string) => string
     expect(loader('', `~icons/test/icon.${extension}?width=1.5em&raw=false`)).toBe(expected)
+  }
 })
