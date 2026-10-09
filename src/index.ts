@@ -1,57 +1,104 @@
 import type { Options } from './types'
+import { extname } from 'node:path'
 import { createUnplugin } from 'unplugin'
 import { generateComponentFromPath, isIconPath, normalizeIconPath, resolveIconsPath } from './core/loader'
 import { resolveOptions } from './core/options'
 
 const RE_EXTENSION = /\.\w+$/
 const RE_LEADING_SLASH = /^\//
+const RE_VITE_ESBUILD_EXTENSION = /\.(?:m?ts|[jt]sx)$/
+const VIRTUAL_ICON_PREFIX = '\0unplugin-icons/'
+// Match unplugin's esbuild and Bun loader inference, ignoring query values.
+const EXTENSION_LOADERS = {
+  '.js': 'js',
+  '.mjs': 'js',
+  '.cjs': 'js',
+  '.jsx': 'jsx',
+  '.ts': 'ts',
+  '.cts': 'ts',
+  '.mts': 'ts',
+  '.tsx': 'tsx',
+  '.css': 'css',
+  '.less': 'css',
+  '.stylus': 'css',
+  '.scss': 'css',
+  '.sass': 'css',
+  '.json': 'json',
+  '.txt': 'text',
+} as const
 
-const unplugin = createUnplugin<Options | undefined>((options = {}) => {
+function getLoader(_code: string, id: string) {
+  const extension = extname(id.split('?')[0]).toLowerCase()
+  return EXTENSION_LOADERS[extension as keyof typeof EXTENSION_LOADERS] || 'js'
+}
+
+function resolveIconId(id: string, compilerOption: Options['compiler'], webpackLike: boolean, vite: boolean) {
+  if (id.startsWith(VIRTUAL_ICON_PREFIX))
+    return id
+  if (isIconPath(id)) {
+    const normalizedId = normalizeIconPath(id)
+    // fix issue 322
+    const queryIndex = normalizedId.indexOf('?')
+    const query = queryIndex > -1 ? normalizedId.slice(queryIndex) : ''
+    const res = (queryIndex > -1 ? normalizedId.slice(0, queryIndex) : normalizedId)
+      .replace(RE_EXTENSION, '')
+      .replace(RE_LEADING_SLASH, '')
+    const withExtension = (extension: string) => {
+      // These adapters encode the whole ID as a filename. Keep the extension
+      // last for loader rules, and recover the untouched request in load().
+      if (webpackLike && query)
+        return `${VIRTUAL_ICON_PREFIX}${encodeURIComponent(`${res}${query}`)}/icon.${extension}`
+      // Vite can mistake a decimal query value for the extension. Encoding dots
+      // preserves URLSearchParams semantics and keeps its loader inference on the path.
+      if (vite && RE_VITE_ESBUILD_EXTENSION.test(`.${extension}`))
+        return `${res}.${extension}${query.replaceAll('.', '%2E')}`
+      return `${res}.${extension}${query}`
+    }
+    const resolved = resolveIconsPath(`${res}${query}`)
+    // accept raw compiler from query params
+    const compiler = resolved?.query?.raw === 'true' ? 'raw' : compilerOption
+    if (compiler && typeof compiler !== 'string') {
+      const ext = compiler.extension
+      if (ext)
+        return withExtension(ext.startsWith('.') ? ext.slice(1) : ext)
+    }
+    else {
+      switch (compiler) {
+        case 'astro':
+          return withExtension('astro')
+        case 'jsx':
+          return withExtension('jsx')
+        case 'qwik':
+          return withExtension('jsx')
+        case 'marko':
+          return withExtension('marko')
+        case 'svelte':
+          return withExtension('svelte')
+        case 'solid':
+          return withExtension('tsx')
+      }
+    }
+    return `${res}${query}`
+  }
+  return null
+}
+
+const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
   const resolved = resolveOptions(options)
+  const webpackLike = meta.framework === 'webpack' || meta.framework === 'rspack'
 
   return {
     name: 'unplugin-icons',
     enforce: 'pre',
     resolveId(id) {
-      if (isIconPath(id)) {
-        const normalizedId = normalizeIconPath(id)
-        // fix issue 322
-        const queryIndex = normalizedId.indexOf('?')
-        const res = `${(queryIndex > -1 ? normalizedId.slice(0, queryIndex) : normalizedId)
-          .replace(RE_EXTENSION, '')
-          .replace(RE_LEADING_SLASH, '')}${queryIndex > -1 ? `?${normalizedId.slice(queryIndex + 1)}` : ''}`
-        const resolved = resolveIconsPath(res)
-        // accept raw compiler from query params
-        const compiler = resolved?.query?.raw === 'true' ? 'raw' : options.compiler
-        if (compiler && typeof compiler !== 'string') {
-          const ext = compiler.extension
-          if (ext)
-            return `${res}.${ext.startsWith('.') ? ext.slice(1) : ext}`
-        }
-        else {
-          switch (compiler) {
-            case 'astro':
-              return `${res}.astro`
-            case 'jsx':
-              return `${res}.jsx`
-            case 'qwik':
-              return `${res}.jsx`
-            case 'marko':
-              return `${res}.marko`
-            case 'svelte':
-              return `${res}.svelte`
-            case 'solid':
-              return `${res}.tsx`
-          }
-        }
-        return res
-      }
-      return null
+      return resolveIconId(id, options.compiler, webpackLike, meta.framework === 'vite')
     },
     loadInclude(id) {
-      return isIconPath(id)
+      return isIconPath(id) || id.startsWith(VIRTUAL_ICON_PREFIX)
     },
     async load(id) {
+      if (id.startsWith(VIRTUAL_ICON_PREFIX))
+        id = decodeURIComponent(id.slice(VIRTUAL_ICON_PREFIX.length, id.lastIndexOf('/')))
       const {
         config,
         resolveVirtualIconPath,
@@ -76,6 +123,12 @@ const unplugin = createUnplugin<Options | undefined>((options = {}) => {
           map: { version: 3, mappings: '', sources: [] } as any,
         }
       }
+    },
+    esbuild: {
+      loader: getLoader,
+    },
+    bun: {
+      loader: getLoader,
     },
     rollup: {
       api: {

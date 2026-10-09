@@ -132,6 +132,9 @@ catalogs:
     bumpp:
       specifier: ^10.4.1
       version: 10.4.1
+    esbuild:
+      specifier: 0.28.2
+      version: 0.28.2
     eslint:
       specifier: ^9.39.2
       version: 9.39.5
@@ -503,9 +506,6 @@ importers:
       obug:
         specifier: catalog:build
         version: 2.2.1
-      svelte:
-        specifier: ^3.0.0 || ^4.0.0 || ^5.0.0
-        version: 5.57.0(@typescript-eslint/types@8.70.0)
       unplugin:
         specifier: catalog:build
         version: 3.3.0(@rspack/core@1.7.12(@swc/helpers@0.5.1))(esbuild@0.28.2)(rolldown@1.0.0-rc.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))(rollup@4.63.1)(vite@7.3.6(@types/node@25.9.6)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))(webpack@5.110.3)
@@ -543,6 +543,9 @@ importers:
       bumpp:
         specifier: catalog:build
         version: 10.4.1(magicast@0.5.4)
+      esbuild:
+        specifier: catalog:build
+        version: 0.28.2
       eslint:
         specifier: catalog:build
         version: 9.39.5(jiti@2.7.0)(supports-color@8.1.1)
@@ -552,6 +555,9 @@ importers:
       rollup:
         specifier: catalog:build
         version: 4.63.1
+      svelte:
+        specifier: catalog:svelte
+        version: 5.57.0(@typescript-eslint/types@8.70.0)
       tsdown:
         specifier: catalog:build
         version: 0.20.3(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(publint@0.3.24)(synckit@0.11.13)(typescript@5.9.3)
