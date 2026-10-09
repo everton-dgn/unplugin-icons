@@ -460,6 +460,15 @@ See [the Astro + Vue example](examples/astro-vue) for a working example project.
 
 Configure the `compiler` option based on your framework. Some frameworks may require additional peer dependencies.
 
+Each plugin instance selects one component compiler. It does not switch compiler
+according to the framework of the importing file. For example, the Astro + Vue
+configuration above produces Vue components for its icon imports.
+
+For framework-independent SVG content, use a [raw import](#raw-svg-import) or the typed
+`~icons-raw/` and `virtual:icons-raw/` prefixes. These return strings; the importing
+framework is responsible for rendering them. Registering two instances with the
+same icon prefixes does not select a compiler per import.
+
 See the [framework compatibility checks](./test/frameworks/README.md) for pinned
 versions, reproducible consumer tests and their validation limits.
 
@@ -511,6 +520,9 @@ Emits [Vapor mode](https://github.com/vuejs/core/tree/minor/packages/runtime-vap
 Icons({ compiler: 'vue-vapor' })
 ```
 
+SSR compilation is supported through the Vite adapter. Other adapters emit
+client components. See the [runtime checks and known limitations](test/frameworks/vue/README.md).
+
 **Peer Dependency:**
 
 Requires Vue 3.6+:
@@ -543,6 +555,19 @@ Add to your `tsconfig.json`:
 ```ts
 Icons({ compiler: 'jsx', jsx: 'react' })
 ```
+
+React icons accept a `title` prop that creates or updates the SVG `<title>`:
+
+```tsx
+import SearchIcon from '~icons/mdi/magnify'
+
+export function LabeledSearchIcon({ label }: { label: string }) {
+  return <SearchIcon title={label} role="img" aria-label={label} />
+}
+```
+
+The title is rendered as text, including when the value contains markup characters.
+For decorative icons, omit the title and pass `aria-hidden="true"`.
 
 **Peer Dependencies:**
 
@@ -669,6 +694,14 @@ import 'unplugin-icons/types/svelte'
 
 See [the Svelte example](examples/vite-svelte) for a complete setup.
 
+When publishing a Svelte library, inspect the files you distribute. If they still
+import `~icons/` or `virtual:icons/`, the consuming application must run
+unplugin-icons with `compiler: 'svelte'` and provide the required icon collections.
+Type declarations alone do not resolve these virtual modules.
+
+To avoid that consumer requirement, resolve the icons during your library build
+with a bundler that runs unplugin-icons, and distribute the generated output.
+
 <br></details>
 
 <details>
@@ -781,6 +814,21 @@ Add to your `tsconfig.json`:
 ```
 
 See [the Qwik example](examples/vite-qwik) for a complete setup.
+
+<br></details>
+
+<details>
+<summary>Marko</summary><br>
+
+```ts
+Icons({ compiler: 'marko' })
+```
+
+Use `@marko/vite` to compile the generated Marko modules. With `@marko/vite`
+6.1.13, prefer `virtual:icons/` and `virtual:icons-raw/`: its default tilde alias
+overlaps the `~icons/` and `~icons-raw/` prefixes. The
+[Marko fixture](test/frameworks/marko/README.md) shows the exact alias ordering
+for applications that use tilde imports, plus tested versions and runtime limits.
 
 <br></details>
 
@@ -1186,7 +1234,13 @@ For custom SVGs, leave the original root `width` and `height` attributes out: ex
 
 ## Global Icon Transformation
 
-Apply transformations to all custom icons during loading. Useful for adding default attributes like `fill="currentColor"`.
+The `transform` option runs for SVG strings from `customCollections`, including
+string entries and loaders that return SVG strings. Callbacks that return
+`IconifyJSON` and installed Iconify collections do not run this callback.
+Use `iconCustomizer` for attribute
+overrides across collection types, or return SVG strings from a custom loader
+when you need to transform their markup. The example below transforms a custom icon.
+
 ```ts
 Icons({
   customCollections: {

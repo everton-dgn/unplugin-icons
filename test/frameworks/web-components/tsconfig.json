@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "unplugin-icons/types/web-components",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false
+  },
+  "include": [
+    "app/**/*.ts",
+    "types.ts"
+  ]
+}

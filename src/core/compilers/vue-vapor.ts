@@ -36,3 +36,26 @@ export const VueVaporCompiler = (async (svg: string, collection: string, icon: s
 
   return code
 }) as Compiler
+
+export const VueVaporSSRCompiler = (async (svg: string, collection: string, icon: string) => {
+  const { compileTemplate } = await importPeerModule('@vue/compiler-sfc', 'vue/compiler-sfc').catch((cause) => {
+    throw new Error('Failed to load @vue/compiler-sfc or vue/compiler-sfc for Vue Vapor SSR', { cause })
+  })
+  const { injectScripts, svg: handled } = handleSVGId(svg)
+  const { code, errors } = compileTemplate({
+    source: handled,
+    id: `${collection}:${icon}`,
+    filename: `${collection}-${icon}.vue`,
+    ssr: true,
+    vapor: true,
+    ssrCssVars: [],
+  })
+  if (errors.length)
+    throw errors[0]
+
+  return `import { markRaw } from 'vue'\n${code.replace(RE_EXPORT_STATEMENT, '')}
+export default markRaw({ name: '${collection}-${icon}', __vapor: true, ssrRender${
+    injectScripts ? `, setup() {${injectScripts};return { idMap }}` : ''
+  } })
+/* vite-plugin-components disabled */`
+}) as Compiler
