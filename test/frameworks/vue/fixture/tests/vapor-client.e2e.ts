@@ -1,0 +1,42 @@
+import { expect, test } from '@playwright/test'
+
+test('Vapor client-only: aliases, reactive props, events and raw strings', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  page.on('console', (message) => {
+    if (message.type() === 'error')
+      errors.push(message.text())
+  })
+  await page.goto('/csr')
+  await expect(page.locator('main')).toHaveAttribute('data-mounted', 'true')
+  const primary = page.getByTestId('primary')
+  await expect(primary).toHaveAttribute('width', '24')
+  await expect(primary).toHaveAttribute('class', 'primary')
+  await expect(primary.locator('title')).toHaveText('A & B <C> "D"')
+  expect(await primary.locator('use').evaluate(el => el.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('/sprite.svg#shape')
+  await expect(page.getByTestId('alias')).toHaveAttribute('width', '1.5em')
+  await primary.click()
+  await expect(page.getByTestId('clicks')).toHaveText('1')
+  await page.getByRole('button', { name: 'Update props' }).click()
+  await expect(primary).toHaveAttribute('width', '48')
+  await expect(primary).toHaveAttribute('data-count', '1')
+  await expect(primary).toHaveCSS('color', 'rgb(0, 0, 255)')
+  await expect(page.getByTestId('raw')).toContainText('width="2em"')
+  await expect(page.getByTestId('virtual-raw')).toContainText('title="a%2Eb"')
+  expect(errors).toEqual([])
+})
+
+test('Vapor client-only: DOM identity and events survive an update', async ({ page }) => {
+  await page.goto('/csr')
+  await expect(page.locator('main')).toHaveAttribute('data-mounted', 'true')
+  const primary = page.getByTestId('primary')
+  await expect(primary).toBeVisible()
+  await primary.evaluate(el => Reflect.set(window, 'originalVaporIcon', el))
+  await primary.click()
+  await expect(page.getByTestId('clicks')).toHaveText('1')
+  await page.getByRole('button', { name: 'Update props' }).click()
+  await expect(primary).toHaveAttribute('data-count', '1')
+  expect(await primary.evaluate(el => Reflect.get(window, 'originalVaporIcon') === el)).toBe(true)
+  await primary.click()
+  await expect(page.getByTestId('clicks')).toHaveText('2')
+})

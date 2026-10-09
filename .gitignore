@@ -1,4 +1,5 @@
 node_modules
+.polyhive/
 .DS_Store
 dist
 example/README.md

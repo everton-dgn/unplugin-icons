@@ -1,0 +1,32 @@
+{
+  "name": "unplugin-icons-react-runtime-fixture",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "vp build && vp build --ssr app/entry-server.tsx --outDir dist/server",
+    "test": "node --import tsx ./node_modules/@playwright/test/cli.js test"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@svgr/core": "8.1.0",
+    "@svgr/plugin-jsx": "8.1.0",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  }
+}

@@ -96,7 +96,7 @@
     "lint-fix": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
     "release": "bumpp",
-    "test": "vitest",
+    "test": "vitest --dir test",
     "test:types:solid": "tsx test/solid-types.ts",
     "typecheck": "tsc --noEmit"
   },
