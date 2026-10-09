@@ -1,0 +1,1 @@
+export const glyph = `<svg viewBox="0 0 24 24"><title>A &amp; B &lt;C&gt; &quot;D&quot; &#96; \\</title><defs><linearGradient id="literal-paint"><stop offset="0" stop-color="red"/></linearGradient></defs><path fill="url(#literal-paint)" d="M0 0h24v24H0z"/></svg>`
