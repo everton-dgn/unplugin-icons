@@ -8,7 +8,8 @@ import Icons from '../src'
 describe.each(['webpack', 'rspack'] as const)('%s icon prefixes', (framework) => {
   it.each(['~icons/', 'virtual:icons/', '~icons-raw/', 'virtual:icons-raw/'])('bundles %s and preserves encoded query values', async (prefix) => {
     const root = fileURLToPath(new URL('../', import.meta.url))
-    const require = createRequire(new URL(`../examples/${framework}/package.json`, import.meta.url))
+    const example = framework === 'rspack' ? 'rspack-vue3' : 'webpack'
+    const require = createRequire(new URL(`../examples/${example}/package.json`, import.meta.url))
     const bundle = framework === 'webpack' ? require('webpack') : require('@rspack/core').rspack
     const fixture = mkdtempSync(join(root, `node_modules/.icon-prefix-${framework}-`))
     writeFileSync(join(fixture, 'entry.mjs'), `
