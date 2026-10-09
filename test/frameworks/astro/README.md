@@ -20,8 +20,9 @@ collection and otherwise stores its browser under the checkout's `node_modules`.
 
 The full command currently exits nonzero at the strict TypeScript gate because
 Astro 7.3.8 publishes inconsistent declarations. Runtime tests still execute;
-the runner never converts the failed gate to a successful result. `astro check`
-and the standalone `tsc` gate are distinct checks. TypeScript 6.0.3 matches the
+the runner never converts the failed gate to a successful result. In the latest
+run, `astro check` passed with zero errors, warnings or hints; the standalone
+`tsc` gate failed. TypeScript 6.0.3 matches the
 declared peer range of `@astrojs/check` 0.9.10; this fixture does not claim
 TypeScript 7 support. This is runtime validation with an upstream type-checking
 blocker, not a claim of complete Astro support.
@@ -90,8 +91,9 @@ normal runs never regenerate it.
 - Component assertions require distinct internal IDs across three instances,
   including two uses of the same import. Each SVG must reference its own gradient
   and path through `stroke`, `href` and namespace-aware `xlink:href`. The seven raw
-  SVGs must retain their literal IDs and references. These assertions await
-  integration of #321 and a new runtime run; no passing result is claimed yet.
+  SVGs retain their literal IDs and references. After integration of #321, all
+  five tests passed in development and all five passed against the production
+  server, with browser JavaScript disabled.
 - Strict component/raw consumer types with `skipLibCheck: false`, including
   invalid component props and non-callable raw strings.
 
@@ -102,6 +104,27 @@ upstream declaration failures without importing unplugin-icons. In particular,
 `astro/dist/type-utils.d.ts` does not export. Other diagnostics concern Astro
 declarations and optional storage driver types. No local type shim or
 `skipLibCheck` workaround is applied.
+
+## Post-#321 validation
+
+The run from commit `4feedc5424e3ddf6aa708a0a19cdd4a884094e93` retained
+its artifacts in `unplugin-astro-runtime-R6rJuo` under the OS temporary directory.
+Frozen installation, package provenance checks and the production build passed.
+All 42 installed code/type files matched the fresh package hashes. The stale
+dist marker remained in the retained old dist and was absent from the package;
+the checked-in icon catalog was unchanged.
+
+The complete runner exited 1 and recorded `failures: ["typecheck"]`. Its strict
+consumer check produced 63 diagnostics. The separate Astro-only command below
+exited 2 with the same 63 diagnostics, including the missing `KebabKeys` export;
+there were no additional consumer diagnostics. The run retains
+`command-1.log`, `upstream-control.log` and `type-comparison.json` for comparison,
+and `command-3.log`/`command-5.log` for the five development/five production passes.
+No type gate was bypassed, and the overall fixture remains failing.
+
+```sh
+bun x --no-install tsc --noEmit -p tsconfig.upstream.json
+```
 
 ## Upstream patch comparison
 
