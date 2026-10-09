@@ -2,6 +2,8 @@ import type { Compiler } from './types'
 import { camelize } from '@iconify/utils/lib/misc/strings'
 import { importPeerModule } from './peer'
 
+const RE_INVALID_IDENTIFIER = /[^\w$]/g
+
 export const JSXCompiler = (async (
   svg,
   collection,
@@ -21,7 +23,7 @@ export const JSXCompiler = (async (
       ref: options.jsx === 'react',
       titleProp: options.jsx === 'react',
     },
-    { componentName: camelize(`${collection}-${icon}`) },
+    { componentName: camelize(`${collection}-${icon}`).replace(RE_INVALID_IDENTIFIER, '_') },
   )
   // svgr does not provide an option to support preact (WHY?),
   // we manually remove the react import for preact

@@ -3,11 +3,11 @@ import { Buffer } from 'node:buffer'
 import { extname } from 'node:path'
 import { normalizePath } from '@iconify/utils/lib/loader/hmr-utils'
 import { createUnplugin } from 'unplugin'
-import { generateComponentFromPath, isIconPath, isRawIconPath, normalizeIconPath, resolveIconsPath } from './core/loader'
+import { generateComponentFromPath, isIconPath, isRawIconPath, normalizeIconPath, resolveIconsPath, stripIconExtension } from './core/loader'
 import { resolveOptions } from './core/options'
 
-const RE_EXTENSION = /\.\w+$/
 const RE_LEADING_SLASH = /^\//
+const RE_LEADING_DOT = /^\./
 const RE_VITE_ESBUILD_EXTENSION = /\.(?:m?ts|[jt]sx)$/
 const VIRTUAL_ICON_PREFIX = '\0unplugin-icons/'
 const VIRTUAL_RAW_ICON_PREFIX = '\0unplugin-icons-raw/'
@@ -30,9 +30,16 @@ const EXTENSION_LOADERS = {
   '.txt': 'text',
 } as const
 
-function getLoader(_code: string, id: string) {
+function getLoader(_code: string, id: string, compiler: Options['compiler']) {
+  if (compiler === 'raw' || resolveIconsPath(id)?.query.raw === 'true')
+    return 'js'
+  if (compiler && typeof compiler !== 'string') {
+    const extension = compiler.extension ? extname(`icon.${compiler.extension.replace(RE_LEADING_DOT, '')}`).toLowerCase() : ''
+    return EXTENSION_LOADERS[extension as keyof typeof EXTENSION_LOADERS] || 'js'
+  }
+  // Built-in compilers emit JavaScript or JSX. Other suffixes belong to the icon name.
   const extension = extname(id.split('?')[0]).toLowerCase()
-  return EXTENSION_LOADERS[extension as keyof typeof EXTENSION_LOADERS] || 'js'
+  return extension === '.jsx' || extension === '.tsx' ? EXTENSION_LOADERS[extension] : 'js'
 }
 
 function resolveIconId(id: string, compilerOption: Options['compiler'], webpackLike: boolean, vite: boolean) {
@@ -43,8 +50,8 @@ function resolveIconId(id: string, compilerOption: Options['compiler'], webpackL
     // fix issue 322
     const queryIndex = normalizedId.indexOf('?')
     const query = queryIndex > -1 ? normalizedId.slice(queryIndex) : ''
-    const res = (queryIndex > -1 ? normalizedId.slice(0, queryIndex) : normalizedId)
-      .replace(RE_EXTENSION, '')
+    const extension = compilerOption && typeof compilerOption !== 'string' ? compilerOption.extension : undefined
+    const res = stripIconExtension(queryIndex > -1 ? normalizedId.slice(0, queryIndex) : normalizedId, extension)
       .replace(RE_LEADING_SLASH, '')
     const withExtension = (extension: string) => {
       // These adapters encode the whole ID as a filename. Keep the extension
@@ -142,10 +149,10 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
       }
     },
     esbuild: {
-      loader: getLoader,
+      loader: (code: string, id: string) => getLoader(code, id, options.compiler),
     },
     bun: {
-      loader: getLoader,
+      loader: (code: string, id: string) => getLoader(code, id, options.compiler),
     },
     rollup: {
       api: {
