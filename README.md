@@ -875,9 +875,8 @@ or the position and value of a `raw` query parameter. In particular, `raw=false`
 does not switch these imports to components. Other query parameters keep their
 usual behavior. Existing component imports and `?raw` imports are unchanged.
 
-Use `~icons-raw/` with webpack. Its current adapter rejects the `virtual:` URI
-scheme before the icon loader runs. The `virtual:icons-raw/` alias is supported
-with Vite and esbuild.
+Both `~icons-raw/` and `virtual:icons-raw/` work with Vite, esbuild, webpack and
+Rspack, including imports with query parameters.
 
 Include the dedicated declaration alongside your framework's types, for example:
 
