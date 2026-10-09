@@ -1,0 +1,17 @@
+import Icon from "virtual:icons/fixture/sample"
+import Alias from "~icons/fixture/sample.dot?width=2.5&height=3.5"
+import Escaping from "virtual:icons/fixture/escaping"
+import raw from "virtual:icons-raw/fixture/sample.dot?raw=false"
+import aliasRaw from "~icons-raw/fixture/sample.dot?raw=false"
+import queryRaw from "virtual:icons/fixture/sample.dot?width=2.5&raw=true&height=3.5"
+
+<let/count=0>
+<section data-testid=input.prefix>
+  <Icon data-testid="icon" width=32+count aria-label=`Icon ${count} <&"` onClick() { count++ }/>
+  <Alias data-testid="alias"/>
+  <Escaping data-testid="escaping"/>
+  <pre data-testid="raw">${raw}</pre>
+  <pre data-testid="raw-alias">${aliasRaw}</pre>
+  <pre data-testid="query-raw">${queryRaw}</pre>
+  <button onClick() { count++ }>Update ${count}</button>
+</section>
