@@ -1,0 +1,13 @@
+diff --git a/dist/core.d.ts b/dist/core.d.ts
+index 7173a04d27ea0d0b708a9cffdebf0cf49571e7f5..bf132602bd8b6ae62b52d114bfe807a750251747 100644
+--- a/dist/core.d.ts
++++ b/dist/core.d.ts
+@@ -998,7 +998,7 @@ declare namespace h {
+     function h(type: any, data: any, text: string): JSXNode<any>;
+     function h(type: any, data: any, children: Array<JSXNode<any> | undefined | null>): JSXNode<any>;
+     function h(sel: any, data: any | null, children: JSXNode<any>): JSXNode<any>;
+-        { JSX };
++    export { QwikJSX as JSX };
+ }
+ export { h as createElement }
+ export { h }

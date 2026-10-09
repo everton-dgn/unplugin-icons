@@ -1,0 +1,20 @@
+{
+  "name": "unplugin-icons-qwik-runtime-fixture",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "dependencies": {
+    "@builder.io/qwik": "1.20.2",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@svgx/core": "1.0.2",
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2",
+    "vite": "7.3.6"
+  },
+  "patchedDependencies": {
+    "@builder.io/qwik@1.20.2": "patches/@builder.io%2Fqwik@1.20.2.patch"
+  }
+}
