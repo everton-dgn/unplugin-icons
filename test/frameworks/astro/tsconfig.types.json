@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "preserve",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "types": [
+      "astro/client",
+      "unplugin-icons/types/astro",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "strict": true,
+    "skipLibCheck": false
+  },
+  "files": [
+    "types.ts"
+  ]
+}

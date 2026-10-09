@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "preserve",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "types": [
+      "astro/client"
+    ],
+    "strict": true,
+    "skipLibCheck": false
+  },
+  "files": [
+    "upstream-types.ts"
+  ]
+}

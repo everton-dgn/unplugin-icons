@@ -1,0 +1,28 @@
+{
+  "name": "unplugin-icons-astro-runtime-fixture",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "typecheck": "astro check && tsc --noEmit -p tsconfig.types.json",
+    "build": "astro build",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "astro": "7.3.8",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  }
+}
