@@ -1,0 +1,47 @@
+{
+  "name": "unplugin-icons-svelte-runtime",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "build": "bun node_modules/vite/dist/vite/node/cli.js build"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "catalog:",
+    "@sveltejs/kit": "catalog:",
+    "svelte": "catalog:",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@sveltejs/adapter-bun": "catalog:",
+    "@sveltejs/adapter-node": "catalog:",
+    "@sveltejs/vite-plugin-svelte": "catalog:",
+    "@types/node": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  },
+  "workspaces": {
+    "packages": [],
+    "catalog": {
+      "@opentelemetry/api": "1.9.1",
+      "@playwright/test": "1.64.0",
+      "@sveltejs/adapter-bun": "1.0.0",
+      "@sveltejs/adapter-node": "6.0.0",
+      "@sveltejs/kit": "3.0.1",
+      "@sveltejs/vite-plugin-svelte": "7.3.1",
+      "@types/node": "24.19.2",
+      "svelte": "5.57.2",
+      "svelte-check": "4.7.6",
+      "typescript": "6.0.3",
+      "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+      "vite-plus": "1.1.0"
+    }
+  }
+}

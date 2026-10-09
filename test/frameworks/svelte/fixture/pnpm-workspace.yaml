@@ -1,0 +1,18 @@
+packages:
+  - .
+strictPeerDependencies: true
+autoInstallPeers: false
+minimumReleaseAgeExclude:
+  - '@types/node@24.19.2'
+catalog:
+  '@opentelemetry/api': 1.9.1
+  '@playwright/test': 1.64.0
+  '@sveltejs/adapter-bun': 1.0.0
+  '@sveltejs/adapter-node': 6.0.0
+  '@sveltejs/kit': 3.0.1
+  '@sveltejs/vite-plugin-svelte': 7.3.1
+  '@types/node': 24.19.2
+  svelte: 5.57.2
+  svelte-check: 4.7.6
+  typescript: 6.0.3
+  vite: 8.3.4
