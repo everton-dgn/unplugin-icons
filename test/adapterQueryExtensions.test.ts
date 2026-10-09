@@ -2,7 +2,7 @@ import type { UnpluginOptions } from 'unplugin'
 import { describe, expect, it, vi } from 'vitest'
 import Icons from '../src'
 
-describe.each(['webpack', 'rspack'] as const)('%s virtual icon queries', (framework) => {
+describe.each(['webpack', 'rspack', 'rolldown'] as const)('%s virtual icon queries', (framework) => {
   it.each(['?width=1.5em&title=a%3Fb&width=2em', '?raw=false&width=1.5em', '?raw=true&width=1.5em'])('preserves %s through load', async (query) => {
     const plugin = Icons.raw({
       compiler: { extension: '.custom.ts', compiler: svg => `export default ${JSON.stringify(svg)}` },
