@@ -1,12 +1,12 @@
 import type { Compiler } from './types'
-import { importModule } from 'local-pkg'
 import { handleSVGId } from '../svgId'
+import { importPeerModule } from './peer'
 
 const renderFnRE = /^(?:export )?function render\((\w+)\)\s*\{/m
 const RE_EXPORT_STATEMENT = /^export /gm
 
 export const VueVaporCompiler = (async (svg: string, collection: string, icon: string) => {
-  const { compile } = await importModule('@vue/compiler-vapor')
+  const { compile } = await importPeerModule('@vue/compiler-vapor')
 
   const name = `${collection}-${icon}`
   const { injectScripts, svg: handled } = handleSVGId(svg)
