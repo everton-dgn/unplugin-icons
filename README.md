@@ -1175,6 +1175,23 @@ export default {
 
 > **Note**: The `virtual:icons` prefix still works in Vite, but `~icons` is recommended for consistency across all build tools.
 
+## Linting virtual imports
+
+Icon imports are virtual modules resolved by this plugin during the build. If your ESLint configuration uses `eslint-plugin-import` and reports `import/no-unresolved` for these imports, add their prefixes to that rule's `ignore` option:
+
+```js
+export default {
+  // Include this rule in your existing ESLint configuration.
+  rules: {
+    'import/no-unresolved': ['error', {
+      ignore: ['^~icons/', '^virtual:icons/'],
+    }],
+  },
+}
+```
+
+This keeps unresolved-import checks active for other modules. It does not check whether an icon exists; the build still resolves and validates icon imports. Use the rule's `ignore` option, rather than `settings['import/ignore']`.
+
 ## Options
 
 Configure default styling and behavior for all icons:
