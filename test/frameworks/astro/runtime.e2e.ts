@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test'
 
 const svgRoot = /<svg(?:[^>"']|"[^"]*"|'[^']*')*>/g
-const widths = /\bwidth="([^"]+)"/g
-const heights = /\bheight="([^"]+)"/g
+const widths = /\swidth="([^"]+)"/g
+const heights = /\sheight="([^"]+)"/g
+const fills = /\sfill="([^"]+)"/g
 
 test.use({ javaScriptEnabled: false })
 
@@ -21,12 +22,13 @@ test('SSR contains components and raw strings before browser scripts', async ({ 
   expect(await page.locator('#component use').evaluate(node => node.getAttributeNS('http://www.w3.org/1999/xlink', 'href'))).toBe('#known-path')
 })
 
-test('characterizes duplicate root attributes and browser precedence', async ({ request, page }) => {
+test('emits each root attribute once with consumer props taking precedence', async ({ request, page }) => {
   const html = await (await request.get('/')).text()
   const root = html.match(svgRoot)?.find(tag => tag.includes('id="component"'))
   expect(root).toBeDefined()
-  expect(Array.from(root!.matchAll(widths), match => match[1])).toEqual(['99', '24'])
-  expect(Array.from(root!.matchAll(heights), match => match[1])).toEqual(['98', '24'])
+  expect(Array.from(root!.matchAll(widths), match => match[1])).toEqual(['99'])
+  expect(Array.from(root!.matchAll(heights), match => match[1])).toEqual(['98'])
+  expect(Array.from(root!.matchAll(fills), match => match[1])).toEqual(['blue'])
   await page.goto('/')
   await expect(page.locator('#component')).toHaveClass('consumer')
   await expect(page.locator('#component')).toHaveAttribute('width', '99')
@@ -34,6 +36,8 @@ test('characterizes duplicate root attributes and browser precedence', async ({ 
   await expect(page.locator('#component')).toHaveAttribute('fill', 'blue')
   await expect(page.locator('#virtual')).toHaveAttribute('data-probe', '2.5em')
   await expect(page.locator('#virtual')).toHaveAttribute('width', '24')
+  await expect(page.locator('#virtual')).toHaveAttribute('height', '24')
+  await expect(page.locator('#virtual')).toHaveAttribute('fill', 'none')
 })
 
 test('raw aliases preserve query decoding and return strings', async ({ page }) => {

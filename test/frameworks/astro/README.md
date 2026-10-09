@@ -81,14 +81,12 @@ normal runs never regenerate it.
 - `~icons/` and `virtual:icons/`, including explicit `.astro` and decimal query
   values; both typed raw aliases with `raw=false`, repeated and encoded queries,
   and legacy raw queries in first, middle and last positions.
-- SVG case-sensitive attributes, namespace-aware `xlink:href`, title entities,
-  consumer attribute escaping and existing duplicate root attributes. The compiler
-  emits consumer props before literal SVG defaults, producing duplicate width and
-  height attributes. Chromium keeps the first occurrence, so consumer values win
-  in this fixture. The test checks both raw HTML duplicates and the parsed DOM;
-  this characterizes nonconforming markup and does not promise identical behavior
-  in other parsers. Embedded custom SVG dimensions remain unchanged
-  by Iconify query customization, so query decoding is checked with `data-probe`.
+- SVG case-sensitive attributes, namespace-aware `xlink:href`, title entities
+  and consumer attribute escaping. Raw HTML contains one `width`, `height` and
+  `fill` on the component root, with consumer props overriding SVG defaults.
+  The parsed DOM also checks these overrides and defaults on an unmodified icon.
+  Embedded custom SVG dimensions remain unchanged by Iconify query customization,
+  so query decoding is checked with `data-probe`.
 - Known IDs and fragment references remain intact. Repeated instances retain
   duplicate IDs. This characterizes the existing behavior, not a fix for #321.
 - Strict component/raw consumer types with `skipLibCheck: false`, including
