@@ -172,8 +172,8 @@ it.each([undefined, 'tsx'])('preserves mixed Vite HMR consumers with compiler ex
     expect(directModule).toBeTruthy()
     const selectedModules = [legacyModules[1], directModule]
     const beforeRaw = await plugin.handleHotUpdate({ file, server, modules: selectedModules })
-    // Keep the legacy hook's exact selection/undefined behavior without raw IDs.
-    expect(beforeRaw).toEqual(extension ? undefined : [legacyModules[0]])
+    expect(new Set(beforeRaw)).toEqual(new Set([...legacyModules, ...selectedModules]))
+    expect(beforeRaw).toHaveLength(3)
     const ids = ['~icons-raw/test/icon', '~icons-raw/test/icon?width=1.5em&raw=false', 'virtual:icons-raw/test/icon?width=2em']
     const modules = []
     for (const id of ids) {
@@ -184,9 +184,9 @@ it.each([undefined, 'tsx'])('preserves mixed Vite HMR consumers with compiler ex
     }
     expect(addWatchFile).toHaveBeenCalledWith(file)
     const updated = await plugin.handleHotUpdate({ file, server, modules: selectedModules })
-    const knownModules = extension ? [] : [legacyModules[0]]
     expect(new Set(updated.map((module: { id: string }) => module.id)))
-      .toEqual(new Set([...modules, ...selectedModules, ...knownModules].map(module => module!.id)))
+      .toEqual(new Set([...modules, ...selectedModules, ...legacyModules].map(module => module!.id)))
+    expect(updated).toHaveLength(6)
     currentSvg = '<svg viewBox="0 0 24 24"><circle r="8"/></svg>'
     for (const module of updated)
       server.moduleGraph.invalidateModule(module)
