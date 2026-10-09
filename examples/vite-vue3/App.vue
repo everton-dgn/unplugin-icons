@@ -1,14 +1,28 @@
 <script setup lang="ts">
-import MdiStore24Hour from 'virtual:icons/mdi/store-24-hour'
-import MdiAlarmOff from 'virtual:icons/mdi/alarm-off?width=4.25rem&height=4.25rem'
-import MdiAlarmOff2 from 'virtual:icons/mdi/alarm-off?width=1em&height=1em'
-import RawMdiAlarmOff from 'virtual:icons/mdi/alarm-off?raw&width=4.25rem&height=4.25rem'
-import RawMdiAlarmOff2 from 'virtual:icons/mdi/alarm-off?raw&width=1em&height=1em'
-import RawMdiAlarmOff3 from 'virtual:icons/mdi/alarm-off?raw&width=unset&height=unset'
+import FaSolidComments from 'virtual:icons/fa-solid/comments'
+import FaSolidCommentsWithHeight from 'virtual:icons/fa-solid/comments?height=2em'
+import FaSolidCommentsWithWidth from 'virtual:icons/fa-solid/comments?width=2.25em'
+import RawFaSolidComments from 'virtual:icons/fa-solid/comments?raw'
+import RawFaSolidCommentsWithHeight from 'virtual:icons/fa-solid/comments?raw&height=2em'
+import RawFaSolidCommentsWithWidth from 'virtual:icons/fa-solid/comments?raw&width=2.25em'
+import RawFaSolidCommentsWithSize from 'virtual:icons/fa-solid/comments?raw&width=3em&height=2em'
+import RawFaSolidCommentsWithUnsetWidth from 'virtual:icons/fa-solid/comments?raw&width=unset'
+import RawFaSolidCommentsWithUnsetHeight from 'virtual:icons/fa-solid/comments?raw&height=unset'
+import RawFaSolidCommentsWithUnsetSize from 'virtual:icons/fa-solid/comments?raw&width=unset&height=unset'
 import Custom1 from 'virtual:icons/plain-color-icons/about?raw'
 import Custom2 from 'virtual:icons/test-color-icons/about?raw'
 import ExternalCustom3 from 'virtual:icons/test-color-icons/about'
 import VSCodePython from 'virtual:icons/vscode-icons/file-type-python'
+
+const dimensionExamples = [
+  { query: '?raw', svg: RawFaSolidComments },
+  { query: '?raw&height=2em', svg: RawFaSolidCommentsWithHeight },
+  { query: '?raw&width=2.25em', svg: RawFaSolidCommentsWithWidth },
+  { query: '?raw&width=3em&height=2em', svg: RawFaSolidCommentsWithSize },
+  { query: '?raw&width=unset', svg: RawFaSolidCommentsWithUnsetWidth },
+  { query: '?raw&height=unset', svg: RawFaSolidCommentsWithUnsetHeight },
+  { query: '?raw&width=unset&height=unset', svg: RawFaSolidCommentsWithUnsetSize },
+]
 </script>
 
 <template>
@@ -30,7 +44,7 @@ import VSCodePython from 'virtual:icons/vscode-icons/file-type-python'
       <i-mdi:cactus />
       <i-twemoji-1st-place-medal />
       <IIcTwotone23mp />
-      <MdiStore24Hour />
+      <FaSolidComments />
       <VSCodePython />
       <ExternalCustom3 />
       <i-test-color-icons:about />
@@ -44,8 +58,8 @@ import VSCodePython from 'virtual:icons/vscode-icons/file-type-python'
     </p>
     <h2>Custom Props via Query</h2>
     <p>
-      <MdiAlarmOff />
-      <MdiAlarmOff2 />
+      <FaSolidCommentsWithHeight />
+      <FaSolidCommentsWithWidth />
     </p>
     <h2>Custom Icons</h2>
     <p>
@@ -63,31 +77,15 @@ import VSCodePython from 'virtual:icons/vscode-icons/file-type-python'
       Raw Icons from
       <strong>raw</strong> query param
     </h2>
-    <div
-      style="
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        align-items: center;
-      "
-    >
-      <span v-html="RawMdiAlarmOff" />
-      <div>
-        <code style="opacity: 0.5">import RawMdiAlarmOff from
-          'virtual:icons/mdi/alarm-off?raw&width=4.25rem&height=4.25rem'</code>
-        <pre>{{ RawMdiAlarmOff }}</pre>
-      </div>
-      <span v-html="RawMdiAlarmOff2" />
-      <div>
-        <code style="opacity: 0.5">import RawMdiAlarmOff2 from
-          'virtual:icons/mdi/alarm-off?raw&width=1em&height=1em'</code>
-        <pre>{{ RawMdiAlarmOff2 }}</pre>
-      </div>
-      <span v-html="RawMdiAlarmOff3" />
-      <div>
-        <code style="opacity: 0.5">import RawMdiAlarmOff3 from
-          'virtual:icons/mdi/alarm-off?raw&width=unset&height=unset'</code>
-        <pre>{{ RawMdiAlarmOff3 }}</pre>
-      </div>
+    <p>Non-square icon: fa-solid/comments (576 × 512). Compare the generated dimensions below.</p>
+    <div class="dimension-examples">
+      <template v-for="example in dimensionExamples" :key="example.query">
+        <span v-html="example.svg" />
+        <div>
+          <code>virtual:icons/fa-solid/comments{{ example.query }}</code>
+          <pre>{{ example.svg }}</pre>
+        </div>
+      </template>
       <span v-html="Custom1" />
       <div>
         <code style="opacity: 0.5">import Custom1 from
@@ -108,5 +106,22 @@ import VSCodePython from 'virtual:icons/vscode-icons/file-type-python'
 <style scoped>
 pre {
   overflow-x: auto;
+}
+
+.dimension-examples {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5em;
+}
+
+.dimension-examples > span {
+  display: inline-flex;
+  max-width: 100%;
+  box-shadow: 0 0 0 1px rgb(128 128 128 / 50%);
+}
+
+.dimension-examples > span:has(svg[width]) {
+  width: fit-content;
 }
 </style>
