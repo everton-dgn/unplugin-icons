@@ -19,7 +19,7 @@ supported versions. Each fixture documents its dependencies, commands and limits
 
 These Vite consumers use local Vite+/core 1.1.0; Next uses its own Webpack.
 Fixtures install with Bun 1.4.2. Build and server runtimes vary between fixtures.
-React, Next, Preact, Solid and Web Components use TypeScript
+React, Next, Preact, Solid, Qwik and Web Components use TypeScript
 7.0.2. Svelte, Vue and Nuxt use 6.0.3 for their current checking tools. Marko's
 fixture makes no claim of a public TypeScript declaration. The repository itself
 still uses pnpm.

@@ -54,7 +54,7 @@ Client and SSR builds produce `dist/client/q-manifest.json` and
 `dist/server/entry.ssr.js`. The SSR entry passes the virtual manifest to
 `renderToString` with `base: '/build/'` and `qwikLoader: 'inline'`.
 `ssr.html` retains the paused output. The server selects its port after both
-builds, retrying at most three times for `EADDRINUSE`.
+builds, making at most three attempts when `EADDRINUSE` occurs.
 
 Chromium runs in a separate headless process. `PLAYWRIGHT_BROWSERS_PATH` is
 preserved when supplied; otherwise browsers use this fixture's ignored
