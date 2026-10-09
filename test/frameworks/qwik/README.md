@@ -26,10 +26,12 @@ For an intentional dependency refresh, add `--resolve-lock` to either command.
 It backs up and replaces only the selected profile's lock. Review that change,
 then repeat the frozen run.
 
-The full runner currently exits nonzero because Qwik 1.20.2 publishes an invalid
-declaration. Runtime tests still execute, and `result.json` records their result
-separately from TypeScript exit codes. No type shim, package patch,
-`skipLibCheck` or expected-failure annotation hides this gate.
+Both profiles apply the tracked Qwik declaration patch described below. Strict
+consumer, upstream-only and raw checks must pass before builds or browsers run.
+The runner also removes each set of `@ts-expect-error` directives in temporary
+copies and requires the expected negative diagnostics. Each command retains its
+log; `type-results.json` preserves positive gate results even on failure. A
+successful complete run writes `result.json`. No type shim or `skipLibCheck` is used.
 
 ## Isolation and artifacts
 
@@ -70,9 +72,10 @@ and backups are retained; output directories are never reused.
 - Escaped title and attributes, SVG namespace and namespace-aware `xlink:href`.
 - Existing ID behavior: SVGX/SVGO changes `shape` to `a`, and five instances
   repeat that ID. This does not establish ID isolation.
-- Strict raw types pass with TypeScript 7. Component cases cover valid and
-  invalid props, refs and raw assignments, while the full gate remains red.
-  Qwik accepts `Signal<Element>` for refs, including a div signal.
+- Strict TypeScript 7 checks for component props, refs, raw assignments and the
+  upstream `h.JSX` / `createElement.JSX` aliases. Negative controls require five
+  consumer errors, two raw errors and three upstream errors. Qwik accepts
+  `Signal<Element>` for refs, including a div signal.
 
 Playwright collects `runtime.e2e.ts`; root Vitest does not collect it.
 These runs verify macOS arm64 and Chromium. Other operating systems, browser
@@ -80,24 +83,44 @@ engines, development HMR and Qwik 2 were not tested.
 
 ## Known limits
 
-Qwik 1.20.2 emits `{ JSX };` inside `declare namespace h` in
-`@builder.io/qwik/dist/core.d.ts:1001`. TypeScript 7.0.2 reports TS1036 and
-TS2552; TypeScript 5.9.3 reproduces them. The Qwik-only control imports no
-unplugin-icons code. In a retained consumer:
+The original Qwik 1.20.2 package emits `{ JSX };` inside `declare namespace h`
+in `@builder.io/qwik/dist/core.d.ts:1001`. TypeScript 7.0.2 reports two TS1036
+diagnostics and one TS2552. An earlier investigation also reproduced this failure
+with TypeScript 5.9.3; that comparison is historical. The current fixture installs
+and validates only TypeScript 7.0.2.
+The fixture's tracked patch changes that line to `export { QwikJSX as JSX };`,
+restoring the namespace alias present in Qwik's
+[original source](https://github.com/QwikDev/qwik/blob/12eb9716611fade0f3c99809be5e9dd1196fce7f/packages/qwik/src/core/render/jsx/factory.ts).
+The upstream-only control imports no unplugin-icons code and checks both aliases,
+valid SVG props and rejected invalid props/refs. This is a local package patch,
+not a fix published by Qwik. Compatibility here is conditional on applying it.
 
-```sh
-node node_modules/typescript/bin/tsc -p tsconfig.repro.json
-node node_modules/typescript/bin/tsc -p tsconfig.raw.json
-# Native Vite profile also installs this comparison:
-node node_modules/typescript-5/bin/tsc --noEmit
+The patch ships with this fixture, not with the unplugin-icons package. A Bun
+consumer of Qwik 1.20.2 must copy `patches/@builder.io%2Fqwik@1.20.2.patch`
+into its own project and add this field to its package.json:
+
+```json
+{
+  "patchedDependencies": {
+    "@builder.io/qwik@1.20.2": "patches/@builder.io%2Fqwik@1.20.2.patch"
+  }
+}
 ```
 
-A TypeScript 7 control compared normalized diagnostics: Qwik alone and the
-consumer with its directives produced the same three upstream errors. Removing
-the five `@ts-expect-error` directives added five TS2322 diagnostics for invalid
-props on both component aliases, a numeric ref signal, a raw string assigned to
-a component, and a raw string assigned to a number. This proves those negative
-cases while keeping the upstream failure visible.
+Run `bun install` to update that project's lock, retain the patch and lock in
+version control, then use `bun install --frozen-lockfile` for reproducible
+installs. Both fixture profiles carry this mapping and their own frozen lock;
+`prepare` copies and checks the shared patch. The patch was produced through
+`bun patch` / `bun patch --commit` and changes only the declaration export.
+Do not assume other package managers apply Bun's `patchedDependencies` field.
+
+In a retained consumer, the positive gates can also be run individually:
+
+```sh
+node node_modules/typescript/bin/tsc --noEmit
+node node_modules/typescript/bin/tsc -p tsconfig.repro.json
+node node_modules/typescript/bin/tsc -p tsconfig.raw.json
+```
 
 The Vite+ profile explicitly installs esbuild because Qwik selects it for SSR
 minification. Omitting this optional peer made the real SSR build fail.
@@ -107,7 +130,8 @@ minification or assertions. See [Vite's esbuild fallback guidance](https://vite.
 Warnings remain for the deprecated `esbuild` option and Rolldown's unrecognized
 `onlyExplicitManualChunks`. Qwik declares Vite `>=5 <8`; Vite+ 1.1.0 embeds
 Vite 8.3.3/Rolldown 1.2.12. The successful fixture establishes the tested behavior,
-without promising every integration covered by those packages.
+but does not establish official Qwik support for Vite 8 or every integration
+covered by those packages. The declaration patch does not change that peer range.
 
 Virtual JSX modules with queries do not inherit the app's tsconfig automatically.
 Qwik's optimizer excludes IDs containing `?raw`, including `?raw=false`.

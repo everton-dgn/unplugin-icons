@@ -15,6 +15,11 @@ export function prepare(fixture, run, freshLock, vitePlus = true) {
     const source = vitePlus && ['package.json', 'bun.lock'].includes(name) ? join(fixture, 'vite-plus', name) : join(fixture, name)
     cpSync(source, join(run, name), { recursive: true, force: false, errorOnExist: true })
   }
+  // Both profiles use the shared patches copied with the fixture above.
+  const manifest = JSON.parse(readFileSync(join(run, 'package.json'), 'utf8'))
+  assert.equal(manifest.patchedDependencies['@builder.io/qwik@1.20.2'], 'patches/@builder.io%2Fqwik@1.20.2.patch')
+  for (const patch of Object.values(manifest.patchedDependencies))
+    assert.deepEqual(readFileSync(join(run, patch)), readFileSync(join(fixture, patch)))
 }
 
 export function verify(run, expected) {

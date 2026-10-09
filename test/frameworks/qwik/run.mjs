@@ -7,6 +7,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { backup, pack } from './artifact.mjs'
 import { prepare, verify } from './isolation.mjs'
+import { checkTypes } from './type-gates.mjs'
 
 const fixture = dirname(fileURLToPath(import.meta.url))
 const root = resolve(fixture, '../../..')
@@ -55,14 +56,10 @@ if (freshLock) {
     backup(join(profile, 'bun.lock'), 'bun.lock')
   cpSync(join(run, 'bun.lock'), join(profile, 'bun.lock'))
 }
-const typecheck = command(process.execPath, ['node_modules/typescript/bin/tsc', '--noEmit'], 'typecheck', run, true)
-const fallback = typecheck && !vitePlus ? command(process.execPath, ['node_modules/typescript-5/bin/tsc', '--noEmit'], 'typecheck-5', run, true) : null
-const upstreamRepro = command(process.execPath, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.repro.json'], 'upstream-types-repro', run, true)
-command(process.execPath, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.raw.json'], 'raw-types')
+const types = checkTypes(run, command)
 command(process.execPath, ['build.mjs'], 'client-build')
 command(process.execPath, ['build.mjs', '--ssr'], 'ssr-build')
 command(process.execPath, ['node_modules/@playwright/test/cli.js', 'install', 'chromium', '--only-shell'], 'chromium-install')
 command(process.execPath, ['node_modules/@playwright/test/cli.js', 'test'], 'browser')
 assert.deepEqual(verify(run, artifact.expected), peers)
-writeFileSync(join(run, 'result.json'), `${JSON.stringify({ typecheck, fallback, upstreamRepro, runtime: 'passed' }, null, 2)}\n`, { flag: 'wx' })
-process.exitCode = typecheck
+writeFileSync(join(run, 'result.json'), `${JSON.stringify({ ...types, runtime: 'passed' }, null, 2)}\n`, { flag: 'wx' })

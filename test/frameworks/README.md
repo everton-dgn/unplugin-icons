@@ -10,6 +10,7 @@ supported versions. Each fixture documents its dependencies, commands and limits
 | Next App Router | Next 16.4.0, React/ReactDOM 19.3.0 | Strict public types, Webpack production build, SSR, hydration and raw imports across Server/Client Component boundaries | [Next fixture](./next/README.md) |
 | Preact | Preact 11.0.1, preset 2.10.6 | Strict types, SSR, hydration, client rendering, native SVG attributes and refs without React compatibility | [Preact fixture](./preact/README.md) |
 | Solid 2 | Core/web 2.0.0-rc.14, Vite plugin 3.0.0-next.49 | Strict types, production SSR, hydration, client rendering, SVG refs, reactive props and raw queries | [Solid 2 fixture](./solid2/README.md) |
+| Qwik 1 | Qwik 1.20.2 with the documented declaration patch | Strict types and negative controls, production SSR, resumability, SVG refs and reactive props with Vite+ and native Vite | [Qwik fixture](./qwik/README.md) |
 | SvelteKit | Svelte 5.57.2, Kit 3.0.1, Vite plugin 7.3.1 | Strict types, production SSR, hydration, runes and SVG events with Node and Bun adapters | [Svelte fixture](./svelte/README.md) |
 | Vue | Vue/compiler 3.5.43 | Strict types, production SSR, hydration, refs, reactive attributes, events and raw queries | [Vue fixture](./vue/README.md) |
 | Nuxt | Nuxt 4.6.0, Vue 3.5.43 | Native module registration, injected public types, production SSR, hydration and raw queries | [Nuxt fixture](./nuxt/README.md) |
@@ -45,7 +46,6 @@ framework compatibility. Follow each PR for its current code and evidence.
 | Consumer | Pinned version | Verified runtime | Remaining type gate | Draft |
 | --- | --- | --- | --- | --- |
 | Astro | 7.3.8 | Development and production HTTP SSR with JavaScript disabled | Published Astro declarations reference a missing export; an Astro-only control reproduces it | [Astro diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/29) |
-| Qwik | 1.20.2 | Production SSR and resumability with Vite+ and native Vite | Invalid published JSX declaration; the consumer adds no diagnostics to a Qwik-only control | [Qwik diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/36) |
 | Ember | 7.3.0 | Production rendering, modifiers, reactive updates and disposal | Glimmer/Ember declaration failures also occur in an independent upstream control | [Ember diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/35) |
 
 ## Reproduce a check
