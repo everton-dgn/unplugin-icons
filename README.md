@@ -547,6 +547,19 @@ Add to your `tsconfig.json`:
 Icons({ compiler: 'jsx', jsx: 'react' })
 ```
 
+React icons accept a `title` prop that creates or updates the SVG `<title>`:
+
+```tsx
+import SearchIcon from '~icons/mdi/magnify'
+
+export function LabeledSearchIcon({ label }: { label: string }) {
+  return <SearchIcon title={label} role="img" aria-label={label} />
+}
+```
+
+The title is rendered as text, including when the value contains markup characters.
+For decorative icons, omit the title and pass `aria-hidden="true"`.
+
 **Peer Dependencies:**
 
 ```bash
