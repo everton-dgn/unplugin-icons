@@ -1,5 +1,5 @@
 import type { Awaitable } from '@antfu/utils'
-import type { CustomHMRIconLoader } from '@iconify/utils/lib/loader/types'
+import type { CustomHMRIconLoader, IconifyLoaderOptions } from '@iconify/utils/lib/loader/types'
 import type { CustomCompiler } from './core/compilers/types'
 
 export type CustomIconLoader = (name: string) => Awaitable<string | undefined>
@@ -7,7 +7,10 @@ export type IconCustomizer = (collection: string, icon: string, props: Record<st
 export type InlineCollection = Record<string, string | (() => Awaitable<string | undefined>)>
 export type { CustomCompiler }
 
-export type CustomCollectionIconLoader = CustomIconLoader | InlineCollection | CustomHMRIconLoader
+// Reuse the whole-collection callback without widening per-icon SVG loaders.
+type IconifyCollectionLoader = Extract<NonNullable<IconifyLoaderOptions['customCollections']>[string], () => unknown>
+
+export type CustomCollectionIconLoader = CustomIconLoader | InlineCollection | CustomHMRIconLoader | IconifyCollectionLoader
 
 export interface Options {
   /**
