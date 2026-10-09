@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "ember-source/types",
+      "@glint/ember-tsc/types",
+      "@embroider/core/virtual",
+      "vite/client"
+    ]
+  },
+  "include": ["types/upstream.gts"]
+}

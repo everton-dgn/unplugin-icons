@@ -15,6 +15,7 @@ supported versions. Each fixture documents its dependencies, commands and limits
 | Nuxt | Nuxt 4.6.0, Vue 3.5.43 | Native module registration, injected public types, production SSR, hydration and raw queries | [Nuxt fixture](./nuxt/README.md) |
 | Marko | Marko 6.4.5, compiler 5.42.11, Vite plugin 6.1.13 | Production SSR, hydration, client rendering, reactive props, events and literal SVG/CDATA preservation | [Marko fixture](./marko/README.md) |
 | Web Components | Native custom elements | Strict types, registration, constructors, subclassing, shadow/light DOM, reconnection and events | [Web Components fixture](./web-components/README.md) |
+| Ember | Ember 7.3.0 with the documented declaration patch | Strict template types, production rendering, SVG modifiers, reactive updates and disposal | [Ember fixture](./ember/README.md) |
 
 These Vite consumers use local Vite+/core 1.1.0; Next uses its own Webpack.
 Fixtures install with Bun 1.4.2. Build and server runtimes vary between fixtures.
@@ -46,7 +47,6 @@ framework compatibility. Follow each PR for its current code and evidence.
 | --- | --- | --- | --- | --- |
 | Astro | 7.3.8 | Development and production HTTP SSR with JavaScript disabled | Published Astro declarations reference a missing export; an Astro-only control reproduces it | [Astro diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/29) |
 | Qwik | 1.20.2 | Production SSR and resumability with Vite+ and native Vite | Invalid published JSX declaration; the consumer adds no diagnostics to a Qwik-only control | [Qwik diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/36) |
-| Ember | 7.3.0 | Production rendering, modifiers, reactive updates and disposal | Glimmer/Ember declaration failures also occur in an independent upstream control | [Ember diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/35) |
 
 ## Reproduce a check
 
