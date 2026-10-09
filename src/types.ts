@@ -73,6 +73,7 @@ export interface Options {
    *
    * - none: plain SVG content
    * - raw: an ESM module with a default exported string of the SVG HTML
+   * - vue3: Vue 3.5+ component with SSR-stable SVG IDs
    * - vue-vapor: Vue 3.6+ Vapor mode component, for apps mounted without VDOM interop
    *
    * @default (detect automatically, fallback to 'vue3')

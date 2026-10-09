@@ -1,0 +1,14 @@
+---
+import Red from '~icons/fixture/style-red';
+import Blue from 'virtual:icons/fixture/style-blue';
+---
+<html lang="en"><head><title>SVG style isolation</title></head><body>
+  <section data-style="red"><Red /></section>
+  <section data-style="blue"><Blue /></section>
+  <section data-style="external"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><path class="shared" d="M0 0h40v40H0z"/><path class="secondary" d="M40 40h40v40H40z"/></svg></section>
+</body></html>
+<style is:global>
+  .shared { fill: green; }
+  svg { stroke: green; }
+  path:not(.shared) { fill: green; }
+</style>

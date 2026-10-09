@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="root" width="80" height="80" viewBox="0 0 80 80" aria-labelledby="title description" style="color:red" data-quote='one > "two" &amp; three'>
+<title id="title">Color &amp; title</title><desc id="description">Description &quot;quoted&quot;</desc>
+<defs>
+<linearGradient id="red"><stop offset="0" stop-color="blue"/><stop offset="1" stop-color="blue"/></linearGradient>
+<clipPath id="clip"><rect width="80" height="80"/></clipPath>
+<path id="glyph" d="M1 1h2v2H1z"/>
+</defs>
+<style><![CDATA[#shape { fill: url("#red"); color: red; } /* #red url(#red) stays literal */ #shape::before { content: "#red url(#red)"; } .external { background-image: url("https://example.invalid/a.svg#red"); }]]></style>
+<rect id="shape" data-role="shape" width="80" height="80" fill="url(#red)" clip-path="url('#clip')" style="stroke: url(&quot;#red&quot;); stroke-width: 0; color: red" aria-describedby="description title">
+<animate id="motion" attributeName="opacity" values="1;1" begin="shape.click; motion.end+1s; 2s" end="motion.end; indefinite" dur="1s"/>
+</rect>
+<use data-role="href" href="#glyph"/><use data-role="spaced-href" href=" #glyph "/><use data-role="xlink" xlink:href="#glyph"/>
+<a data-role="external" href="https://example.invalid/a.svg#glyph" xlink:href="/sprite.svg#glyph"><title>External</title></a>
+<text data-role="escaped">&lt;script data-injected="yes"&gt;globalThis.injected = true&lt;/script&gt; &amp; &#36;</text>
+<text data-role="literal"><![CDATA[quotes " ' & < > $1 \n ${notExecuted}]]></text>
+</svg>

@@ -24,7 +24,7 @@ onMounted(() => {
 
 <template>
   <main :data-mounted="mounted">
-    <template v-if="ids"><Gradient data-testid="gradient" /></template>
+    <template v-if="ids"><Gradient data-testid="gradient" /><Gradient data-testid="gradient" /></template>
     <template v-else>
       <Icon ref="iconRef" data-testid="primary" :width="width" height="24"
         class="primary" role="img" aria-label="Primary icon" :data-count="count"

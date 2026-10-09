@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><defs><path id="marker" d="M0 0"/></defs><style>.shared { fill: blue; } svg { stroke: blue; } path:not(.shared) { fill: blue; }</style><path class="shared" d="M0 0h40v40H0z"/><path class="secondary" d="M40 40h40v40H40z"/></svg>

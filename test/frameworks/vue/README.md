@@ -44,7 +44,7 @@ use `prepare.mjs --refresh-lock` (plus `--vapor` for that variant), review the
 generated `bun.lock`, back up the previous fixture lock and copy the new lock
 into `stable/` or `vapor/`. Then repeat frozen preparation.
 
-## Stable coverage and known IDs limitation
+## Stable coverage and SVG IDs
 
 Two functional tests cover SSR before JavaScript, SVG identity across hydration,
 component ref through `$el`, reactive width/data/style, click events, class,
@@ -52,12 +52,12 @@ accessibility attributes, xlink namespace, escaped title text, both icon aliases
 decimal queries, both raw aliases, dotted raw names, `raw=false` on a raw prefix,
 repeated width parameters and percent-encoded query values.
 
-A separate characterization reproduces #344: icons with gradient `defs` receive
-random IDs independently on server and client. It asserts hydration diagnostics
-and attaches them to the test result. Its passing result proves the known
-limitation, not support for SSR-safe IDs. Detailed production hydration messages
-are enabled for this observation. No production workaround or `useId` contract
-change is included.
+A separate regression checks distinct gradient IDs across two instances, SVG
+identity and the absence of hydration diagnostics. The compiler uses Vue 3.5+
+`useId()` for the references recognized by its existing SVG helper. The focused
+[ID regression](../../vue-ids/README.md) also checks concurrent server applications
+and application prefixes with stable Vue and Vapor. This does not extend ID
+rewriting to CSS blocks, SMIL or other frameworks.
 
 `vue-tsc --noEmit` checks the real Vue SFCs and public icon declarations with
 `strict`, `moduleResolution: Bundler` and `skipLibCheck: false`. It includes
@@ -96,7 +96,7 @@ rendered on the server and hydrated the same SVG nodes. Generated icons have
 their own focused SSR regression, linked above.
 
 No tests are skipped or marked as expected failures. Width remains an open
-failure, while #344 remains a separate unresolved characterization.
+failure. The separate ID regression covers #344 without testing width fallthrough.
 
 ## Versions and limits
 

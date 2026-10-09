@@ -79,10 +79,11 @@ function decodeAttribute(value: string): string {
 }
 
 /** Read the SVG opening tag, including duplicate attributes prepended by the loader. */
-export function extractAstroSvgRoot(svg: string): { defaults: string, template: string } {
+export function extractAstroSvgRoot(svg: string): { defaults: string, template: string, values: Record<string, string> } {
   const { rootEnd, opening } = readRootOpening(svg)
   const attributes: string[] = []
   const names = new Set<string>()
+  const values: Record<string, string> = Object.create(null)
   let cursor = rootEnd
   while (cursor < svg.length) {
     RE_END.lastIndex = cursor
@@ -90,6 +91,7 @@ export function extractAstroSvgRoot(svg: string): { defaults: string, template: 
     if (end) {
       return {
         defaults: `{${attributes.join(',')}}`,
+        values,
         template: `${opening} {...props}${end[1]}${svg.slice(RE_END.lastIndex)}`,
       }
     }
@@ -103,6 +105,7 @@ export function extractAstroSvgRoot(svg: string): { defaults: string, template: 
       names.add(attribute[1])
       const name = JSON.stringify(attribute[1])
       const value = JSON.stringify(decodeAttribute(attribute[2] ?? attribute[3]))
+      values[attribute[1]] = decodeAttribute(attribute[2] ?? attribute[3])
       // Computed keys also treat __proto__ as an ordinary own property.
       attributes.push(`[${name}]:${value}`)
     }

@@ -179,18 +179,11 @@ export default {
 <details>
 <summary>Nuxt</summary><br>
 
-Nuxt 2 and [Nuxt Bridge](https://github.com/nuxt/bridge)
-
-```ts
-// nuxt.config.ts
-export default {
-  buildModules: [
-    ['unplugin-icons/nuxt', { /* options */ }],
-  ],
-}
-```
-
 Nuxt 3/4
+
+The module uses the Vue 3 compiler and requires Vue runtime 3.5+ with a matching
+compiler. Upgrade applications using an older Vue runtime before using this
+version. Vue 2 applications, including Nuxt 2, are not supported.
 
 ```ts
 // nuxt.config.ts
@@ -483,13 +476,20 @@ Icons({ compiler: 'vue3' })
 
 **Peer Dependency:**
 
-> **Note**: As of Vue 3.2.13+, `@vue/compiler-sfc` is included in the main `vue` package, so no additional installation is needed.
+The `vue3` compiler requires Vue runtime 3.5+ and a matching compiler version.
+It uses Vue's `useId()` for the SVG ID references handled by the plugin, keeping
+them distinct per instance and stable across SSR and hydration. If multiple Vue
+apps share a page, set a different `app.config.idPrefix` for each app and use the
+same prefix on its server and client.
 
-If you're using an older version:
+`vue/compiler-sfc` is included in supported Vue versions. An explicitly installed
+`@vue/compiler-sfc` takes precedence; keep it aligned with the runtime version.
+This requirement applies to the Vue 3 compiler; no global `vue` peer is imposed
+on consumers of other compilers.
 
-```bash
-npm i -D @vue/compiler-sfc
-```
+Only the existing `url(#...)` attribute references and their matching `id`
+attributes are rewritten. This does not add support for CSS blocks, SMIL, ARIA
+references or IDs in other framework compilers.
 
 **TypeScript Support:**
 
@@ -718,6 +718,35 @@ explicit `null` or `undefined` removes it. Other values follow Astro's attribute
 serialization, without falling back to the default. Each root attribute is emitted once.
 Custom SVG root attributes must use quoted XML values and XML entities.
 DOCTYPE declarations are omitted from inline SVG output; DTD entities are not expanded.
+
+IDs declared in the SVG are private to each rendered instance. The server runtime
+must provide `crypto.randomUUID()`. Repeated icons and different icons can reuse
+the same source IDs without sharing gradients, masks or other definitions.
+Do not target the original IDs from application CSS, scripts or external references.
+
+The compiler updates local fragment URLs, `href`/`xlink:href`, CSS ID selectors,
+ARIA ID lists and SMIL references, including animated reference attributes.
+References to IDs absent from the SVG and URLs with an external path stay unchanged.
+Colors, literal text, comments and CSS strings are preserved. Consumer props remain
+final and are not rewritten. Overriding or removing a source root `id` also removes
+the target of internal references to that root; prefer a wrapper for application IDs.
+
+When an SVG with IDs contains styles, their selectors are restricted to that instance's
+root and descendants with a zero-specificity `:where(...)` filter. The generated
+`data-unplugin-icons-scope` attribute is reserved for this isolation. CSS keyframe
+names remain unchanged; use distinct names when custom icons define different
+animations. Icons without declared IDs retain the previous compilation path,
+including its handling of unscoped SVG styles.
+
+SVGs with IDs must use quoted attribute values and balanced tags throughout the
+body, with unique, nonempty ID definitions. Embedded scripts, event
+handlers and animations of `id` are rejected because their ID behavior cannot be
+preserved by static rewriting. ID-related CSS attribute selectors support `=` and
+`~=` with case-sensitive matching. Other operators, case-insensitive matching,
+unparsed CSS syntax and references split across CDATA boundaries produce a compile
+error that identifies the icon and retains the original cause.
+See the [Astro instance ID tests](test/astro-ids/runtime) for the tested syntax,
+commands and runtime limits.
 
 **TypeScript Support:**
 
