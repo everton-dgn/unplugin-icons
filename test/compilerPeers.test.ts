@@ -35,7 +35,7 @@ function isolatePackage(base: string, name: string) {
   return target
 }
 
-function fixture(location: 'package' | 'project') {
+function fixture(location: 'package' | 'project', includeVuePeer = true) {
   // Outside the checkout so its hoisted node_modules cannot mask the regression.
   // Keep the fixture on failure as well as success for inspection.
   const base = mkdtempSync(join(tmpdir(), 'unplugin-icons-peers-'))
@@ -56,8 +56,10 @@ function fixture(location: 'package' | 'project') {
     writeFileSync(join(plugin, `${file}.mjs`), outputText.replace(relativeImportRE, 'from $1$2.mjs$1'))
   }
   const peers = location === 'package' ? plugin : project
-  for (const name of ['@vue/compiler-sfc', '@vue/compiler-vapor', '@svgx/core', '@svgr/plugin-jsx'])
-    linkPackage(peers, name)
+  for (const name of ['@vue/compiler-sfc', '@vue/compiler-vapor', '@svgx/core', '@svgr/plugin-jsx']) {
+    if (name !== '@vue/compiler-sfc' || includeVuePeer)
+      linkPackage(peers, name)
+  }
   const svgr = isolatePackage(base, '@svgr/core')
   linkPackage(peers, '@svgr/core', svgr)
   return { plugin, project, localPkg, svgr }
@@ -121,6 +123,76 @@ it('preserves module-not-found errors for absent peers', () => {
     await assert.rejects(importPeerModule('missing-compiler-peer-fixture'), {
       code: 'ERR_MODULE_NOT_FOUND',
     });
+    console.log('rejected');
+  `], { cwd: project, encoding: 'utf8', stdio: 'pipe' })
+  expect(output.trim()).toBe('rejected')
+})
+
+describe('vue compiler fallback', () => {
+  it.each(['package', 'project'] as const)('compiles with only vue visible in the %s', (location) => {
+    const { plugin, project, localPkg } = fixture(location, false)
+    const target = location === 'package' ? plugin : project
+    linkPackage(target, 'vue', join(root, 'examples/vite-vue3/node_modules/vue'))
+    for (const directory of [plugin, project, localPkg])
+      expect(() => createRequire(join(directory, 'entry.mjs')).resolve('@vue/compiler-sfc')).toThrow()
+    expect(createRequire(join(target, 'entry.mjs')).resolve('vue/compiler-sfc')).toBeTruthy()
+    const url = pathToFileURL(join(plugin, 'compilers/vue3.mjs')).href
+    const code = execFileSync(process.execPath, ['--input-type=module', '-e', `
+      const { Vue3Compiler } = await import(${JSON.stringify(url)});
+      console.log(await Vue3Compiler(${JSON.stringify(svg)}, 'test', 'icon', {}));
+    `], { cwd: project, encoding: 'utf8', stdio: 'pipe' })
+    expect(code).toContain('export default markRaw(')
+    expect(code).toContain('viewBox')
+  })
+})
+
+it.each(['esm', 'cjs'])('prefers the explicit %s Vue peer in the project over the package fallback', (format) => {
+  const { plugin, project } = fixture('package', false)
+  linkPackage(plugin, 'vue', join(root, 'examples/vite-vue3/node_modules/vue'))
+  const peer = join(project, 'node_modules/@vue/compiler-sfc')
+  mkdirSync(peer, { recursive: true })
+  writeFileSync(join(peer, 'package.json'), JSON.stringify({ exports: `./index.${format === 'esm' ? 'mjs' : 'cjs'}` }))
+  const compiler = '() => ({ code: "export function render() { return \'explicit-peer\' }" })'
+  writeFileSync(join(peer, `index.${format === 'esm' ? 'mjs' : 'cjs'}`), format === 'esm'
+    ? `export const compileTemplate = ${compiler}`
+    : `module.exports = { compileTemplate: ${compiler} }`)
+  const url = pathToFileURL(join(plugin, 'compilers/vue3.mjs')).href
+  const code = execFileSync(process.execPath, ['--input-type=module', '-e', `
+    const { Vue3Compiler } = await import(${JSON.stringify(url)});
+    console.log(await Vue3Compiler(${JSON.stringify(svg)}, 'test', 'icon', {}));
+  `], { cwd: project, encoding: 'utf8', stdio: 'pipe' })
+  expect(code).toContain('explicit-peer')
+})
+
+it.each([
+  ['throw new Error("broken explicit peer")', 'broken explicit peer'],
+  ['import "missing-vue-peer-internal-dependency"', 'missing-vue-peer-internal-dependency'],
+])('preserves an explicit Vue peer import failure: %s', (source, message) => {
+  const { plugin, project } = fixture('project', false)
+  linkPackage(project, 'vue', join(root, 'examples/vite-vue3/node_modules/vue'))
+  const peer = join(plugin, 'node_modules/@vue/compiler-sfc')
+  mkdirSync(peer, { recursive: true })
+  writeFileSync(join(peer, 'package.json'), JSON.stringify({ exports: './index.mjs' }))
+  writeFileSync(join(peer, 'index.mjs'), source)
+  const url = pathToFileURL(join(plugin, 'compilers/vue3.mjs')).href
+  const output = execFileSync(process.execPath, ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    const { Vue3Compiler } = await import(${JSON.stringify(url)});
+    await assert.rejects(Vue3Compiler(${JSON.stringify(svg)}, 'test', 'icon', {}),
+      error => error.message.includes(${JSON.stringify(message)}));
+    console.log('rejected');
+  `], { cwd: project, encoding: 'utf8', stdio: 'pipe' })
+  expect(output.trim()).toBe('rejected')
+})
+
+it('preserves the missing peer error when neither Vue compiler is available', () => {
+  const { plugin, project } = fixture('project', false)
+  const url = pathToFileURL(join(plugin, 'compilers/vue3.mjs')).href
+  const output = execFileSync(process.execPath, ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    const { Vue3Compiler } = await import(${JSON.stringify(url)});
+    await assert.rejects(Vue3Compiler(${JSON.stringify(svg)}, 'test', 'icon', {}),
+      error => error.code === 'ERR_MODULE_NOT_FOUND' && error.message.includes('@vue/compiler-sfc'));
     console.log('rejected');
   `], { cwd: project, encoding: 'utf8', stdio: 'pipe' })
   expect(output.trim()).toBe('rejected')

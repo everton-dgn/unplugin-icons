@@ -5,7 +5,7 @@ import { importPeerModule } from './peer'
 const RE_EXPORT_STATEMENT = /^export /gm
 
 export const Vue3Compiler = (async (svg: string, collection: string, icon: string) => {
-  const { compileTemplate } = await importPeerModule('@vue/compiler-sfc')
+  const { compileTemplate } = await importPeerModule('@vue/compiler-sfc', 'vue/compiler-sfc')
 
   const { injectScripts, svg: handled } = handleSVGId(svg)
 
