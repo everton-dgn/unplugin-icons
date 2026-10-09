@@ -4,7 +4,9 @@ This fixture installs a freshly packed unplugin-icons in an isolated OS temporar
 directory. It uses Astro 7.3.8, @astrojs/node 11.1.7, Vite+/core 1.1.0,
 Bun 1.4.2, TypeScript 6.0.3 and Playwright 1.64.0. Support is conditional on
 the committed Astro declaration patch and the fixture's complete type dependencies.
-The registry package without these additions fails strict TypeScript checking.
+The registry package without these additions fails strict TypeScript checking
+with skipLibCheck: false. This fixture does not establish whether the patch is
+required with Astro's default skipLibCheck: true.
 
 ## Run
 
@@ -27,7 +29,8 @@ Astro-only control, 19 negative type cases and the real toStyleString helper.
 It then runs five development browser tests, builds the Astro app and runs five
 production browser tests. Each type gate has its own command log; a failed gate
 remains in results.json and causes a nonzero final exit even if runtime passes.
-No TypeScript diagnostic is excluded. Both tsc configurations use strict: true
+No type diagnostic is excluded. The ignoreDeprecations: "6.0" option suppresses
+deprecations of inherited configuration options. Both tsc configurations use strict: true
 and skipLibCheck: false. TypeScript 6.0.3 fits @astrojs/check 0.9.10's peer range;
 this fixture does not claim TypeScript 7 support.
 
@@ -44,7 +47,7 @@ ambient Zod declarations, two omitted internal interfaces and declarations for
 Image, Picture, Font and ClientRouter. A conditional types export resolves the
 component declarations without changing their runtime targets.
 
-The two interfaces are checked against their runtime consumers in
+The two interfaces were manually checked against their runtime consumers in
 dist/core/fetch/fetch-state.js and dist/core/build/plugins/plugin-manifest.js.
 
 KebabCase/KebabKeys are a local implementation, not a historical restoration.
