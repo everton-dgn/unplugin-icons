@@ -8,6 +8,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { backup, pack } from './artifact.mjs'
 import { prepare, verify } from './isolation.mjs'
+import { checkNegativeTypes } from './negative-types.mjs'
 import { withServer } from './server.mjs'
 
 async function main() {
@@ -50,11 +51,20 @@ async function main() {
   const dependencies = verify(run, artifact.expected)
   writeFileSync(join(run, 'evidence.json'), JSON.stringify({ ...artifact, dependencies, stale }, null, 2), { flag: 'wx' })
   const failures = []
-  try {
-    command(process.execPath, ['node_modules/@glint/ember-tsc/bin/ember-tsc.js', '--noEmit'])
+  for (const [gate, config] of [['upstream-types', 'tsconfig.upstream.json'], ['typecheck', 'tsconfig.json']]) {
+    try {
+      command(process.execPath, ['node_modules/@glint/ember-tsc/bin/ember-tsc.js', '--noEmit', '-p', config])
+    }
+    catch {
+      failures.push(gate)
+    }
   }
-  catch {
-    failures.push('typecheck')
+  try {
+    checkNegativeTypes(run)
+  }
+  catch (error) {
+    console.error(error.message)
+    failures.push('negative-types')
   }
   command(process.execPath, ['build.mjs'])
   command(process.execPath, ['node_modules/@playwright/test/cli.js', 'install', 'chromium', '--only-shell'])

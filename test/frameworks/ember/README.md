@@ -2,8 +2,8 @@
 
 This fixture builds an Ember application against a fresh `unplugin-icons`
 tarball, then tests the production bundle in headless Chromium. It does not
-exercise SSR, FastBoot or hydration. Runtime passes do not imply a passing
-strict type gate: the current declarations have the issues described below.
+exercise SSR, FastBoot or hydration. The runner requires strict type checks for
+the upstream control and consumer, negative controls, and production browser tests.
 
 ## Versions
 
@@ -31,8 +31,9 @@ node test/frameworks/ember/run.mjs
 ```
 
 Bun installation and the initial Chromium download may need network access.
-The runner prints the retained temporary consumer directory. It runs strict
-`.gts` checking, builds with Vite+, and tests the production output. A type
+The runner prints the retained temporary consumer directory. It runs the
+upstream-only control and consumer `.gts` check as separate gates, builds with
+Vite+, and tests the production output. A type
 failure remains a nonzero final result even when browser tests pass.
 
 `ember()` precedes Babel. There is no `ember-cli-build.js`, so the fixture omits
@@ -66,7 +67,7 @@ normal runs never regenerate it.
 The runner preserves `PLAYWRIGHT_BROWSERS_PATH` when provided and sets
 `PLAYWRIGHT_SKIP_BROWSER_GC=1`. Otherwise it keeps the browser in the checkout's
 `node_modules`. Preview binds only localhost, selects a port after the build,
-uses strict port binding, and retries only collisions, at most three times.
+uses strict port binding, and makes at most three attempts on port collisions.
 It never reuses an existing server or connects to the user's browser.
 
 ## Coverage and current limits
@@ -84,18 +85,69 @@ It never reuses an existing server or connects to the user's browser.
 - `.gts` negatives reject undeclared component arguments, a modifier requiring
   `HTMLDivElement`, raw strings used as components, and components used as strings.
 
-The strict gate keeps `skipLibCheck: false`. The public icon declaration uses
-`Element: SVGElement`, which makes Glint reject the valid root SVG `width` and
-`height` attributes in `application.gts`. `types/upstream.gts` supplies an
-independent `ComponentLike<{ Element: SVGSVGElement }>` control that accepts
-those dimensions. The separate SVG root types fix changes both aliases to `SVGSVGElement`.
-That fix must be included in the package under test to remove these additional
-consumer diagnostics; this fixture does not copy or shim the declarations.
+Both type gates keep `skipLibCheck: false`. The public icon declaration uses
+`Element: SVGSVGElement`, which accepts root SVG width and height attributes.
+`types/upstream.gts` supplies an independent component control without loading
+unplugin-icons declarations.
 
-The dependency declarations also fail independently of unplugin-icons, including
-missing `@glimmer/interfaces` exports and unresolved Glimmer internal subpaths.
-In a retained consumer, run `node node_modules/@glint/ember-tsc/bin/ember-tsc.js
---noEmit -p tsconfig.upstream.json` to check the upstream control. This baseline
-does not load unplugin-icons declarations. The full gate remains red until its
-library and upstream issues are addressed; this fixture does not claim complete
-Ember compatibility.
+Unpatched Ember 7.3.0 produces 251 diagnostics in the independent control.
+The fixture pins exactly 7.3.0 and applies the declaration-only patch through
+Bun's `patchedDependencies`. It corrects ambient import paths and supplies
+14 missing declarations emitted from the official Ember source commit
+[4bffdcad2967657793ebcbdb0b991ecb59d19cf7](https://github.com/emberjs/ember.js/tree/4bffdcad2967657793ebcbdb0b991ecb59d19cf7).
+No runtime JavaScript or public icon types are changed by this patch.
+
+Patch SHA-256: `64df3821021815bd1ba715c4b4640e9452acdb0e5689e326ef60f41602d569b2`.
+The added files live directly in the existing `types/stable` directory because
+Bun 1.4.2 fails to create their nested directories while applying the patch.
+Their ambient module names and emitted contents are unchanged; the index imports
+use the corresponding flat filenames.
+
+A fresh consumer with an empty Bun cache passed `bun install --frozen-lockfile`
+without changing the lock. Both strict type gates passed, and removing the four
+expected-error directives produced the four expected diagnostics. The patch
+must be reviewed when upgrading Ember; it is not evidence that unpatched Ember
+passes strict declaration checking. Neither gate uses `skipLibCheck` or a
+local declaration shim to suppress dependency errors.
+
+After both positive gates, `negative-types.mjs` creates a new retained directory
+and copies `types/contract.gts` without its four expected-error directives. Its
+config extends the consumer config, preserving the same types and strictness.
+The gate requires exit 2 and exactly four diagnostics, all in that copied file,
+with codes TS2322, TS2345, TS2554 and TS2769. Dependency diagnostics, accepted
+invalid cases or extra errors fail the gate. The directory retains the compiler
+output and a JSON record of the command, exit status and diagnostics.
+
+## Applying the patch in a Bun consumer
+
+The published `unplugin-icons` package does not apply this fixture patch
+automatically. To use it in a Bun 1.4.2 consumer, copy
+`patches/ember-source@7.3.0.patch` from this fixture into the consumer's `patches`
+directory. Merge these entries into the consumer's `package.json`, preserving
+its other dependencies and patches:
+
+```json
+{
+  "dependencies": {
+    "ember-source": "7.3.0"
+  },
+  "patchedDependencies": {
+    "ember-source@7.3.0": "patches/ember-source@7.3.0.patch"
+  }
+}
+```
+
+Resolve and retain the consumer's lock once, then use frozen installs:
+
+```sh
+bun install
+bun install --frozen-lockfile
+```
+
+Keep the patch, manifest and `bun.lock` together in version control. Run the
+consumer's strict type checks after applying it or upgrading dependencies.
+
+With this patch, the complete runner passed both strict type gates, the
+production build and all four Chromium tests. All 42 installed library
+`dist`/`types` files matched the fresh package hashes. These results cover
+macOS arm64 with the pinned versions, not unpatched Ember or SSR.

@@ -1,0 +1,1505 @@
+diff --git a/types/stable/@ember/engine/lib/strict-resolver.d.ts b/types/stable/@ember/engine/lib/strict-resolver.d.ts
+index ac24e4d5c33e550fcbd1aa542d98a9b55660a03d..726639ecd6a037bbc9e8445eedb9bb9c8fee5175 100644
+--- a/types/stable/@ember/engine/lib/strict-resolver.d.ts
++++ b/types/stable/@ember/engine/lib/strict-resolver.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@ember/engine/lib/strict-resolver' {
+     import type { Factory, Resolver } from "@ember/-internals/owner";
+-    import type Engine from "..";
++    import type Engine from "@ember/engine";
+     export class StrictResolver implements Resolver {
+         #private;
+         moduleBasedResolver: boolean;
+diff --git a/types/stable/@glimmer/compiler/lib/passes/1-normalization/index.d.ts b/types/stable/@glimmer/compiler/lib/passes/1-normalization/index.d.ts
+index 8d9bba3fc70878e7b759557692739388f68c5a38..35583a2cabae8ccdf1828a3adf0c3b1a7c246179 100644
+--- a/types/stable/@glimmer/compiler/lib/passes/1-normalization/index.d.ts
++++ b/types/stable/@glimmer/compiler/lib/passes/1-normalization/index.d.ts
+@@ -1,8 +1,8 @@
+ declare module '@glimmer/compiler/lib/passes/1-normalization' {
+     import type * as ASTv2 from "@glimmer/syntax/lib/v2/api";
+     import type * as src from "@glimmer/syntax/lib/source/api";
+-    import type { Result } from "@glimmer/compiler/shared/result";
+-    import * as mir from "@glimmer/compiler/lib/2-encoding/mir";
++    import type { Result } from "@glimmer/compiler/lib/shared/result";
++    import * as mir from "@glimmer/compiler/lib/passes/2-encoding/mir";
+     /**
+      * Normalize the AST from @glimmer/syntax into the HIR. The HIR has special
+      * instructions for keywords like `{{yield}}`, `(has-block)` and
+diff --git a/types/stable/@glimmer-constants-lib-builder-constants.d.ts b/types/stable/@glimmer-constants-lib-builder-constants.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..1d8edf8ff27ac284562eadd7df39595848292673
+--- /dev/null
++++ b/types/stable/@glimmer-constants-lib-builder-constants.d.ts
+@@ -0,0 +1,70 @@
++declare module '@glimmer/constants/lib/builder-constants' {
++export type BUILDER_LITERAL = 0;
++export const BUILDER_LITERAL: BUILDER_LITERAL;
++export type BUILDER_COMMENT = 1;
++export const BUILDER_COMMENT: BUILDER_COMMENT;
++export type BUILDER_APPEND = 2;
++export const BUILDER_APPEND: BUILDER_APPEND;
++export type BUILDER_MODIFIER = 3;
++export const BUILDER_MODIFIER: BUILDER_MODIFIER;
++export type BUILDER_DYNAMIC_COMPONENT = 4;
++export const BUILDER_DYNAMIC_COMPONENT: BUILDER_DYNAMIC_COMPONENT;
++export type BUILDER_GET = 5;
++export const BUILDER_GET: BUILDER_GET;
++export type BUILDER_CONCAT = 6;
++export const BUILDER_CONCAT: BUILDER_CONCAT;
++export type BUILDER_HAS_BLOCK = 7;
++export const BUILDER_HAS_BLOCK: BUILDER_HAS_BLOCK;
++export type BUILDER_HAS_BLOCK_PARAMS = 8;
++export const BUILDER_HAS_BLOCK_PARAMS: BUILDER_HAS_BLOCK_PARAMS;
++export type BLOCK_HEAD = 'Block';
++export const BLOCK_HEAD: BLOCK_HEAD;
++export type CALL_HEAD = 'Call';
++export const CALL_HEAD: CALL_HEAD;
++export type ELEMENT_HEAD = 'Element';
++export const ELEMENT_HEAD: ELEMENT_HEAD;
++export type APPEND_PATH_HEAD = 'AppendPath';
++export const APPEND_PATH_HEAD: APPEND_PATH_HEAD;
++export type APPEND_EXPR_HEAD = 'AppendExpr';
++export const APPEND_EXPR_HEAD: APPEND_EXPR_HEAD;
++export type LITERAL_HEAD = 'Literal';
++export const LITERAL_HEAD: LITERAL_HEAD;
++export type MODIFIER_HEAD = 'Modifier';
++export const MODIFIER_HEAD: MODIFIER_HEAD;
++export type DYNAMIC_COMPONENT_HEAD = 'DynamicComponent';
++export const DYNAMIC_COMPONENT_HEAD: DYNAMIC_COMPONENT_HEAD;
++export type COMMENT_HEAD = 'Comment';
++export const COMMENT_HEAD: COMMENT_HEAD;
++export type SPLAT_HEAD = 'Splat';
++export const SPLAT_HEAD: SPLAT_HEAD;
++export type KEYWORD_HEAD = 'Keyword';
++export const KEYWORD_HEAD: KEYWORD_HEAD;
++export type HeadKind = BLOCK_HEAD | CALL_HEAD | ELEMENT_HEAD | APPEND_PATH_HEAD | APPEND_EXPR_HEAD | LITERAL_HEAD | MODIFIER_HEAD | DYNAMIC_COMPONENT_HEAD | COMMENT_HEAD | SPLAT_HEAD | KEYWORD_HEAD;
++export type LOCAL_VAR = 'Local';
++export const LOCAL_VAR: LOCAL_VAR;
++export type FREE_VAR = 'Free';
++export const FREE_VAR: FREE_VAR;
++export type ARG_VAR = 'Arg';
++export const ARG_VAR: ARG_VAR;
++export type BLOCK_VAR = 'Block';
++export const BLOCK_VAR: BLOCK_VAR;
++export type THIS_VAR = 'This';
++export const THIS_VAR: THIS_VAR;
++export type VariableKind = LOCAL_VAR | FREE_VAR | ARG_VAR | BLOCK_VAR | THIS_VAR;
++export type LITERAL_EXPR = 'Literal';
++export const LITERAL_EXPR: LITERAL_EXPR;
++export type CALL_EXPR = 'Call';
++export const CALL_EXPR: CALL_EXPR;
++export type GET_PATH_EXPR = 'GetPath';
++export const GET_PATH_EXPR: GET_PATH_EXPR;
++export type GET_VAR_EXPR = 'GetVar';
++export const GET_VAR_EXPR: GET_VAR_EXPR;
++export type CONCAT_EXPR = 'Concat';
++export const CONCAT_EXPR: CONCAT_EXPR;
++export type HAS_BLOCK_EXPR = 'HasBlock';
++export const HAS_BLOCK_EXPR: HAS_BLOCK_EXPR;
++export type HAS_BLOCK_PARAMS_EXPR = 'HasBlockParams';
++export const HAS_BLOCK_PARAMS_EXPR: HAS_BLOCK_PARAMS_EXPR;
++export type ExpressionKind = LITERAL_EXPR | CALL_EXPR | GET_PATH_EXPR | GET_VAR_EXPR | CONCAT_EXPR | HAS_BLOCK_EXPR | HAS_BLOCK_PARAMS_EXPR;
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-debug.d.ts b/types/stable/@glimmer-debug-lib-debug.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a96a09acef17a25df8283b497e51fd2d6e90f164
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-debug.d.ts
+@@ -0,0 +1,110 @@
++declare module '@glimmer/debug/lib/debug' {
++import type { BlockMetadata, CompilationContext, Dict, Nullable, Optional, Program, RuntimeOp } from '@glimmer/interfaces';
++import type { Primitive, RegisterName } from '@glimmer/debug/lib/dism/dism';
++import type { NormalizedOperand } from '@glimmer/debug/lib/dism/operand-types';
++import { type Fragment } from '@glimmer/debug/lib/render/fragment';
++export function describeOp(op: RuntimeOp, program: Program, meta: Nullable<BlockMetadata>): Fragment;
++export function logOpcodeSlice(context: CompilationContext, start: number, end: number): void;
++export function describeOpcode(type: string, params: Optional<Dict<SomeDisassembledOperand>>): string | void;
++export type AnyOperand = [type: string, value: never, options?: object];
++export type OperandTypeOf<O extends AnyOperand> = O[0];
++export type OperandValueOf<O extends AnyOperand> = O[1];
++export type OperandOptionsOf<O extends AnyOperand> = O extends [
++    type: string,
++    value: never,
++    options: infer Options
++] ? Options : void;
++export type OperandOptionsA<O extends AnyOperand> = O extends [
++    type: string,
++    value: never,
++    options: infer Options
++] ? Options : {};
++type ExtractA<O> = O extends {
++    a: infer A;
++} ? A : never;
++type ExpandUnion<U> = U extends infer O ? ExtractA<{
++    a: O;
++}> : never;
++export type NullableOperand<O extends AnyOperand> = [OperandTypeOf<O>, OperandValueOf<O>, Expand<OperandOptionsA<O> & {
++    nullable?: false;
++}>] | [
++    OperandTypeOf<O>,
++    Nullable<OperandValueOf<O>>,
++    Expand<OperandOptionsA<O> & {
++        nullable: true;
++    }>
++];
++export type NullableName<T extends string> = T extends `${infer N}?` ? N : never;
++export type WithOptions<O extends AnyOperand, Options> = ExpandUnion<[
++    OperandTypeOf<O>,
++    OperandValueOf<O>,
++    Expand<OperandOptionsA<O> & Options>
++]>;
++type Expand<T> = T extends infer O ? {
++    [K in keyof O]: O[K];
++} : never;
++type DefineOperand<T extends string, V, Options = undefined> = undefined extends Options ? readonly [type: T, value: V] : readonly [type: T, value: V, options: Options];
++type DefineNullableOperand<T extends string, V, Options = undefined> = Options extends undefined ? readonly [type: T, value: V] | readonly [type: T, value: Nullable<V>, options: {
++    nullable: true;
++}] | readonly [type: T, value: V, options: {
++    nullable?: false;
++}] : readonly [type: T, value: Nullable<V>, options: Expand<Options & {
++    nullable: true;
++}>] | readonly [type: T, value: V, options: Expand<Options & {
++    nullable?: false;
++}>] | readonly [type: T, value: V, options: Options];
++/**
++ * A dynamic operand has a value that can't be easily represented as an embedded string.
++ */
++export type RawDynamicDisassembledOperand = DefineOperand<'dynamic', unknown> | DefineOperand<'constant', number> | DefineNullableOperand<'array', unknown[]> | DefineOperand<'variable', number, {
++    name?: string | null;
++}>;
++export type RawStaticDisassembledOperand = DefineOperand<'error:operand', number, {
++    label: NormalizedOperand;
++}> | DefineOperand<'error:opcode', number, {
++    kind: number;
++}> | DefineOperand<'number', number> | DefineOperand<'boolean', boolean> | DefineOperand<'primitive', Primitive> | DefineOperand<'register', RegisterName> | DefineOperand<'instruction', number> | DefineOperand<'enum<curry>', 'component' | 'helper' | 'modifier'> | DefineOperand<'array', number[], {
++    kind: typeof Number;
++}> | DefineNullableOperand<'array', string[], {
++    kind: typeof String;
++}>
++/**
++ * A variable is a numeric offset into the stack (relative to the $fp register).
++ */
++ | DefineNullableOperand<'string', string>;
++export type RawDisassembledOperand = RawStaticDisassembledOperand | RawDynamicDisassembledOperand;
++type ObjectForRaw<R> = R extends RawDisassembledOperand ? R[2] extends undefined ? {
++    type: R[0];
++    value: R[1];
++    options?: R[2];
++} : {
++    type: R[0];
++    value: R[1];
++    options: R[2];
++} : never;
++export class DisassembledOperand<R extends RawDisassembledOperand = RawDisassembledOperand> {
++    #private;
++    static of(raw: RawDisassembledOperand): SomeDisassembledOperand;
++    private constructor();
++    get type(): R[0];
++    get value(): R[1];
++    get options(): R[2];
++}
++export type StaticDisassembledOperand = ObjectForRaw<RawStaticDisassembledOperand> & {
++    isDynamic: false;
++};
++export type DynamicDisassembledOperand = ObjectForRaw<RawDynamicDisassembledOperand> & {
++    isDynamic: true;
++};
++export type SomeDisassembledOperand = StaticDisassembledOperand | DynamicDisassembledOperand;
++export interface DebugOp {
++    name: string;
++    params: Dict<SomeDisassembledOperand>;
++    meta: BlockMetadata | null;
++}
++export type OpSnapshot = Pick<RuntimeOp, 'offset' | 'size' | 'type' | 'op1' | 'op2' | 'op3'>;
++export function getOpSnapshot(op: RuntimeOp): OpSnapshot;
++export function debugOp(program: Program, op: OpSnapshot, meta: BlockMetadata | null): DebugOp;
++export {};
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-dism-dism.d.ts b/types/stable/@glimmer-debug-lib-dism-dism.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..92157784ab558041af71372e63265f674c6922da
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-dism-dism.d.ts
+@@ -0,0 +1,54 @@
++declare module '@glimmer/debug/lib/dism/dism' {
++import type { Expand, Nullable } from '@glimmer/interfaces';
++import type { NormalizedOperand } from '@glimmer/debug/lib/dism/operand-types';
++export type Primitive = undefined | null | boolean | number | string;
++export type RegisterName = '$pc' | '$ra' | '$fp' | '$sp' | '$s0' | '$s1' | '$t0' | '$t1' | '$v0' | `$bug${number}`;
++export type StaticDisassembledOperand = ObjectForRaw<RawStaticDisassembledOperand> & {
++    isDynamic: false;
++};
++export type DynamicDisassembledOperand = ObjectForRaw<RawDynamicDisassembledOperand> & {
++    isDynamic: true;
++};
++export type SomeDisassembledOperand = StaticDisassembledOperand | DynamicDisassembledOperand;
++export type RawDisassembledOperand = RawStaticDisassembledOperand | RawDynamicDisassembledOperand;
++type DefineOperand<T extends string, V, Options = undefined> = undefined extends Options ? readonly [type: T, value: V] : readonly [type: T, value: V, options: Options];
++type DefineNullableOperand<T extends string, V, Options = undefined> = Options extends undefined ? readonly [type: T, value: V] | readonly [type: T, value: Nullable<V>, options: {
++    nullable: true;
++}] | readonly [type: T, value: V, options: {
++    nullable?: false;
++}] : readonly [type: T, value: Nullable<V>, options: Expand<Options & {
++    nullable: true;
++}>] | readonly [type: T, value: V, options: Expand<Options & {
++    nullable?: false;
++}>] | readonly [type: T, value: V, options: Options];
++/**
++ * A dynamic operand has a value that can't be easily represented as an embedded string.
++ */
++export type RawDynamicDisassembledOperand = DefineOperand<'dynamic', unknown> | DefineOperand<'constant', number> | DefineNullableOperand<'array', unknown[]> | DefineOperand<'variable', number, {
++    name?: string | null;
++}>;
++export type RawStaticDisassembledOperand = DefineOperand<'error:operand', number, {
++    label: NormalizedOperand;
++}> | DefineOperand<'error:opcode', number, {
++    kind: number;
++}> | DefineOperand<'number', number> | DefineOperand<'boolean', boolean> | DefineOperand<'primitive', Primitive> | DefineOperand<'register', RegisterName> | DefineOperand<'instruction', number> | DefineOperand<'enum<curry>', 'component' | 'helper' | 'modifier'> | DefineOperand<'array', number[], {
++    kind: typeof Number;
++}> | DefineNullableOperand<'array', string[], {
++    kind: typeof String;
++}>
++/**
++ * A variable is a numeric offset into the stack (relative to the $fp register).
++ */
++ | DefineNullableOperand<'string', string>;
++type ObjectForRaw<R> = R extends RawDisassembledOperand ? R[2] extends undefined ? {
++    type: R[0];
++    value: R[1];
++    options?: R[2];
++} : {
++    type: R[0];
++    value: R[1];
++    options: R[2];
++} : never;
++export {};
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-dism-operand-types.d.ts b/types/stable/@glimmer-debug-lib-dism-operand-types.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..0fe7ca3012a823e9914003683ef67fd6f8e8e10d
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-dism-operand-types.d.ts
+@@ -0,0 +1,16 @@
++declare module '@glimmer/debug/lib/dism/operand-types' {
++export const OPERAND_TYPES: readonly ["imm/u32", "imm/i32", "imm/bool", "imm/u32{todo}", "imm/i32{todo}", "imm/enum<curry>", "imm/block:handle", "imm/pc", "handle", "handle/block", "const/i32[]", "const/str?", "const/any[]", "const/str[]?", "const/bool", "const/fn", "const/any", "const/primitive", "const/definition", "register", "register/instruction", "register/stack", "register/sN", "register/tN", "register/v0", "variable", "instruction/relative"];
++export function isOperandType(s: string): s is OperandType;
++export type OPERAND_TYPE = (typeof OPERAND_TYPES)[number];
++export type NonNullableOperandType = Exclude<OPERAND_TYPE, `${string}?`>;
++export type NullableOperandType = Extract<OPERAND_TYPE, `${string}?`> extends `${infer S}?` ? S : never;
++export type OperandType = NonNullableOperandType | NullableOperandType | `${NullableOperandType}?`;
++export interface NormalizedOperand {
++    type: OperandType;
++    name: string;
++}
++export type NormalizedOperandList = [] | [NormalizedOperand] | [NormalizedOperand, NormalizedOperand] | [NormalizedOperand, NormalizedOperand, NormalizedOperand];
++export type ShorthandOperandList = [] | [ShorthandOperand] | [ShorthandOperand, ShorthandOperand] | [ShorthandOperand, ShorthandOperand, ShorthandOperand];
++export type ShorthandOperand = `${string}:${OperandType}`;
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-buffer.d.ts b/types/stable/@glimmer-debug-lib-render-buffer.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a0b561785a93e60d40cdfdc283b96bee152abaf4
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-buffer.d.ts
+@@ -0,0 +1,78 @@
++declare module '@glimmer/debug/lib/render/buffer' {
++import type { DisplayFragmentOptions, FlushedLines } from '@glimmer/debug/lib/render/logger';
++/**
++ * The `LogFragmentBuffer` is responsible for collecting the fragments that are logged to the
++ * `DebugLogger` so that they can be accumulated during a group and flushed together.
++ *
++ * This queuing serves two purposes:
++ *
++ * 1. To allow the individual fragments that make up a single line to append their values to
++ *    the current line. To accomplish this, each fragment can append static content and its
++ *    formatting specifier (e.g. `%o`) to the accumulated {@link #template} *and* append the
++ *    value to format to the {@link #substitutions} array.
++ * 2. To allow logs that refer to objects to be represented as footnotes in the current line,
++ *    with the footnote to be printed in a later line.
++ *
++ * This allows a list of fragments, each of which represent formattable values, to be flattened
++ * into a single template string and an array of values to format.
++ *
++ * ## Footnotes
++ *
++ * An opcode slice containing constant references will be logged like this:
++ *
++ * ```
++ * ...
++ * 362. (PushArgs names=[] block-names=[] flags=16)
++ * 366. (Helper helper=[0])
++ * [0] glimmerHelper()
++ * 368. (PopFrame)
++ * 369. (Fetch register=$v0)
++ * 371. (Primitive constant="/index.html")
++ * ...
++ * ```
++ *
++ * The fragment for line `366` includes an `ObjectFragment` for the helper value. When logged,
++ * the object will be represented as a footnote and the value will be printed in a later
++ * line.
++ */
++export class LogFragmentBuffer {
++    #private;
++    constructor(options: DisplayFragmentOptions);
++    /**
++     * Add a footnoted value to the current buffer.
++     *
++     * If the `subtle` option is set, the fragment will only be printed if the buffer is configured
++     * to show subtle content.
++     *
++     * This method takes two callbacks: `add` and `append`.
++     *
++     * The `append` callback behaves like {@linkcode append}, but without the `subtle` argument. If
++     * `addFootnoted` is called with `subtle: false`, then the callback will never be called, so
++     * there is no need to pass the `subtle` argument again.
++     *
++     * The `add` callback is responsible for appending the footnote itself to the buffer. The first
++     * parameter to `add` (`useNumber`) specifies whether the caller has used the footnote number
++     * to refer to the footnote.
++     *
++     * This is typically true, but fragments can specify an alternative annotation that should be used
++     * instead of the default footnote number. In that case, the footnote number is not used, and the
++     * next footnote is free to use it.
++     *
++     * The `add` callback also takes a template string and an optional list of substitutions, which
++     * describe the way the footnote itself should be formatted.
++     */
++    addFootnoted(subtle: boolean, add: (footnote: {
++        n: number;
++        style: string;
++    }, child: LogFragmentBuffer) => boolean): void;
++    /**
++     * Append a fragment to the current buffer.
++     *
++     * If the `subtle` option is set, the fragment will only be printed if the buffer is configured
++     * to show subtle content.
++     */
++    append(subtle: boolean, template: string, ...substitutions: unknown[]): void;
++    flush(): FlushedLines;
++}
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-entry.d.ts b/types/stable/@glimmer-debug-lib-render-entry.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..78b5874423c71880f1c52a906b986ac1d16f3383
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-entry.d.ts
+@@ -0,0 +1,30 @@
++declare module '@glimmer/debug/lib/render/entry' {
++/**
++ * A Loggable is either:
++ *
++ * 1. a single log line
++ * 2. a log line as a header followed by a group of log entries
++ */
++export type Loggable = [LogLine, ...LogEntry[]];
++export type LogEntry = LogLine | LogGroup;
++/**
++ * LogLine represents a single line in the log. The line is logged *either* by passing the `line`
++ * values to `console.{log,info,debug,warn,error}` *or* by passing them to `console.group` to
++ * represent the header of a group.
++ */
++export interface LogLine {
++    readonly type: 'line';
++    readonly line: unknown[];
++}
++/**
++ * LogGroup represents a group of log entries. It is logged by calling *either* `console.group` or
++ * `console.groupCollapsed` (depending on the value of `collapsed`).
++ */
++export interface LogGroup {
++    type: 'group';
++    collapsed: boolean;
++    heading: unknown[];
++    children: LogEntry[];
++}
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-format.d.ts b/types/stable/@glimmer-debug-lib-render-format.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e3144bd6cc49f3fb327f794490ea1264953a7397
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-format.d.ts
+@@ -0,0 +1,12 @@
++declare module '@glimmer/debug/lib/render/format' {
++import type { StyleName } from '@glimmer/debug/lib/render/styles';
++export type Format = {
++    style: string;
++};
++export type IntoFormat = {
++    style: string;
++} | StyleName;
++export function intoFormat(format: IntoFormat): Format;
++export function formats(...formats: IntoFormat[]): string;
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-fragment-type.d.ts b/types/stable/@glimmer-debug-lib-render-fragment-type.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..335548721fb4fe28b38faf304aea8851282b8c11
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-fragment-type.d.ts
+@@ -0,0 +1,93 @@
++declare module '@glimmer/debug/lib/render/fragment-type' {
++import type { AnyFn, SimpleNode } from '@glimmer/interfaces';
++import type { Fragment } from '@glimmer/debug/lib/render/fragment';
++export const FORMATTERS: {
++    readonly value: "%O";
++    readonly string: "%s";
++    readonly integer: "%d";
++    readonly float: "%f";
++    readonly special: "%o";
++};
++interface AbstractLeafFragment {
++    readonly value: unknown;
++    readonly style?: string | undefined;
++    readonly subtle?: boolean;
++}
++/**
++ * A leaf fragment that represents an arbitrary value.
++ *
++ * When the value is a primitive, the fragment is appended to the buffer as if it was an instance of
++ * the appropriate leaf fragment type (e.g. strings are appended as if they were `StringFragment`).
++ *
++ * Otherwise, `ValueFragment` is appended to the current line as a footnote reference and the value
++ * itself is appended to a later line that *defines* the footnote using the `%O` format specifier.
++ */
++export interface ValueFragment extends AbstractLeafFragment {
++    readonly kind: 'value';
++    readonly value: unknown;
++    /**
++     * The `ValueFragment` is appended to the current line as a footnote reference (e.g. `[1]`) and
++     * the value itself is appended to a later line that *defines* the footnote (e.g. `[1]
++     * ObjectHere`).
++     *
++     * By default, the footnote reference is an incrementing number per log line, and the footnote
++     * value is formatted using the `%O` format specifier.
++     *
++     * The `display` property can be provided to override these defaults.
++     */
++    readonly display?: {
++        ref: string;
++        footnote?: Fragment | undefined;
++    } | {
++        inline: Fragment;
++    } | undefined;
++}
++/**
++ * A leaf fragment that represents a string value.
++ *
++ * Corresponds to the `%s` format specifier.
++ */
++export interface StringFragment extends AbstractLeafFragment {
++    readonly kind: 'string';
++    readonly value: string;
++}
++/**
++ * A leaf fragment that represents an integer value.
++ *
++ * Corresponds to the `%d` format specifier.
++ */
++export interface IntegerFragment extends AbstractLeafFragment {
++    readonly kind: 'integer';
++    readonly value: number;
++}
++/**
++ * A leaf fragment that represents a float value.
++ *
++ * Corresponds to the `%f` format specifier.
++ */
++export interface FloatFragment extends AbstractLeafFragment {
++    readonly kind: 'float';
++    readonly value: number;
++}
++/**
++ * A leaf fragment that represents a DOM node.
++ *
++ * Corresponds to the `%o` format specifier.
++ */
++export interface SpecialFragment extends AbstractLeafFragment {
++    readonly kind: 'special';
++    readonly value: SimpleNode | Node | AnyFn | unknown[];
++}
++/**
++ * The list of leaf fragment types correspond exactly to the list of console.log
++ * format specifiers.
++ */
++export type LeafFragmentType = StringFragment | IntegerFragment | FloatFragment | ValueFragment | SpecialFragment;
++export type FragmentType = LeafFragmentType | {
++    kind: 'multi';
++    value: LeafFragment[];
++};
++export type LeafFragment = Fragment<LeafFragmentType>;
++export {};
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-fragment.d.ts b/types/stable/@glimmer-debug-lib-render-fragment.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..df1d49990109924e28517b8bd49aa067ca51707d
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-fragment.d.ts
+@@ -0,0 +1,90 @@
++declare module '@glimmer/debug/lib/render/fragment' {
++import type { AnyFn, SimpleNode } from '@glimmer/interfaces';
++import type { Loggable } from '@glimmer/debug/lib/render/entry';
++import type { IntoFormat } from '@glimmer/debug/lib/render/format';
++import type { FloatFragment, FragmentType, IntegerFragment, LeafFragment, SpecialFragment, StringFragment } from '@glimmer/debug/lib/render/fragment-type';
++import type { DisplayFragmentOptions } from '@glimmer/debug/lib/render/logger';
++import { LogFragmentBuffer } from '@glimmer/debug/lib/render/buffer';
++import { STYLES } from '@glimmer/debug/lib/render/styles';
++/**
++ * @import { StyleName } from '@glimmer/debug/lib/render/styles';
++ */
++/**
++ * Fragment is the most fundamental building block of the debug logger.
++ *
++ */
++export class Fragment<T extends FragmentType = FragmentType> {
++    #private;
++    static integer(this: void, value: number, options?: Omit<IntegerFragment, 'kind' | 'value'>): Fragment<IntegerFragment>;
++    static float(this: void, value: number, options?: Omit<FloatFragment, 'kind' | 'value'>): Fragment<FloatFragment>;
++    static string(this: void, value: string, options?: Omit<StringFragment, 'kind' | 'value'>): Fragment<StringFragment>;
++    static special(this: void, value: Node | SimpleNode | AnyFn | unknown[], options?: Omit<SpecialFragment, 'kind' | 'value'>): Fragment<SpecialFragment>;
++    constructor(type: T);
++    /**
++     * A subtle fragment is only printed if the `showSubtle` option is set.
++     *
++     * Returns true if this fragment is a subtle leaf or is a multi fragment
++     * with all subtle leaves.
++     */
++    isSubtle(): boolean;
++    /**
++     * If the current fragment is not empty, apply `ifPresent` to the current
++     * fragment. Otherwise, do nothing.
++     *
++     * If the current fragment is subtle, the result is also subtle.
++     */
++    map(ifPresent: (value: Fragment) => Fragment): Fragment;
++    /**
++     * A fragment is empty if it should not be printed with the provided display options.
++     *
++     * This means that if a fragment is subtle and `showSubtle` is false, the fragment is empty.
++     */
++    isEmpty(options?: DisplayFragmentOptions): boolean;
++    /**
++     * Returns an array of {@linkcode LeafFragment}s that make up the current
++     * fragment.
++     *
++     * This effectively flattens any number of nested multi-fragments into a flat array of leaf
++     * fragments.
++     */
++    leaves(): LeafFragment[];
++    /**
++     * Returns a fragment with the specified subtle status without mutating the current fragment.
++     *
++     * If `isSubtle` is true, the fragment will also be styled with the `subtle` style.
++     */
++    subtle(isSubtle?: boolean): Fragment<T>;
++    /**
++     * Apply the specified styles to the current fragment (if it's a leaf) or all
++     * of its children (if it's a multi-fragment).
++     *
++     * Keep in mind that merging styles might be very difficult to undo, so treat
++     * this as a low-level operation, and prefer to use higher-level concepts like
++     * `subtle` if you can instead.
++     */
++    styleAll(...allFormats: IntoFormat[]): Fragment<T>;
++    /**
++     * Convert the current fragment into a string with no additional formatting.
++     * The primary purpose for this method is to support converting a fragment
++     * into a string for inclusion in thrown Errors. If you're going to *log*
++     * a fragment, log it using `DebugLogger` and don't convert it to
++     * a string first.
++     */
++    stringify(options: DisplayFragmentOptions): string;
++    /**
++     * Convert this fragment into a Loggable for logging through the `DebugLogger`.
++     */
++    toLoggable(options: DisplayFragmentOptions): Loggable;
++    /**
++     * Append this fragment to the low-level `LogFragmentBuffer`.
++     */
++    appendTo(buffer: LogFragmentBuffer): void;
++}
++export type IntoFragment = Fragment | IntoFragment[] | number | string | null;
++type IntoLeafFragment = LeafFragment | number | string | null;
++export function intoFragment(value: IntoFragment): Fragment;
++export function frag(strings: TemplateStringsArray, ...values: IntoFragment[]): Fragment;
++export const as: { [K in keyof typeof STYLES]: ((value: IntoLeafFragment) => LeafFragment) & ((value: IntoFragment) => Fragment); };
++export {};
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-logger.d.ts b/types/stable/@glimmer-debug-lib-render-logger.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..080c03d2320ecd4c4da6472c31c4508827d587cc
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-logger.d.ts
+@@ -0,0 +1,22 @@
++declare module '@glimmer/debug/lib/render/logger' {
++import { LOCAL_LOGGER } from '@glimmer/util';
++import type { LogEntry, LogLine } from '@glimmer/debug/lib/render/entry';
++import type { IntoFragment } from '@glimmer/debug/lib/render/fragment';
++export interface DisplayFragmentOptions {
++    readonly showSubtle: boolean;
++}
++export type FlushedLines = [LogLine, ...LogEntry[]];
++export class DebugLogger {
++    #private;
++    static configured(): DebugLogger;
++    constructor(logger: typeof LOCAL_LOGGER, options: DisplayFragmentOptions);
++    internals(...args: IntoFragment[]): void;
++    log(...args: IntoFragment[]): void;
++    labelled(label: string, ...args: IntoFragment[]): void;
++    group(...args: IntoFragment[]): {
++        expanded: () => () => void;
++        collapsed: () => () => void;
++    };
++}
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-render-styles.d.ts b/types/stable/@glimmer-debug-lib-render-styles.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..6bd28c1f327e96694e3c40245dd149519766dcde
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-render-styles.d.ts
+@@ -0,0 +1,47 @@
++declare module '@glimmer/debug/lib/render/styles' {
++export const STYLES: {
++    readonly var: "color: grey";
++    readonly varReference: "color: blue; text-decoration: underline";
++    readonly varBinding: "color: blue;";
++    readonly specialVar: "color: blue";
++    readonly prop: "color: grey";
++    readonly specialProp: "color: red";
++    readonly token: "color: green";
++    readonly def: "color: blue";
++    readonly builtin: "color: blue";
++    readonly punct: "color: GrayText";
++    readonly kw: "color: rgb(185 0 99 / 100%);";
++    readonly type: "color: teal";
++    readonly number: "color: blue";
++    readonly string: "color: red";
++    readonly null: "color: grey";
++    readonly specialString: "color: darkred";
++    readonly atom: "color: blue";
++    readonly attrName: "color: orange";
++    readonly attrValue: "color: blue";
++    readonly boolean: "color: blue";
++    readonly comment: "color: green";
++    readonly meta: "color: grey";
++    readonly register: "color: purple";
++    readonly constant: "color: purple";
++    readonly dim: "color: grey";
++    readonly internals: "color: lightgrey; font-style: italic";
++    readonly diffAdd: "color: Highlight";
++    readonly diffDelete: "color: SelectedItemText; background-color: SelectedItem";
++    readonly diffChange: "color: MarkText; background-color: Mark";
++    readonly sublabel: "font-style: italic; color: grey";
++    readonly error: "color: red";
++    readonly label: "text-decoration: underline";
++    readonly errorLabel: "color: darkred; font-style: italic";
++    readonly errorMessage: "color: darkred; text-decoration: underline";
++    readonly stack: "color: grey; font-style: italic";
++    readonly unbold: "font-weight: normal";
++    readonly pointer: "background-color: lavender; color: indigo";
++    readonly pointee: "background-color: lavender; color: indigo";
++    readonly focus: "font-weight: bold";
++    readonly focusColor: "background-color: lightred; color: darkred";
++};
++export type StyleName = keyof typeof STYLES;
++export function mergeStyle(a?: string, b?: string): string | undefined;
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-stack-check.d.ts b/types/stable/@glimmer-debug-lib-stack-check.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..7f2f343e0daff6f3bad654c87854aa5d9a2305d4
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-stack-check.d.ts
+@@ -0,0 +1,53 @@
++declare module '@glimmer/debug/lib/stack-check' {
++import type { AnyFn, BlockSymbolTable, Dict, Maybe, Nullable, ProgramSymbolTable, SimpleDocumentFragment, SimpleElement, SimpleNode } from '@glimmer/interfaces';
++import type { MachineRegister, Register, SyscallRegister } from '@glimmer/vm/lib/registers';
++import type { Primitive } from '@glimmer/debug/lib/dism/dism';
++export interface Checker<T> {
++    type: T;
++    validate(value: unknown): value is T;
++    expected(): string;
++}
++export function wrap<T>(checker: () => Checker<T>): Checker<T>;
++export interface Constructor<T> extends AnyFn {
++    prototype: T;
++}
++export interface SafeString {
++    toHTML(): string;
++}
++export function CheckInstanceof<T>(Class: Constructor<T>): Checker<T>;
++export const CheckRegister: Checker<Register>;
++export const CheckSyscallRegister: Checker<SyscallRegister>;
++export const CheckMachineRegister: Checker<MachineRegister>;
++export function CheckNullable<T>(checker: Checker<T>): Checker<Nullable<T>>;
++export function CheckMaybe<T>(checker: Checker<T>): Checker<Maybe<T>>;
++export function CheckInterface<I extends {
++    [P in keyof O]: O[P]['type'];
++}, O extends Dict<Checker<unknown>>>(obj: O): Checker<I>;
++export function CheckArray<T>(obj: Checker<T>): Checker<T[]>;
++export function CheckDict<T>(obj: Checker<T>): Checker<Dict<T>>;
++export function check<T>(value: unknown, checker: Checker<T>, message?: (value: unknown, expected: string) => string): T;
++export function check<T, U extends T>(value: T, checker: (value: T) => asserts value is U): U;
++export function recordStackSize(sp: number): void;
++export function expectStackChange(stack: {
++    sp: number;
++}, expected: number, name: string): void;
++export const CheckPrimitive: Checker<Primitive>;
++export const CheckFunction: Checker<AnyFn>;
++export const CheckNumber: Checker<number>;
++export const CheckBoolean: Checker<boolean>;
++export const CheckHandle: Checker<number>;
++export const CheckString: Checker<string>;
++export const CheckNull: Checker<null>;
++export const CheckUndefined: Checker<undefined>;
++export const CheckUnknown: Checker<unknown>;
++export const CheckSafeString: Checker<SafeString>;
++export const CheckObject: Checker<object>;
++export function CheckOr<T, U>(left: Checker<T>, right: Checker<U>): Checker<T | U>;
++export function CheckValue<T>(value: T, desc?: string): Checker<T>;
++export const CheckBlockSymbolTable: Checker<BlockSymbolTable>;
++export const CheckProgramSymbolTable: Checker<ProgramSymbolTable>;
++export const CheckElement: Checker<SimpleElement>;
++export const CheckDocumentFragment: Checker<SimpleDocumentFragment>;
++export const CheckNode: Checker<SimpleNode>;
++
++}
+diff --git a/types/stable/@glimmer-debug-lib-vm-snapshot.d.ts b/types/stable/@glimmer-debug-lib-vm-snapshot.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e7562dfe5154066da1d5253d5e1c453c380552d6
+--- /dev/null
++++ b/types/stable/@glimmer-debug-lib-vm-snapshot.d.ts
+@@ -0,0 +1,47 @@
++declare module '@glimmer/debug/lib/vm/snapshot' {
++import type { Cursor, DebugRegisters, DebugVmSnapshot, Nullable, ScopeSlot, SimpleElement, VmMachineOp, VmOp } from '@glimmer/interfaces';
++import type { Fragment } from '@glimmer/debug/lib/render/fragment';
++export interface RuntimeOpSnapshot {
++    type: VmMachineOp | VmOp;
++    isMachine: 0 | 1;
++    size: number;
++}
++export class VmSnapshot {
++    #private;
++    constructor(opcode: RuntimeOpSnapshot, snapshot: DebugVmSnapshot);
++    diff(other: VmSnapshot): VmDiff;
++}
++type GetRegisterDiffs<D extends DebugRegisters> = {
++    [P in keyof D]: VmSnapshotValueDiff<P, D[P]>;
++};
++type RegisterDiffs = GetRegisterDiffs<DebugRegisters>;
++export class VmDiff {
++    readonly opcode: RuntimeOpSnapshot;
++    readonly registers: RegisterDiffs;
++    readonly stack: VmSnapshotArrayDiff<'stack', unknown[]>;
++    readonly blocks: VmSnapshotArrayDiff<'blocks', object[]>;
++    readonly cursors: VmSnapshotArrayDiff<'cursors', Cursor[]>;
++    readonly constructing: VmSnapshotValueDiff<'constructing', Nullable<SimpleElement>>;
++    readonly destructors: VmSnapshotArrayDiff<'destructors', object[]>;
++    readonly scope: VmSnapshotArrayDiff<'scope', ScopeSlot[]>;
++    constructor(opcode: RuntimeOpSnapshot, before: DebugVmSnapshot, after: DebugVmSnapshot);
++}
++export class VmSnapshotArrayDiff<N extends string | number, T extends unknown[]> {
++    readonly name: N;
++    readonly before: T;
++    readonly after: T;
++    readonly change: boolean | 'reset';
++    constructor(name: N, before: T, after: T, change?: boolean | 'reset');
++    describe(): Fragment;
++}
++export class VmSnapshotValueDiff<N extends string | number, T> {
++    readonly name: N;
++    readonly before: T;
++    readonly after: T;
++    readonly didChange: boolean;
++    constructor(name: N, before: T, after: T);
++    describe(): Fragment;
++}
++export {};
++
++}
+diff --git a/types/stable/@glimmer/interfaces/index.d.ts b/types/stable/@glimmer/interfaces/index.d.ts
+index 6608c4b554e6fae73fc9dfd611be9ac4b7813045..f7a143a6d0c6d448d985c3d20eef13b6daacadfe 100644
+--- a/types/stable/@glimmer/interfaces/index.d.ts
++++ b/types/stable/@glimmer/interfaces/index.d.ts
+@@ -2,7 +2,7 @@ declare module '@glimmer/interfaces' {
+     import type * as WireFormat from "@glimmer/interfaces/lib/compile/wire-format/api";
+ 
+     export type * from "@glimmer/interfaces/lib/array";
+-    export type * from "@glimmer/interfaces/lib/compile/index";
++    export type * from "@glimmer/interfaces/lib/compile";
+     export type * from "@glimmer/interfaces/lib/components";
+     export type * from "@glimmer/interfaces/lib/content";
+     export type * from "@glimmer/interfaces/lib/core";
+diff --git a/types/stable/@glimmer/interfaces/lib/array.d.ts b/types/stable/@glimmer/interfaces/lib/array.d.ts
+index c379e59958fe7cb7191455b0f491cd03dcc29fec..e0af12fe8f4390c6f5822c6db4657c2891d98d45 100644
+--- a/types/stable/@glimmer/interfaces/lib/array.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/array.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/array' {
+-    import type { Optional } from "@glimmer/interfaces/lib/core.js";
++    import type { Optional } from "@glimmer/interfaces/lib/core";
+ 
+     export type PresentArray<T> = [T, ...T[]];
+     export type OptionalArray<T> = Optional<PresentArray<T>>;
+diff --git a/types/stable/@glimmer/interfaces/lib/compile/encoder.d.ts b/types/stable/@glimmer/interfaces/lib/compile/encoder.d.ts
+index b4eb1ee59888764c5fcb4d68074ad45e492e4393..e6e7b894bdabb5bbfca6eb5494edb354f4a73f9d 100644
+--- a/types/stable/@glimmer/interfaces/lib/compile/encoder.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/compile/encoder.d.ts
+@@ -1,11 +1,11 @@
+ declare module '@glimmer/interfaces/lib/compile/encoder' {
+-    import type { Nullable, Optional } from "@glimmer/interfaces/lib/core.js";
+-    import type { CompileTimeConstants } from "@glimmer/interfaces/lib/program.js";
+-    import type { CompileTimeComponent } from "@glimmer/interfaces/lib/serialize.js";
+-    import type { HandleResult, NamedBlocks } from "@glimmer/interfaces/lib/template.js";
+-    import type { VmMachineOp as MachineOp, VmOp as Op } from "@glimmer/interfaces/lib/vm-opcodes.js";
+-    import type { SingleBuilderOperand } from "@glimmer/interfaces/lib/compile/operands.js";
+-    import type * as WireFormat from "@glimmer/interfaces/lib/compile/wire-format/api.js";
++    import type { Nullable, Optional } from "@glimmer/interfaces/lib/core";
++    import type { CompileTimeConstants } from "@glimmer/interfaces/lib/program";
++    import type { CompileTimeComponent } from "@glimmer/interfaces/lib/serialize";
++    import type { HandleResult, NamedBlocks } from "@glimmer/interfaces/lib/template";
++    import type { VmMachineOp as MachineOp, VmOp as Op } from "@glimmer/interfaces/lib/vm-opcodes";
++    import type { SingleBuilderOperand } from "@glimmer/interfaces/lib/compile/operands";
++    import type * as WireFormat from "@glimmer/interfaces/lib/compile/wire-format/api";
+ 
+     // These values are used in the same space as standard opcodes, so we need to
+     // start them at a higher value to prevent collisions
+diff --git a/types/stable/@glimmer/interfaces/lib/compile/index.d.ts b/types/stable/@glimmer/interfaces/lib/compile/index.d.ts
+index 5eec00fa0f491611772cf08a10ba359b3e9dd348..701e01e33d50dc72d4f0e554965c84040b9410f4 100644
+--- a/types/stable/@glimmer/interfaces/lib/compile/index.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/compile/index.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/compile' {
+-    export type * from "@glimmer/interfaces/lib/compile/encoder.js";
+-    export type * from "@glimmer/interfaces/lib/compile/instruction-encoder.js";
+-    export type * from "@glimmer/interfaces/lib/compile/operands.js";
+-    export type * from "@glimmer/interfaces/lib/compile/wire-format/api.js";
++    export type * from "@glimmer/interfaces/lib/compile/encoder";
++    export type * from "@glimmer/interfaces/lib/compile/instruction-encoder";
++    export type * from "@glimmer/interfaces/lib/compile/operands";
++    export type * from "@glimmer/interfaces/lib/compile/wire-format/api";
+ }
+\ No newline at end of file
+diff --git a/types/stable/@glimmer/interfaces/lib/compile/instruction-encoder.d.ts b/types/stable/@glimmer/interfaces/lib/compile/instruction-encoder.d.ts
+index e5e28eae53e619bb5e04276b76849feb8a80e670..c9ce43b630760f7a45cd534e527652d07da27748 100644
+--- a/types/stable/@glimmer/interfaces/lib/compile/instruction-encoder.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/compile/instruction-encoder.d.ts
+@@ -1,7 +1,7 @@
+ declare module '@glimmer/interfaces/lib/compile/instruction-encoder' {
+-    import type { CompilerBuffer } from "@glimmer/interfaces/lib/template.js";
+-    import type { VmMachineOp, VmOp } from "@glimmer/interfaces/lib/vm-opcodes.js";
+-    import type { Operand } from "@glimmer/interfaces/lib/compile/operands.js";
++    import type { CompilerBuffer } from "@glimmer/interfaces/lib/template";
++    import type { VmMachineOp, VmOp } from "@glimmer/interfaces/lib/vm-opcodes";
++    import type { Operand } from "@glimmer/interfaces/lib/compile/operands";
+ 
+     export type ARG_SHIFT = 8;
+     export type MAX_SIZE = 0x7fffffff;
+diff --git a/types/stable/@glimmer/interfaces/lib/compile/operands.d.ts b/types/stable/@glimmer/interfaces/lib/compile/operands.d.ts
+index a3ccf3cf05d14a993fc7e990fa341abbc8903f9b..f9ede7f76a3781bbbce3dd5a1aec858671979471 100644
+--- a/types/stable/@glimmer/interfaces/lib/compile/operands.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/compile/operands.d.ts
+@@ -1,7 +1,7 @@
+ declare module '@glimmer/interfaces/lib/compile/operands' {
+-    import type { CompilableTemplate } from "@glimmer/interfaces/lib/template.js";
+-    import type { SymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table.js";
+-    import type * as WireFormat from "@glimmer/interfaces/lib/compile/wire-format/api.js";
++    import type { CompilableTemplate } from "@glimmer/interfaces/lib/template";
++    import type { SymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table";
++    import type * as WireFormat from "@glimmer/interfaces/lib/compile/wire-format/api";
+ 
+     export type LabelOperandType = 1;
+     export type IsStrictModeOperandType = 2;
+diff --git a/types/stable/@glimmer/interfaces/lib/compile/wire-format/api.d.ts b/types/stable/@glimmer/interfaces/lib/compile/wire-format/api.d.ts
+index edcbf6a355262d68cb17ad0c873165ee38233f40..c5763f43ed781360168130c95805c45a0841fc59 100644
+--- a/types/stable/@glimmer/interfaces/lib/compile/wire-format/api.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/compile/wire-format/api.d.ts
+@@ -1,7 +1,7 @@
+ declare module '@glimmer/interfaces/lib/compile/wire-format/api' {
+-    import type { PresentArray } from "@glimmer/interfaces/lib/array.js";
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { CurriedType } from "@glimmer/interfaces/lib/curry.js";
++    import type { PresentArray } from "@glimmer/interfaces/lib/array";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { CurriedType } from "@glimmer/interfaces/lib/curry";
+     import type {
+       AppendOpcode,
+       AttrOpcode,
+@@ -46,10 +46,10 @@ declare module '@glimmer/interfaces/lib/compile/wire-format/api' {
+       UndefinedOpcode,
+       WithDynamicVarsOpcode,
+       YieldOpcode,
+-    } from "@glimmer/interfaces/lib/compile/wire-format/opcodes.js";
++    } from "@glimmer/interfaces/lib/compile/wire-format/opcodes";
+ 
+-    export type * from "@glimmer/interfaces/lib/compile/wire-format/opcodes.js";
+-    export type * from "@glimmer/interfaces/lib/compile/wire-format/resolution.js";
++    export type * from "@glimmer/interfaces/lib/compile/wire-format/opcodes";
++    export type * from "@glimmer/interfaces/lib/compile/wire-format/resolution";
+ 
+     export type TupleSyntax = Statement | TupleExpression;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/components.d.ts b/types/stable/@glimmer/interfaces/lib/components.d.ts
+index d7e68951e8efbee3fdbdf63d7acbe00c121a2159..1e37dbb96e18ee05c379116fa3a36183ad2f4029 100644
+--- a/types/stable/@glimmer/interfaces/lib/components.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/components.d.ts
+@@ -1,10 +1,10 @@
+ declare module '@glimmer/interfaces/lib/components' {
+-    import type { Dict } from "@glimmer/interfaces/lib/core.js";
+-    import type { InternalComponentManager } from "@glimmer/interfaces/lib/managers.js";
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
+-    import type { ScopeSlot } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { CompilableProgram } from "@glimmer/interfaces/lib/template.js";
+-    import type { ProgramSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table.js";
++    import type { Dict } from "@glimmer/interfaces/lib/core";
++    import type { InternalComponentManager } from "@glimmer/interfaces/lib/managers";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
++    import type { ScopeSlot } from "@glimmer/interfaces/lib/runtime";
++    import type { CompilableProgram } from "@glimmer/interfaces/lib/template";
++    import type { ProgramSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table";
+ 
+     export type ComponentDefinitionState = object;
+     export type ComponentInstanceState = unknown;
+diff --git a/types/stable/@glimmer/interfaces/lib/dom/attributes.d.ts b/types/stable/@glimmer/interfaces/lib/dom/attributes.d.ts
+index cc05a0ec0e9b83c25d3d1a3d8479f916b93e9b93..206f5972ed481264ac38e8133d01401acc9ef018 100644
+--- a/types/stable/@glimmer/interfaces/lib/dom/attributes.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/dom/attributes.d.ts
+@@ -1,9 +1,9 @@
+ declare module '@glimmer/interfaces/lib/dom/attributes' {
+-    import type { Maybe, Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { ElementOperations, Environment, ModifierInstance } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { Stack } from "@glimmer/interfaces/lib/stack.js";
+-    import type { Bounds, Cursor } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { GlimmerTreeChanges, GlimmerTreeConstruction } from "@glimmer/interfaces/lib/dom/changes.js";
++    import type { Maybe, Nullable } from "@glimmer/interfaces/lib/core";
++    import type { ElementOperations, Environment, ModifierInstance } from "@glimmer/interfaces/lib/runtime";
++    import type { Stack } from "@glimmer/interfaces/lib/stack";
++    import type { Bounds, Cursor } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { GlimmerTreeChanges, GlimmerTreeConstruction } from "@glimmer/interfaces/lib/dom/changes";
+     import type {
+       AttrNamespace,
+       SimpleComment,
+@@ -11,7 +11,7 @@ declare module '@glimmer/interfaces/lib/dom/attributes' {
+       SimpleElement,
+       SimpleNode,
+       SimpleText,
+-    } from "@glimmer/interfaces/lib/dom/simple.js";
++    } from "@glimmer/interfaces/lib/dom/simple";
+ 
+     /**
+      * `AppendingBlock` is the interface used by the `ElementBuilder` to keep track of which nodes have
+diff --git a/types/stable/@glimmer/interfaces/lib/dom/bounds.d.ts b/types/stable/@glimmer/interfaces/lib/dom/bounds.d.ts
+index cdc2a56672eb476ec4ca387a5ac7814ed2270115..1a172544ba2fad26dc8ecb74dd4ad04488a018ac 100644
+--- a/types/stable/@glimmer/interfaces/lib/dom/bounds.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/dom/bounds.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/dom/bounds' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { SimpleElement, SimpleNode } from "@glimmer/interfaces/lib/dom/simple.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { SimpleElement, SimpleNode } from "@glimmer/interfaces/lib/dom/simple";
+ 
+     export interface Bounds {
+       // a method to future-proof for wormholing; may not be needed ultimately
+diff --git a/types/stable/@glimmer/interfaces/lib/dom/changes.d.ts b/types/stable/@glimmer/interfaces/lib/dom/changes.d.ts
+index 2bfaca3670091aae7f4226c4e5a56c1fd125e722..17da922a967e1d6ed3b4b9b92ff3cb47635ca00f 100644
+--- a/types/stable/@glimmer/interfaces/lib/dom/changes.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/dom/changes.d.ts
+@@ -1,7 +1,7 @@
+ declare module '@glimmer/interfaces/lib/dom/changes' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { Namespace, SimpleComment, SimpleElement, SimpleNode, SimpleText } from "@glimmer/interfaces/lib/dom/simple.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { Namespace, SimpleComment, SimpleElement, SimpleNode, SimpleText } from "@glimmer/interfaces/lib/dom/simple";
+ 
+     export interface GlimmerDOMOperations {
+       createElement(tag: string, context?: SimpleElement): SimpleElement;
+diff --git a/types/stable/@glimmer/interfaces/lib/dom/tree-construction.d.ts b/types/stable/@glimmer/interfaces/lib/dom/tree-construction.d.ts
+index a03ec200b11e117897c9af32b924b271e4fadedb..9eb5ff64d47c354e8487c40e4b96794cc9ef63b5 100644
+--- a/types/stable/@glimmer/interfaces/lib/dom/tree-construction.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/dom/tree-construction.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/dom/tree-construction' {
+-    import type { Namespace, SimpleDocumentFragment, SimpleElement, SimpleNode } from "@glimmer/interfaces/lib/dom/simple.js";
++    import type { Namespace, SimpleDocumentFragment, SimpleElement, SimpleNode } from "@glimmer/interfaces/lib/dom/simple";
+ 
+     export type NodeToken = number;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/component.d.ts b/types/stable/@glimmer/interfaces/lib/managers/component.d.ts
+index 26618c465ed10b4027912d1cb588a6596e8d83e3..2920683d3215cab1ca791167ca01eda01994ae7d 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/component.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/component.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/managers/component' {
+-    import type { Arguments } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities.js";
++    import type { Arguments } from "@glimmer/interfaces/lib/runtime";
++    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities";
+ 
+     export interface ComponentCapabilitiesVersions {
+       "3.4": {
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/helper.d.ts b/types/stable/@glimmer/interfaces/lib/managers/helper.d.ts
+index 4d8f6365d256ef78022a52407a3023c6b427a8f1..124e09d4c26e91b29aa920366b66c46490056f67 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/helper.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/helper.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/managers/helper' {
+-    import type { Arguments } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities.js";
++    import type { Arguments } from "@glimmer/interfaces/lib/runtime";
++    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities";
+ 
+     export interface HelperCapabilitiesVersions {
+       "3.23": {
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/internal/component.d.ts b/types/stable/@glimmer/interfaces/lib/managers/internal/component.d.ts
+index 7ec0aec78c146f8db6ae6e102e57f45bd260ee0e..6e670f618c00701ecb996235931b3ac02a3b5f45 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/internal/component.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/internal/component.d.ts
+@@ -1,18 +1,18 @@
+ declare module '@glimmer/interfaces/lib/managers/internal/component' {
+-    import type { ComponentInstanceState, PreparedArguments } from "@glimmer/interfaces/lib/components.js";
+-    import type { Destroyable, Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { SimpleElement } from "@glimmer/interfaces/lib/dom/simple.js";
+-    import type { ClassicResolver } from "@glimmer/interfaces/lib/program.js";
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
+-    import type { Owner } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { CapturedArguments, VMArguments } from "@glimmer/interfaces/lib/runtime/arguments.js";
+-    import type { RenderNode } from "@glimmer/interfaces/lib/runtime/debug-render-tree.js";
+-    import type { ElementOperations } from "@glimmer/interfaces/lib/runtime/element.js";
+-    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment.js";
+-    import type { DynamicScope } from "@glimmer/interfaces/lib/runtime/scope.js";
+-    import type { CompilableProgram } from "@glimmer/interfaces/lib/template.js";
+-    import type { ProgramSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table.js";
++    import type { ComponentInstanceState, PreparedArguments } from "@glimmer/interfaces/lib/components";
++    import type { Destroyable, Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { SimpleElement } from "@glimmer/interfaces/lib/dom/simple";
++    import type { ClassicResolver } from "@glimmer/interfaces/lib/program";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
++    import type { Owner } from "@glimmer/interfaces/lib/runtime";
++    import type { CapturedArguments, VMArguments } from "@glimmer/interfaces/lib/runtime/arguments";
++    import type { RenderNode } from "@glimmer/interfaces/lib/runtime/debug-render-tree";
++    import type { ElementOperations } from "@glimmer/interfaces/lib/runtime/element";
++    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment";
++    import type { DynamicScope } from "@glimmer/interfaces/lib/runtime/scope";
++    import type { CompilableProgram } from "@glimmer/interfaces/lib/template";
++    import type { ProgramSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table";
+ 
+     /**
+      * Describes the capabilities of a particular component. The capabilities are
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/internal/helper.d.ts b/types/stable/@glimmer/interfaces/lib/managers/internal/helper.d.ts
+index 73c305cad1bfb4c03fe2e5a8c586c9a138440cce..f6229f9a43438bd9703659e282650e23e6f5c441 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/internal/helper.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/internal/helper.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/managers/internal/helper' {
+-    import type { Helper, HelperDefinitionState, Owner } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { HelperManager } from "@glimmer/interfaces/lib/managers/helper.js";
++    import type { Helper, HelperDefinitionState, Owner } from "@glimmer/interfaces/lib/runtime";
++    import type { HelperManager } from "@glimmer/interfaces/lib/managers/helper";
+ 
+     export interface InternalHelperManager<TOwner extends Owner> {
+       getDelegateFor(owner: TOwner | undefined): HelperManager<unknown>;
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/internal/modifier.d.ts b/types/stable/@glimmer/interfaces/lib/managers/internal/modifier.d.ts
+index 1a4ab80c25f5018adb87e1b006f85c9ca98d1052..749c6827ecf71c24aa67879f029cf7d13324f76c 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/internal/modifier.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/internal/modifier.d.ts
+@@ -1,11 +1,11 @@
+ declare module '@glimmer/interfaces/lib/managers/internal/modifier' {
+     import type { SimpleElement } from "@simple-dom/interface";
+ 
+-    import type { Destroyable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Owner } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments.js";
+-    import type { ModifierDefinitionState, ModifierInstanceState } from "@glimmer/interfaces/lib/runtime/modifier.js";
+-    import type { UpdatableTag } from "@glimmer/interfaces/lib/tags.js";
++    import type { Destroyable } from "@glimmer/interfaces/lib/core";
++    import type { Owner } from "@glimmer/interfaces/lib/runtime";
++    import type { CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments";
++    import type { ModifierDefinitionState, ModifierInstanceState } from "@glimmer/interfaces/lib/runtime/modifier";
++    import type { UpdatableTag } from "@glimmer/interfaces/lib/tags";
+ 
+     export interface InternalModifierManager<
+       TModifierInstanceState = ModifierInstanceState,
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/internal.d.ts b/types/stable/@glimmer/interfaces/lib/managers/internal.d.ts
+index 6e764b4c295990feeab4d3d40633821eb72d63c0..bf8ec35c6156262efd553b9b89cbc215a1b1edb7 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/internal.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/internal.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/managers/internal' {
+-    export type * from "@glimmer/interfaces/lib/managers/internal/component.js";
+-    export type * from "@glimmer/interfaces/lib/managers/internal/helper.js";
+-    export type * from "@glimmer/interfaces/lib/managers/internal/modifier.js";
++    export type * from "@glimmer/interfaces/lib/managers/internal/component";
++    export type * from "@glimmer/interfaces/lib/managers/internal/helper";
++    export type * from "@glimmer/interfaces/lib/managers/internal/modifier";
+ }
+\ No newline at end of file
+diff --git a/types/stable/@glimmer/interfaces/lib/managers/modifier.d.ts b/types/stable/@glimmer/interfaces/lib/managers/modifier.d.ts
+index 65d2514f9018c405011ed71ababa53d167cd2547..9b89bac39e742fc3a5f053826a7f93272bcf7b9d 100644
+--- a/types/stable/@glimmer/interfaces/lib/managers/modifier.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/managers/modifier.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/managers/modifier' {
+-    import type { Arguments } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities.js";
++    import type { Arguments } from "@glimmer/interfaces/lib/runtime";
++    import type { Capabilities } from "@glimmer/interfaces/lib/managers/capabilities";
+ 
+     export interface ModifierCapabilitiesVersions {
+       // passes factoryFor(...).class to `.createModifier`
+diff --git a/types/stable/@glimmer/interfaces/lib/program.d.ts b/types/stable/@glimmer/interfaces/lib/program.d.ts
+index 1b5d00b2aaaf950ee0e6cd0177a03ea4d539e0d6..1f081f7bb4a04eba2f71481be878f9d01cf3a4fd 100644
+--- a/types/stable/@glimmer/interfaces/lib/program.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/program.d.ts
+@@ -1,12 +1,12 @@
+ declare module '@glimmer/interfaces/lib/program' {
+-    import type { Encoder } from "@glimmer/interfaces/lib/compile/index.js";
+-    import type { ComponentDefinition, ComponentDefinitionState } from "@glimmer/interfaces/lib/components.js";
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Environment, HelperDefinitionState, Owner, Program } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { ModifierDefinitionState } from "@glimmer/interfaces/lib/runtime/modifier.js";
+-    import type { ResolvedComponentDefinition } from "@glimmer/interfaces/lib/serialize.js";
+-    import type { BlockMetadata, STDLib, Template } from "@glimmer/interfaces/lib/template.js";
+-    import type { SomeVmOp, VmMachineOp, VmOp } from "@glimmer/interfaces/lib/vm-opcodes.js";
++    import type { Encoder } from "@glimmer/interfaces/lib/compile";
++    import type { ComponentDefinition, ComponentDefinitionState } from "@glimmer/interfaces/lib/components";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Environment, HelperDefinitionState, Owner, Program } from "@glimmer/interfaces/lib/runtime";
++    import type { ModifierDefinitionState } from "@glimmer/interfaces/lib/runtime/modifier";
++    import type { ResolvedComponentDefinition } from "@glimmer/interfaces/lib/serialize";
++    import type { BlockMetadata, STDLib, Template } from "@glimmer/interfaces/lib/template";
++    import type { SomeVmOp, VmMachineOp, VmOp } from "@glimmer/interfaces/lib/vm-opcodes";
+ 
+     export type CreateRuntimeOp = (heap: ProgramHeap) => RuntimeOp;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/references.d.ts b/types/stable/@glimmer/interfaces/lib/references.d.ts
+index 4f2d5d14b6e71312ae14b189f5e8bccdb0aedc60..ee2803f4021f9b6db82570cd0a43c0838179e25b 100644
+--- a/types/stable/@glimmer/interfaces/lib/references.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/references.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/references' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
+ 
+     export type ConstantReference = 0;
+     export type ComputeReference = 1;
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/arguments.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/arguments.d.ts
+index 7ca1ffd27aed12360931a9753338495ccb51689b..04a0e6bd747e079b9cad33f47c7bcd60724b1de0 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/arguments.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/arguments.d.ts
+@@ -1,7 +1,7 @@
+ declare module '@glimmer/interfaces/lib/runtime/arguments' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
+-    import type { ScopeBlock } from "@glimmer/interfaces/lib/runtime/scope.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
++    import type { ScopeBlock } from "@glimmer/interfaces/lib/runtime/scope";
+ 
+     const CAPTURED_ARGS: unique symbol;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/debug-render-tree.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/debug-render-tree.d.ts
+index fef10dceaebdb87028e29eab5fe70bc31bb128f2..6d440d4389b6a333b2f98cffb4d2572bb89761b9 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/debug-render-tree.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/debug-render-tree.d.ts
+@@ -1,8 +1,8 @@
+ declare module '@glimmer/interfaces/lib/runtime/debug-render-tree' {
+     import type { SimpleElement, SimpleNode } from "@simple-dom/interface";
+ 
+-    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { Arguments, CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments.js";
++    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { Arguments, CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments";
+ 
+     export type RenderNodeType =
+       | "outlet"
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/element.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/element.d.ts
+index a59d9d414bed34087d5c06f69fdcd002a4d05f6a..1c491ce77fddabbb18cde82bf390594513ad8237 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/element.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/element.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/interfaces/lib/runtime/element' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
+ 
+     export interface ElementOperations {
+       setAttribute(
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/environment.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/environment.d.ts
+index 92f73b66bcd69c5862db01f2ab2d1d14a5079940..0691c14e3fbea1a95ff7f03200ef8e45f3faa86d 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/environment.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/environment.d.ts
+@@ -5,14 +5,14 @@ declare module '@glimmer/interfaces/lib/runtime/environment' {
+       ComponentDefinitionState,
+       ComponentInstance,
+       ComponentInstanceState,
+-    } from "@glimmer/interfaces/lib/components.js";
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { GlimmerTreeChanges, GlimmerTreeConstruction } from "@glimmer/interfaces/lib/dom/changes.js";
+-    import type { WithCreateInstance } from "@glimmer/interfaces/lib/managers.js";
+-    import type { ClassicResolver } from "@glimmer/interfaces/lib/program.js";
+-    import type { DebugRenderTree } from "@glimmer/interfaces/lib/runtime/debug-render-tree.js";
+-    import type { ModifierInstance } from "@glimmer/interfaces/lib/runtime/modifier.js";
+-    import type { Program } from "@glimmer/interfaces/lib/runtime/runtime.js";
++    } from "@glimmer/interfaces/lib/components";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { GlimmerTreeChanges, GlimmerTreeConstruction } from "@glimmer/interfaces/lib/dom/changes";
++    import type { WithCreateInstance } from "@glimmer/interfaces/lib/managers";
++    import type { ClassicResolver } from "@glimmer/interfaces/lib/program";
++    import type { DebugRenderTree } from "@glimmer/interfaces/lib/runtime/debug-render-tree";
++    import type { ModifierInstance } from "@glimmer/interfaces/lib/runtime/modifier";
++    import type { Program } from "@glimmer/interfaces/lib/runtime/runtime";
+ 
+     export interface EnvironmentOptions {
+       document?: SimpleDocument;
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/helper.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/helper.d.ts
+index c42bda5f7a6c1484d1bfaec0738c51608c6bcdb2..27e908b99575dc2f4da4d440a2a64778f36d8d94 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/helper.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/helper.d.ts
+@@ -1,8 +1,8 @@
+ declare module '@glimmer/interfaces/lib/runtime/helper' {
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
+-    import type { CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments.js";
+-    import type { Owner } from "@glimmer/interfaces/lib/runtime/owner.js";
+-    import type { DynamicScope } from "@glimmer/interfaces/lib/runtime/scope.js";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
++    import type { CapturedArguments } from "@glimmer/interfaces/lib/runtime/arguments";
++    import type { Owner } from "@glimmer/interfaces/lib/runtime/owner";
++    import type { DynamicScope } from "@glimmer/interfaces/lib/runtime/scope";
+ 
+     export type HelperDefinitionState = object;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/local-debug.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/local-debug.d.ts
+index 6617c3304f7c0e9d2e45cd2291a25a199d78fa51..706cff700181b7ab34301c4593435c87ace67641 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/local-debug.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/local-debug.d.ts
+@@ -1,13 +1,13 @@
+ declare module '@glimmer/interfaces/lib/runtime/local-debug' {
+     import type { SimpleElement } from "@simple-dom/interface";
+ 
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { AppendingBlock } from "@glimmer/interfaces/lib/dom/attributes.js";
+-    import type { Cursor } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { EvaluationContext } from "@glimmer/interfaces/lib/program.js";
+-    import type { BlockMetadata } from "@glimmer/interfaces/lib/template.js";
+-    import type { DynamicScope, Scope, ScopeSlot } from "@glimmer/interfaces/lib/runtime/scope.js";
+-    import type { UpdatingBlockOpcode, UpdatingOpcode } from "@glimmer/interfaces/lib/runtime/vm.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { AppendingBlock } from "@glimmer/interfaces/lib/dom/attributes";
++    import type { Cursor } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { EvaluationContext } from "@glimmer/interfaces/lib/program";
++    import type { BlockMetadata } from "@glimmer/interfaces/lib/template";
++    import type { DynamicScope, Scope, ScopeSlot } from "@glimmer/interfaces/lib/runtime/scope";
++    import type { UpdatingBlockOpcode, UpdatingOpcode } from "@glimmer/interfaces/lib/runtime/vm";
+ 
+     export type MachineRegisters = [$pc: number, $ra: number, $fp: number, $sp: number];
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/modifier.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/modifier.d.ts
+index fc13284a4fbd86b4abef424bf03716602d1e5973..24b0a4c832d33854351bb70a9eefa0362b8b4c69 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/modifier.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/modifier.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/runtime/modifier' {
+-    import type { InternalModifierManager } from "@glimmer/interfaces/lib/managers.js";
++    import type { InternalModifierManager } from "@glimmer/interfaces/lib/managers";
+ 
+     export type ModifierDefinitionState = object;
+     export type ModifierInstanceState = unknown;
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/render.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/render.d.ts
+index d7870d458ec376a6402291cfb304cadc80c53315..ac0898a559b8af77e7d9b15f0584e0831cfcb8c9 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/render.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/render.d.ts
+@@ -1,9 +1,9 @@
+ declare module '@glimmer/interfaces/lib/runtime/render' {
+     import type { SimpleElement, SimpleNode } from "@simple-dom/interface";
+ 
+-    import type { RichIteratorResult } from "@glimmer/interfaces/lib/core.js";
+-    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment.js";
++    import type { RichIteratorResult } from "@glimmer/interfaces/lib/core";
++    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment";
+ 
+     export interface ExceptionHandler {
+       handleException(): void;
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/runtime.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/runtime.d.ts
+index 1bbc65d80c3af4908efd20eb77dd37f0b0e7437d..fc7d9897e2c01ece57e9d837419426a2b4539291 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/runtime.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/runtime.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/runtime/runtime' {
+-    import type { ProgramConstants, ProgramHeap, RuntimeOp } from "@glimmer/interfaces/lib/program.js";
++    import type { ProgramConstants, ProgramHeap, RuntimeOp } from "@glimmer/interfaces/lib/program";
+ 
+     export interface Program {
+       readonly constants: ProgramConstants;
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/scope.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/scope.d.ts
+index faab06c34ff429dac69a228d3eea8b9b4ab5e934..4ff3216d877679817eab27e0406736963d4c9153 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/scope.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/scope.d.ts
+@@ -1,9 +1,9 @@
+ declare module '@glimmer/interfaces/lib/runtime/scope' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { Reference } from "@glimmer/interfaces/lib/references.js";
+-    import type { CompilableBlock } from "@glimmer/interfaces/lib/template.js";
+-    import type { BlockSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table.js";
+-    import type { Owner } from "@glimmer/interfaces/lib/runtime/owner.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { Reference } from "@glimmer/interfaces/lib/references";
++    import type { CompilableBlock } from "@glimmer/interfaces/lib/template";
++    import type { BlockSymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table";
++    import type { Owner } from "@glimmer/interfaces/lib/runtime/owner";
+ 
+     export type Block = CompilableBlock | number;
+ 
+diff --git a/types/stable/@glimmer/interfaces/lib/runtime/vm.d.ts b/types/stable/@glimmer/interfaces/lib/runtime/vm.d.ts
+index 78b78545f6ad10e2d50009570a4ab58b90ebe4cd..5ae98ac6bc282dde71d53d09280f5088b414284e 100644
+--- a/types/stable/@glimmer/interfaces/lib/runtime/vm.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/runtime/vm.d.ts
+@@ -1,8 +1,8 @@
+ declare module '@glimmer/interfaces/lib/runtime/vm' {
+-    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds.js";
+-    import type { GlimmerTreeChanges } from "@glimmer/interfaces/lib/dom/changes.js";
+-    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment.js";
+-    import type { ExceptionHandler } from "@glimmer/interfaces/lib/runtime/render.js";
++    import type { Bounds } from "@glimmer/interfaces/lib/dom/bounds";
++    import type { GlimmerTreeChanges } from "@glimmer/interfaces/lib/dom/changes";
++    import type { Environment } from "@glimmer/interfaces/lib/runtime/environment";
++    import type { ExceptionHandler } from "@glimmer/interfaces/lib/runtime/render";
+ 
+     export interface UpdatingVM {
+       env: Environment;
+diff --git a/types/stable/@glimmer/interfaces/lib/serialize.d.ts b/types/stable/@glimmer/interfaces/lib/serialize.d.ts
+index 7d83d389c1fe65ed52bcd4657591945fd169701a..28eac266583463b4812e7bb10deb59fb2f44b635 100644
+--- a/types/stable/@glimmer/interfaces/lib/serialize.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/serialize.d.ts
+@@ -54,10 +54,10 @@ declare module '@glimmer/interfaces/lib/serialize' {
+       CapabilityMask,
+       ComponentDefinitionState,
+       ComponentInstanceState,
+-    } from "@glimmer/interfaces/lib/components.js";
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
+-    import type { InternalComponentManager } from "@glimmer/interfaces/lib/managers.js";
+-    import type { CompilableProgram, Template } from "@glimmer/interfaces/lib/template.js";
++    } from "@glimmer/interfaces/lib/components";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
++    import type { InternalComponentManager } from "@glimmer/interfaces/lib/managers";
++    import type { CompilableProgram, Template } from "@glimmer/interfaces/lib/template";
+ 
+     export interface CompileTimeComponent {
+       handle: number;
+diff --git a/types/stable/@glimmer/interfaces/lib/stack.d.ts b/types/stable/@glimmer/interfaces/lib/stack.d.ts
+index e6fa0b4a50c13fbbae2cb85ffccd3da972aed107..d394b32e10a9a74a23359dd07a414a0f17807b4b 100644
+--- a/types/stable/@glimmer/interfaces/lib/stack.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/stack.d.ts
+@@ -1,5 +1,5 @@
+ declare module '@glimmer/interfaces/lib/stack' {
+-    import type { Nullable } from "@glimmer/interfaces/lib/core.js";
++    import type { Nullable } from "@glimmer/interfaces/lib/core";
+ 
+     export interface Stack<T> {
+       current: Nullable<T>;
+diff --git a/types/stable/@glimmer/interfaces/lib/template.d.ts b/types/stable/@glimmer/interfaces/lib/template.d.ts
+index 55337a52b921ec8c8366721c274498902f6f9f8e..ea273cd429daa986ac565c265e54e4b5b2364e58 100644
+--- a/types/stable/@glimmer/interfaces/lib/template.d.ts
++++ b/types/stable/@glimmer/interfaces/lib/template.d.ts
+@@ -1,12 +1,12 @@
+ declare module '@glimmer/interfaces/lib/template' {
+-    import type { PresentArray } from "@glimmer/interfaces/lib/array.js";
+-    import type { EncoderError } from "@glimmer/interfaces/lib/compile/encoder.js";
+-    import type { Operand, SerializedInlineBlock, SerializedTemplateBlock } from "@glimmer/interfaces/lib/compile/index.js";
+-    import type { Nullable, Optional } from "@glimmer/interfaces/lib/core.js";
+-    import type { InternalComponentCapabilities } from "@glimmer/interfaces/lib/managers/internal/component.js";
+-    import type { ConstantPool, EvaluationContext, SerializedHeap } from "@glimmer/interfaces/lib/program.js";
+-    import type { Owner } from "@glimmer/interfaces/lib/runtime.js";
+-    import type { BlockSymbolTable, ProgramSymbolTable, SymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table.js";
++    import type { PresentArray } from "@glimmer/interfaces/lib/array";
++    import type { EncoderError } from "@glimmer/interfaces/lib/compile/encoder";
++    import type { Operand, SerializedInlineBlock, SerializedTemplateBlock } from "@glimmer/interfaces/lib/compile";
++    import type { Nullable, Optional } from "@glimmer/interfaces/lib/core";
++    import type { InternalComponentCapabilities } from "@glimmer/interfaces/lib/managers/internal/component";
++    import type { ConstantPool, EvaluationContext, SerializedHeap } from "@glimmer/interfaces/lib/program";
++    import type { Owner } from "@glimmer/interfaces/lib/runtime";
++    import type { BlockSymbolTable, ProgramSymbolTable, SymbolTable } from "@glimmer/interfaces/lib/tier1/symbol-table";
+ 
+     export interface CompilableProgram extends CompilableTemplate<ProgramSymbolTable> {
+       moduleName: string;
+diff --git a/types/stable/@glimmer/manager/index.d.ts b/types/stable/@glimmer/manager/index.d.ts
+index 6cc6d73ac1a6ac6a204523518074c09f88841da7..79f17ca10d41d0d2516382a49483eea45ff3b083 100644
+--- a/types/stable/@glimmer/manager/index.d.ts
++++ b/types/stable/@glimmer/manager/index.d.ts
+@@ -2,7 +2,7 @@ declare module '@glimmer/manager' {
+     export { getInternalComponentManager, getInternalHelperManager, getInternalModifierManager, hasInternalComponentManager, hasInternalHelperManager, hasInternalModifierManager, setInternalComponentManager, setInternalHelperManager, setInternalModifierManager, } from "@glimmer/manager/lib/internal/api";
+     export { componentCapabilities, CustomComponentManager } from "@glimmer/manager/lib/public/component";
+     export { CustomHelperManager, hasDestroyable, hasValue, helperCapabilities, } from "@glimmer/manager/lib/public/helper";
+-    export { setComponentManager, setHelperManager, setModifierManager } from "@glimmer/manager/lib/public/index";
++    export { setComponentManager, setHelperManager, setModifierManager } from "@glimmer/manager/lib/public";
+     export { CustomModifierManager, modifierCapabilities } from "@glimmer/manager/lib/public/modifier";
+     export { getComponentTemplate, setComponentTemplate } from "@glimmer/manager/lib/public/template";
+     export { getCustomTagFor, setCustomTagFor } from "@glimmer/manager/lib/util/args-proxy";
+diff --git a/types/stable/@glimmer/manager/lib/public/helper.d.ts b/types/stable/@glimmer/manager/lib/public/helper.d.ts
+index 0f9a5a9a10c4318a23514593bdafd632e4d33d73..a26d811aa088c6906514e7bcd14758f6ed9ed5a5 100644
+--- a/types/stable/@glimmer/manager/lib/public/helper.d.ts
++++ b/types/stable/@glimmer/manager/lib/public/helper.d.ts
+@@ -1,6 +1,6 @@
+ declare module '@glimmer/manager/lib/public/helper' {
+     import type { Helper, HelperCapabilities, HelperCapabilitiesVersions, HelperDefinitionState, HelperManager, HelperManagerWithDestroyable, HelperManagerWithValue, InternalHelperManager, Owner } from "@glimmer/interfaces";
+-    import type { ManagerFactory } from "@glimmer/manager/lib/public/index";
++    import type { ManagerFactory } from "@glimmer/manager/lib/public";
+     export function helperCapabilities<Version extends keyof HelperCapabilitiesVersions>(managerAPI: Version, options?: Partial<HelperCapabilities>): HelperCapabilities;
+     export function hasValue(manager: HelperManager<unknown>): manager is HelperManagerWithValue<unknown>;
+     export function hasDestroyable(manager: HelperManager<unknown>): manager is HelperManagerWithDestroyable<unknown>;
+diff --git a/types/stable/@glimmer-wire-format-lib-resolution.d.ts b/types/stable/@glimmer-wire-format-lib-resolution.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5e28c280201c339451db8016b4b5c5171a37e605
+--- /dev/null
++++ b/types/stable/@glimmer-wire-format-lib-resolution.d.ts
+@@ -0,0 +1,12 @@
++declare module '@glimmer/wire-format/lib/resolution' {
++import type { ResolveAsComponentHeadResolution, ResolveAsComponentOrHelperHeadResolution, ResolveAsHelperHeadResolution, ResolveAsModifierHeadResolution, StrictResolution } from '@glimmer/interfaces';
++export type resolution = ResolveAsComponentOrHelperHeadResolution | ResolveAsHelperHeadResolution | ResolveAsComponentHeadResolution | ResolveAsModifierHeadResolution | StrictResolution;
++export const resolution: {
++    readonly Strict: 0;
++    readonly ResolveAsComponentOrHelperHead: 1;
++    readonly ResolveAsHelperHead: 5;
++    readonly ResolveAsModifierHead: 6;
++    readonly ResolveAsComponentHead: 7;
++};
++
++}
+diff --git a/types/stable/index.d.ts b/types/stable/index.d.ts
+index e131b25faae92e7eb10148193f1cf07bd7cf1df3..66d93887ae1fb8b8be0415c9679b9dacee1e6ff9 100644
+--- a/types/stable/index.d.ts
++++ b/types/stable/index.d.ts
+@@ -623,3 +623,18 @@
+ /// <reference path="./@ember/-internals/container/lib/container.d.ts" />
+ /// <reference path="./@ember/-internals/browser-environment/index.d.ts" />
+ /// <reference path="./@ember/-internals/browser-environment/lib/has-dom.d.ts" />
++
++import './@glimmer-constants-lib-builder-constants';
++import './@glimmer-wire-format-lib-resolution';
++import './@glimmer-debug-lib-dism-operand-types';
++import './@glimmer-debug-lib-dism-dism';
++import './@glimmer-debug-lib-stack-check';
++import './@glimmer-debug-lib-render-entry';
++import './@glimmer-debug-lib-render-styles';
++import './@glimmer-debug-lib-render-format';
++import './@glimmer-debug-lib-render-fragment-type';
++import './@glimmer-debug-lib-render-logger';
++import './@glimmer-debug-lib-render-buffer';
++import './@glimmer-debug-lib-render-fragment';
++import './@glimmer-debug-lib-debug';
++import './@glimmer-debug-lib-vm-snapshot';
