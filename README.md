@@ -782,6 +782,21 @@ See [the Qwik example](examples/vite-qwik) for a complete setup.
 <br></details>
 
 <details>
+<summary>Marko</summary><br>
+
+```ts
+Icons({ compiler: 'marko' })
+```
+
+Use `@marko/vite` to compile the generated Marko modules. With `@marko/vite`
+6.1.13, prefer `virtual:icons/` and `virtual:icons-raw/`: its default tilde alias
+overlaps the `~icons/` and `~icons-raw/` prefixes. The
+[Marko fixture](test/frameworks/marko/README.md) shows the exact alias ordering
+for applications that use tilde imports, plus tested versions and runtime limits.
+
+<br></details>
+
+<details>
 <summary>Ember</summary><br>
 
 **Configuration:**
