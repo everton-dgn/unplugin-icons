@@ -145,6 +145,9 @@ const unplugin = createUnplugin<Options | undefined>((options = {}, meta) => {
         return {
           code: result.code,
           map: { version: 3, mappings: '', sources: [] } as any,
+          ...(meta.framework === 'rolldown' && (config.compiler === 'raw' || result.resolved.query.raw === 'true')
+            ? { moduleType: 'js' as const }
+            : {}),
         }
       }
     },
