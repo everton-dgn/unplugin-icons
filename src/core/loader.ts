@@ -3,6 +3,7 @@ import type { ResolvedOptions } from '../types'
 import type { Compiler } from './compilers/types'
 import { loadNodeIcon } from '@iconify/utils/lib/loader/node-loader'
 import { compilers } from './compilers'
+import { VueVaporSSRCompiler } from './compilers/vue-vapor'
 
 const URL_PREFIXES = ['/~icons/', '~icons/', 'virtual:icons/', 'virtual/icons/']
 const RAW_URL_PREFIXES = ['/~icons-raw/', '~icons-raw/', 'virtual:icons-raw/']
@@ -74,7 +75,7 @@ export function resolveIconsPath(path: string, customExtension?: string): Resolv
   }
 }
 
-export async function generateComponent({ collection, icon, query }: ResolvedIconPath, options: ResolvedOptions) {
+export async function generateComponent({ collection, icon, query }: ResolvedIconPath, options: ResolvedOptions, ssr = false) {
   const warn = `${collection}/${icon}`
   const {
     scale,
@@ -132,6 +133,9 @@ export async function generateComponent({ collection, icon, query }: ResolvedIco
   const _compiler = query.raw === 'true' ? 'raw' : options.compiler
 
   if (_compiler) {
+    if (_compiler === 'vue-vapor' && ssr)
+      return VueVaporSSRCompiler(svg, collection, icon, options)
+
     const compiler = typeof _compiler === 'string'
       ? compilers[_compiler]
       : (await _compiler.compiler) as Compiler
@@ -144,7 +148,7 @@ export async function generateComponent({ collection, icon, query }: ResolvedIco
   throw new Error(`Unknown compiler: ${_compiler}`)
 }
 
-export async function generateComponentFromPath(path: string, options: ResolvedOptions): Promise<{
+export async function generateComponentFromPath(path: string, options: ResolvedOptions, ssr = false): Promise<{
   code: string
   resolved: ResolvedIconPath
 } | null> {
@@ -152,7 +156,7 @@ export async function generateComponentFromPath(path: string, options: ResolvedO
   const resolved = resolveIconsPath(path, extension)
   return resolved
     ? {
-        code: await generateComponent(resolved, options),
+        code: await generateComponent(resolved, options, ssr),
         resolved,
       }
     : null
