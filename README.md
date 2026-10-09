@@ -460,6 +460,9 @@ See [the Astro + Vue example](examples/astro-vue) for a working example project.
 
 Configure the `compiler` option based on your framework. Some frameworks may require additional peer dependencies.
 
+See the [framework compatibility checks](./test/frameworks/README.md) for pinned
+versions, reproducible consumer tests and their validation limits.
+
 <details>
 <summary>Vue 3</summary><br>
 
