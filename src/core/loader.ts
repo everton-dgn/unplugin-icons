@@ -8,7 +8,7 @@ const URL_PREFIXES = ['/~icons/', '~icons/', 'virtual:icons/', 'virtual/icons/']
 const RAW_URL_PREFIXES = ['/~icons-raw/', '~icons-raw/', 'virtual:icons-raw/']
 const rawIconPathRE = new RegExp(RAW_URL_PREFIXES.map(v => `^${v}`).join('|'))
 const iconPathRE = new RegExp([...URL_PREFIXES, ...RAW_URL_PREFIXES].map(v => `^${v}`).join('|'))
-const RE_EXTENSION = /\.\w+$/
+const RE_EXTENSION = /\.(?:svg|jsx|tsx|svelte|astro|marko)$/
 
 export interface ResolvedIconPath {
   collection: string
@@ -28,7 +28,16 @@ export function normalizeIconPath(path: string) {
   return path.replace(iconPathRE, isRawIconPath(path) ? RAW_URL_PREFIXES[0] : URL_PREFIXES[0])
 }
 
-export function resolveIconsPath(path: string): ResolvedIconPath | null {
+export function stripIconExtension(path: string, customExtension?: string) {
+  if (customExtension) {
+    const suffix = customExtension.startsWith('.') ? customExtension : `.${customExtension}`
+    if (path.endsWith(suffix))
+      return path.slice(0, -suffix.length)
+  }
+  return path.replace(RE_EXTENSION, '')
+}
+
+export function resolveIconsPath(path: string, customExtension?: string): ResolvedIconPath | null {
   if (!isIconPath(path))
     return null
 
@@ -53,8 +62,8 @@ export function resolveIconsPath(path: string): ResolvedIconPath | null {
   if (raw)
     query.raw = 'true'
 
-  // remove extension
-  path = path.replace(RE_EXTENSION, '')
+  // Preserve dots in icon names; only recognized suffixes are extensions.
+  path = stripIconExtension(path, customExtension)
 
   const [collection, icon] = path.split('/')
 
@@ -139,7 +148,8 @@ export async function generateComponentFromPath(path: string, options: ResolvedO
   code: string
   resolved: ResolvedIconPath
 } | null> {
-  const resolved = resolveIconsPath(path)
+  const extension = typeof options.compiler === 'object' ? options.compiler.extension : undefined
+  const resolved = resolveIconsPath(path, extension)
   return resolved
     ? {
         code: await generateComponent(resolved, options),

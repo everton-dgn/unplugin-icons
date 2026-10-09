@@ -1,12 +1,14 @@
 import type { Compiler } from './types'
 import { camelize } from '@iconify/utils/lib/misc/strings'
 
+const RE_INVALID_IDENTIFIER = /[^\w$]/g
+
 export const WebComponentsCompiler = ((svg, collection, icon, { webComponents: options }) => {
   let id = `${collection}-${icon}`
   if (options.iconPrefix)
     id = `${options.iconPrefix}-${id}`
 
-  const name = camelize(id)
+  const name = camelize(id).replace(RE_INVALID_IDENTIFIER, '_')
   let code = `export default class ${name} extends HTMLElement {`
   if (options.shadow) {
     code += `constructor() {
