@@ -326,6 +326,22 @@ See [the Svelte + Vite example](examples/vite-svelte) for a working example proj
 
 > **Note**: This package is ESM-only. You need to use `next.config.mjs` with ES module syntax.
 
+This integration uses Webpack. Turbopack does not run the `webpack` callback in your Next.js configuration, so it cannot load this plugin through that callback.
+
+In Next.js 16, Turbopack is the default for development and production builds. Select Webpack explicitly in both scripts:
+
+```json
+{
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start"
+  }
+}
+```
+
+For Next.js 15, remove `--turbo` or `--turbopack` from your scripts to use Webpack. See the Next.js documentation on [using Webpack instead of Turbopack](https://nextjs.org/docs/app/api-reference/turbopack#using-webpack-instead).
+
 Add to your `next.config.mjs`:
 
 ```ts
