@@ -179,18 +179,11 @@ export default {
 <details>
 <summary>Nuxt</summary><br>
 
-Nuxt 2 and [Nuxt Bridge](https://github.com/nuxt/bridge)
-
-```ts
-// nuxt.config.ts
-export default {
-  buildModules: [
-    ['unplugin-icons/nuxt', { /* options */ }],
-  ],
-}
-```
-
 Nuxt 3/4
+
+The module uses the Vue 3 compiler and requires Vue runtime 3.5+ with a matching
+compiler. Upgrade applications using an older Vue runtime before using this
+version. Vue 2 applications, including Nuxt 2, are not supported.
 
 ```ts
 // nuxt.config.ts
@@ -460,6 +453,18 @@ See [the Astro + Vue example](examples/astro-vue) for a working example project.
 
 Configure the `compiler` option based on your framework. Some frameworks may require additional peer dependencies.
 
+Each plugin instance selects one component compiler. It does not switch compiler
+according to the framework of the importing file. For example, the Astro + Vue
+configuration above produces Vue components for its icon imports.
+
+For framework-independent SVG content, use a [raw import](#raw-svg-import) or the typed
+`~icons-raw/` and `virtual:icons-raw/` prefixes. These return strings; the importing
+framework is responsible for rendering them. Registering two instances with the
+same icon prefixes does not select a compiler per import.
+
+See the [framework compatibility checks](./test/frameworks/README.md) for pinned
+versions, reproducible consumer tests and their validation limits.
+
 <details>
 <summary>Vue 3</summary><br>
 
@@ -471,13 +476,20 @@ Icons({ compiler: 'vue3' })
 
 **Peer Dependency:**
 
-> **Note**: As of Vue 3.2.13+, `@vue/compiler-sfc` is included in the main `vue` package, so no additional installation is needed.
+The `vue3` compiler requires Vue runtime 3.5+ and a matching compiler version.
+It uses Vue's `useId()` for the SVG ID references handled by the plugin, keeping
+them distinct per instance and stable across SSR and hydration. If multiple Vue
+apps share a page, set a different `app.config.idPrefix` for each app and use the
+same prefix on its server and client.
 
-If you're using an older version:
+`vue/compiler-sfc` is included in supported Vue versions. An explicitly installed
+`@vue/compiler-sfc` takes precedence; keep it aligned with the runtime version.
+This requirement applies to the Vue 3 compiler; no global `vue` peer is imposed
+on consumers of other compilers.
 
-```bash
-npm i -D @vue/compiler-sfc
-```
+Only the existing `url(#...)` attribute references and their matching `id`
+attributes are rewritten. This does not add support for CSS blocks, SMIL, ARIA
+references or IDs in other framework compilers.
 
 **TypeScript Support:**
 
@@ -507,6 +519,9 @@ Emits [Vapor mode](https://github.com/vuejs/core/tree/minor/packages/runtime-vap
 ```ts
 Icons({ compiler: 'vue-vapor' })
 ```
+
+SSR compilation is supported through the Vite adapter. Other adapters emit
+client components. See the [runtime checks and known limitations](test/frameworks/vue/README.md).
 
 **Peer Dependency:**
 
@@ -540,6 +555,19 @@ Add to your `tsconfig.json`:
 ```ts
 Icons({ compiler: 'jsx', jsx: 'react' })
 ```
+
+React icons accept a `title` prop that creates or updates the SVG `<title>`:
+
+```tsx
+import SearchIcon from '~icons/mdi/magnify'
+
+export function LabeledSearchIcon({ label }: { label: string }) {
+  return <SearchIcon title={label} role="img" aria-label={label} />
+}
+```
+
+The title is rendered as text, including when the value contains markup characters.
+For decorative icons, omit the title and pass `aria-hidden="true"`.
 
 **Peer Dependencies:**
 
@@ -666,6 +694,14 @@ import 'unplugin-icons/types/svelte'
 
 See [the Svelte example](examples/vite-svelte) for a complete setup.
 
+When publishing a Svelte library, inspect the files you distribute. If they still
+import `~icons/` or `virtual:icons/`, the consuming application must run
+unplugin-icons with `compiler: 'svelte'` and provide the required icon collections.
+Type declarations alone do not resolve these virtual modules.
+
+To avoid that consumer requirement, resolve the icons during your library build
+with a bundler that runs unplugin-icons, and distribute the generated output.
+
 <br></details>
 
 <details>
@@ -676,6 +712,41 @@ See [the Svelte example](examples/vite-svelte) for a complete setup.
 ```ts
 Icons({ compiler: 'astro' })
 ```
+
+Component props override the SVG root defaults. Omit a prop to keep its default;
+explicit `null` or `undefined` removes it. Other values follow Astro's attribute
+serialization, without falling back to the default. Each root attribute is emitted once.
+Custom SVG root attributes must use quoted XML values and XML entities.
+DOCTYPE declarations are omitted from inline SVG output; DTD entities are not expanded.
+
+IDs declared in the SVG are private to each rendered instance. The server runtime
+must provide `crypto.randomUUID()`. Repeated icons and different icons can reuse
+the same source IDs without sharing gradients, masks or other definitions.
+Do not target the original IDs from application CSS, scripts or external references.
+
+The compiler updates local fragment URLs, `href`/`xlink:href`, CSS ID selectors,
+ARIA ID lists and SMIL references, including animated reference attributes.
+References to IDs absent from the SVG and URLs with an external path stay unchanged.
+Colors, literal text, comments and CSS strings are preserved. Consumer props remain
+final and are not rewritten. Overriding or removing a source root `id` also removes
+the target of internal references to that root; prefer a wrapper for application IDs.
+
+When an SVG with IDs contains styles, their selectors are restricted to that instance's
+root and descendants with a zero-specificity `:where(...)` filter. The generated
+`data-unplugin-icons-scope` attribute is reserved for this isolation. CSS keyframe
+names remain unchanged; use distinct names when custom icons define different
+animations. Icons without declared IDs retain the previous compilation path,
+including its handling of unscoped SVG styles.
+
+SVGs with IDs must use quoted attribute values and balanced tags throughout the
+body, with unique, nonempty ID definitions. Embedded scripts, event
+handlers and animations of `id` are rejected because their ID behavior cannot be
+preserved by static rewriting. ID-related CSS attribute selectors support `=` and
+`~=` with case-sensitive matching. Other operators, case-insensitive matching,
+unparsed CSS syntax and references split across CDATA boundaries produce a compile
+error that identifies the icon and retains the original cause.
+See the [Astro instance ID tests](test/astro-ids/runtime) for the tested syntax,
+commands and runtime limits.
 
 **TypeScript Support:**
 
@@ -772,6 +843,21 @@ Add to your `tsconfig.json`:
 ```
 
 See [the Qwik example](examples/vite-qwik) for a complete setup.
+
+<br></details>
+
+<details>
+<summary>Marko</summary><br>
+
+```ts
+Icons({ compiler: 'marko' })
+```
+
+Use `@marko/vite` to compile the generated Marko modules. With `@marko/vite`
+6.1.13, prefer `virtual:icons/` and `virtual:icons-raw/`: its default tilde alias
+overlaps the `~icons/` and `~icons-raw/` prefixes. The
+[Marko fixture](test/frameworks/marko/README.md) shows the exact alias ordering
+for applications that use tilde imports, plus tested versions and runtime limits.
 
 <br></details>
 
@@ -1177,7 +1263,13 @@ For custom SVGs, leave the original root `width` and `height` attributes out: ex
 
 ## Global Icon Transformation
 
-Apply transformations to all custom icons during loading. Useful for adding default attributes like `fill="currentColor"`.
+The `transform` option runs for SVG strings from `customCollections`, including
+string entries and loaders that return SVG strings. Callbacks that return
+`IconifyJSON` and installed Iconify collections do not run this callback.
+Use `iconCustomizer` for attribute
+overrides across collection types, or return SVG strings from a custom loader
+when you need to transform their markup. The example below transforms a custom icon.
+
 ```ts
 Icons({
   customCollections: {

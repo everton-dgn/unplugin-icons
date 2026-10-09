@@ -1,0 +1,14 @@
+---
+import Red from '~icons/fixture/red';
+import Blue from 'virtual:icons/fixture/blue';
+const label = 'Consumer & <safe> "quoted"';
+---
+<html lang="en"><head><title>Astro instance IDs</title></head><body>
+<main>
+  <section data-instance="red-one"><Red /></section>
+  <section data-instance="red-two"><Red /></section>
+  <section data-instance="blue"><Blue /></section>
+  <section data-instance="consumer"><Red id="consumer-root" width="99" aria-label={label} data-consumer="yes" /></section>
+  <section data-instance="null"><Red id={null} width={null} aria-labelledby={null} /></section>
+</main>
+</body></html>

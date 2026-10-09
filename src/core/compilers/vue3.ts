@@ -15,7 +15,7 @@ export const Vue3Compiler = (async (svg: string, collection: string, icon: strin
     filename: `${collection}-${icon}.vue`,
   })
 
-  code = `import { markRaw } from 'vue'\n${code}`
+  code = `import { markRaw${injectScripts ? ', useId as __useId' : ''} } from 'vue'\n${code}`
   code = code.replace(RE_EXPORT_STATEMENT, '')
   code += `\n\nexport default markRaw({ name: '${collection}-${icon}', render${
     injectScripts ? `, setup() {${injectScripts};return { idMap }}` : ''

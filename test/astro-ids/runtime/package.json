@@ -1,0 +1,26 @@
+{
+  "name": "unplugin-icons-astro-instance-ids-runtime",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "build": "astro build",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.7",
+    "astro": "7.3.8",
+    "unplugin-icons": "file:./package"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vitest": "5.0.3"
+  }
+}
