@@ -680,6 +680,11 @@ See [the Svelte example](examples/vite-svelte) for a complete setup.
 Icons({ compiler: 'astro' })
 ```
 
+Component props override the SVG root defaults. Omit a prop to keep its default;
+explicit `null` or `undefined` removes it. Other values follow Astro's attribute
+serialization, without falling back to the default. Each root attribute is emitted once.
+Custom SVG root attributes must use quoted XML values and XML entities.
+
 **TypeScript Support:**
 
 Add to your `tsconfig.json`:
