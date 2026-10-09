@@ -5,7 +5,9 @@ import { loadNodeIcon } from '@iconify/utils/lib/loader/node-loader'
 import { compilers } from './compilers'
 
 const URL_PREFIXES = ['/~icons/', '~icons/', 'virtual:icons/', 'virtual/icons/']
-const iconPathRE = new RegExp(`${URL_PREFIXES.map(v => `^${v}`).join('|')}`)
+const RAW_URL_PREFIXES = ['/~icons-raw/', '~icons-raw/', 'virtual:icons-raw/']
+const rawIconPathRE = new RegExp(RAW_URL_PREFIXES.map(v => `^${v}`).join('|'))
+const iconPathRE = new RegExp([...URL_PREFIXES, ...RAW_URL_PREFIXES].map(v => `^${v}`).join('|'))
 const RE_EXTENSION = /\.\w+$/
 
 export interface ResolvedIconPath {
@@ -18,14 +20,19 @@ export function isIconPath(path: string) {
   return iconPathRE.test(path)
 }
 
+export function isRawIconPath(path: string) {
+  return rawIconPathRE.test(path)
+}
+
 export function normalizeIconPath(path: string) {
-  return path.replace(iconPathRE, URL_PREFIXES[0])
+  return path.replace(iconPathRE, isRawIconPath(path) ? RAW_URL_PREFIXES[0] : URL_PREFIXES[0])
 }
 
 export function resolveIconsPath(path: string): ResolvedIconPath | null {
   if (!isIconPath(path))
     return null
 
+  const raw = isRawIconPath(path)
   path = path.replace(iconPathRE, '')
 
   const query: ResolvedIconPath['query'] = {}
@@ -41,6 +48,10 @@ export function resolveIconsPath(path: string): ResolvedIconPath | null {
         query[key] = value
     })
   }
+
+  // A typed raw prefix always exports a string, regardless of query overrides.
+  if (raw)
+    query.raw = 'true'
 
   // remove extension
   path = path.replace(RE_EXTENSION, '')
