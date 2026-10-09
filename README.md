@@ -1184,7 +1184,7 @@ export default {
   // Include this rule in your existing ESLint configuration.
   rules: {
     'import/no-unresolved': ['error', {
-      ignore: ['^~icons/', '^virtual:icons/'],
+      ignore: ['^~icons/', '^virtual:icons/', '^~icons-raw/', '^virtual:icons-raw/'],
     }],
   },
 }
