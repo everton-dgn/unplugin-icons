@@ -8,6 +8,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { backup, pack } from './artifact.mjs'
 import { prepare, verify } from './isolation.mjs'
+import { runtimeGates } from './runtime-gates.mjs'
 import { withServer } from './servers.mjs'
 import { typeGates } from './type-gates.mjs'
 
@@ -56,18 +57,12 @@ async function main() {
   writeFileSync(join(run, 'evidence.json'), `${JSON.stringify({ ...artifact, peers, stale }, null, 2)}\n`, { flag: 'wx' })
   const failures = []
   typeGates(command, failures)
-  command(process.execPath, ['node_modules/@playwright/test/cli.js', 'install', 'chromium', '--only-shell'])
-  try {
-    await withServer(run, 'dev', url => command('bun', ['run', 'test'], { ...process.env, ASTRO_TEST_URL: url }))
-  }
-  catch (error) {
-    console.error(error)
-    failures.push('dev')
-  }
-  command('bun', ['run', 'build'])
-  await withServer(run, 'prod', url => command('bun', ['run', 'test'], { ...process.env, ASTRO_TEST_URL: url }))
-  writeFileSync(join(run, 'results.json'), JSON.stringify({ failures, runtime: 'dev and prod completed' }, null, 2), { flag: 'wx' })
-  assert.deepEqual(failures, [], `Failed gates: ${failures.join(', ')}; retained: ${run}`)
+  await runtimeGates(run, {
+    browser: () => command(process.execPath, ['node_modules/@playwright/test/cli.js', 'install', 'chromium', '--only-shell']),
+    dev: () => withServer(run, 'dev', url => command('bun', ['run', 'test'], { ...process.env, ASTRO_TEST_URL: url })),
+    build: () => command('bun', ['run', 'build']),
+    prod: () => withServer(run, 'prod', url => command('bun', ['run', 'test'], { ...process.env, ASTRO_TEST_URL: url })),
+  }, failures)
   console.warn(`Passed: ${run}`)
 }
 main().catch((error) => {

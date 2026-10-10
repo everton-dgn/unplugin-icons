@@ -29,6 +29,10 @@ Astro-only control, 19 negative type cases and the real toStyleString helper.
 It then runs five development browser tests, builds the Astro app and runs five
 production browser tests. Each type gate has its own command log; a failed gate
 remains in results.json and causes a nonzero final exit even if runtime passes.
+Browser setup, development, build and production failures are recorded separately.
+Production checks are skipped after a failed build; existing type failures remain
+in the report. Run the failure-path regressions from the repository root with
+pnpm exec vitest run test/frameworks/astro/runtime-gates.test.ts.
 No type diagnostic is excluded. The ignoreDeprecations: "6.0" option suppresses
 deprecations of inherited configuration options. Both tsc configurations use strict: true
 and skipLibCheck: false. TypeScript 6.0.3 fits @astrojs/check 0.9.10's peer range;
