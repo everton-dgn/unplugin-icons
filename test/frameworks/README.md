@@ -16,13 +16,14 @@ supported versions. Each fixture documents its dependencies, commands and limits
 | Nuxt | Nuxt 4.6.0, Vue 3.5.43 | Native module registration, injected public types, production SSR, hydration and raw queries | [Nuxt fixture](./nuxt/README.md) |
 | Marko | Marko 6.4.5, compiler 5.42.11, Vite plugin 6.1.13 | Production SSR, hydration, client rendering, reactive props, events and literal SVG/CDATA preservation | [Marko fixture](./marko/README.md) |
 | Web Components | Native custom elements | Strict types, registration, constructors, subclassing, shadow/light DOM, reconnection and events | [Web Components fixture](./web-components/README.md) |
+| Astro | Astro 7.3.8, Node adapter 11.1.7 | Strict types with the documented declaration patch and type dependencies, development and production SSR, SVG attributes and raw imports | [Astro fixture](./astro/README.md) |
 | Ember | Ember 7.3.0 with the documented declaration patch | Strict template types, production rendering, SVG modifiers, reactive updates and disposal | [Ember fixture](./ember/README.md) |
 
 These Vite consumers use local Vite+/core 1.1.0; Next uses its own Webpack.
 Fixtures install with Bun 1.4.2. Build and server runtimes vary between fixtures.
 React, Next, Preact, Solid, Qwik and Web Components use TypeScript
-7.0.2. Svelte, Vue and Nuxt use 6.0.3 for their current checking tools. Marko's
-fixture makes no claim of a public TypeScript declaration. The repository itself
+7.0.2. Svelte, Vue, Nuxt, Astro and Ember use 6.0.3 for their current checking tools.
+Marko's fixture makes no claim of a public TypeScript declaration. The repository itself
 still uses pnpm.
 
 Vue Vapor 3.6.0-rc.10 has a separate [packed SSR and hydration regression](../vue-vapor/README.md)
@@ -35,18 +36,8 @@ recognized by the Vue helper; other frameworks are not covered by this fix.
 A separate [Astro instance ID regression](../astro-ids/runtime/README.md) checks
 Astro 7.3.8 development and production SSR with JavaScript disabled. It verifies
 private per-instance IDs, local CSS/ARIA/SMIL references, literal SVG content and
-consumer prop precedence. It does not replace the failing Astro strict type gate
-described below.
-
-## Diagnostic consumers with upstream type failures
-
-The following draft fixtures preserve failing strict type gates while exercising
-runtime behavior. Their successful runtime stages do not establish complete
-framework compatibility. Follow each PR for its current code and evidence.
-
-| Consumer | Pinned version | Verified runtime | Remaining type gate | Draft |
-| --- | --- | --- | --- | --- |
-| Astro | 7.3.8 | Development and production HTTP SSR with JavaScript disabled | Published Astro declarations reference a missing export; an Astro-only control reproduces it | [Astro diagnostic](https://github.com/everton-dgn/unplugin-icons/pull/29) |
+consumer prop precedence. The broader Astro fixture above separately verifies
+strict types with its documented dependency patch.
 
 ## Reproduce a check
 

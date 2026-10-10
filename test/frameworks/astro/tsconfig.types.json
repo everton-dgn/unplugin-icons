@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "preserve",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "types": [
+      "astro/client",
+      "unplugin-icons/types/astro",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "skipLibCheck": false
+  },
+  "files": [
+    "types.ts",
+    "platform-types.d.ts",
+    "contracts/components.ts",
+    "contracts/declarations.ts",
+    "contracts/kebab.ts"
+  ]
+}

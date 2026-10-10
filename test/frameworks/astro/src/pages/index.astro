@@ -1,0 +1,22 @@
+---
+import Icon from '~icons/fixture/sample';
+import VirtualIcon from 'virtual:icons/fixture/sample.astro?data-probe=2.5em';
+import Raw from '~icons-raw/fixture/sample?raw=false&data-probe=3em';
+import VirtualRaw from 'virtual:icons-raw/fixture/sample?data-probe=4em&raw=false';
+import First from '~icons/fixture/sample?raw&data-probe=5em';
+import Middle from '~icons/fixture/sample?data-probe=6em&raw&height=7em';
+import Last from '~icons/fixture/sample?data-probe=8em&raw';
+import Repeated from '~icons-raw/fixture/sample?data-probe=9em&data-probe=10em&raw=true&raw=false';
+import Encoded from 'virtual:icons-raw/fixture/sample?data-probe=%252E&raw=false';
+const raw = [Raw, VirtualRaw, First, Middle, Last, Repeated, Encoded];
+const label = 'A & B <safe> "quoted"';
+---
+<html lang="en"><head><title>Astro icon compatibility</title></head><body>
+  <main>
+    <Icon id="component" width="99" height="98" fill="blue" class="consumer" aria-label={label} />
+    <Icon id="repeated" />
+    <VirtualIcon id="virtual" />
+    <section id="raw">{raw.map((value, index) => <div data-index={index}><Fragment set:html={value} /></div>)}</section>
+    <pre id="raw-types">{JSON.stringify(raw.map(value => typeof value))}</pre>
+  </main>
+</body></html>

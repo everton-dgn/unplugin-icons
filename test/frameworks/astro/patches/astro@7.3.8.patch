@@ -1,0 +1,136 @@
+diff --git a/client.d.ts b/client.d.ts
+index 9ddc96a7d8871966d3bea67994958bde285e8e61..9de31fff310f242545247f997e8e75e68a19c796 100644
+--- a/client.d.ts
++++ b/client.d.ts
+@@ -168,7 +168,7 @@ declare module 'astro:schema' {
+ 	 * `import { z } from 'astro:schema'` is deprecated and will be removed
+ 	 * in Astro 8. Use `import { z } from 'astro/zod'` instead.
+ 	 */
+-	export const z = zod.z;
++	export const z: typeof zod.z;
+ }
+ 
+ type MD = import('./dist/types/public/content.js').MarkdownInstance<Record<string, any>>;
+diff --git a/node_modules/astro/components/ClientRouter.astro.d.ts b/components/ClientRouter.astro.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..f2d1a542bed124b0c437a636c7df0c89ca2117f9
+--- /dev/null
++++ b/components/ClientRouter.astro.d.ts
+@@ -0,0 +1,6 @@
++type Fallback = 'none' | 'animate' | 'swap';
++export interface Props {
++    fallback?: Fallback;
++}
++export default function ClientRouterAstroComponent(_props: Props): any;
++export { ClientRouterAstroComponent as ClientRouter };
+diff --git a/node_modules/astro/components/Font.astro.d.ts b/components/Font.astro.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..843bc0a0e23451b9e798460ee5af0c9132c32dc0
+--- /dev/null
++++ b/components/Font.astro.d.ts
+@@ -0,0 +1,8 @@
++interface Props {
++    /** The `cssVariable` registered in your Astro configuration. */
++    cssVariable: import('astro:assets').CssVariable;
++    /** Whether it should output [preload links](https://web.dev/learn/performance/optimize-web-fonts#preload) or not. */
++    preload?: import('astro:assets').FontPreloadFilter;
++}
++export default function FontAstroComponent(_props: Props): any;
++export { FontAstroComponent as Font };
+diff --git a/node_modules/astro/components/Image.astro.d.ts b/components/Image.astro.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..47ae47f427dadd0a8d342ff349de92e0c1418c7c
+--- /dev/null
++++ b/components/Image.astro.d.ts
+@@ -0,0 +1,4 @@
++import { type LocalImageProps, type RemoteImageProps } from 'astro:assets';
++type Props = LocalImageProps | RemoteImageProps;
++export default function ImageAstroComponent(_props: Props): any;
++export { ImageAstroComponent as Image };
+diff --git a/node_modules/astro/components/Picture.astro.d.ts b/components/Picture.astro.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4d15aad66a4abae845adcac992c66cde67064b8c
+--- /dev/null
++++ b/components/Picture.astro.d.ts
+@@ -0,0 +1,10 @@
++import { type LocalImageProps, type RemoteImageProps } from 'astro:assets';
++import type { ImageOutputFormat } from '../dist/types/public/index.js';
++import type { HTMLAttributes } from '../types.js';
++export type Props = (LocalImageProps | RemoteImageProps) & {
++    formats?: ImageOutputFormat[];
++    fallbackFormat?: ImageOutputFormat;
++    pictureAttributes?: HTMLAttributes<'picture'>;
++};
++export default function PictureAstroComponent(_props: Props): any;
++export { PictureAstroComponent as Picture };
+diff --git a/dist/core/fetch/fetch-state.d.ts b/dist/core/fetch/fetch-state.d.ts
+index 48dae0c9aac22428b011099565bb167f2dc68db0..cec8a04004a06809100dcd9c30efb01333f91b83 100644
+--- a/dist/core/fetch/fetch-state.d.ts
++++ b/dist/core/fetch/fetch-state.d.ts
+@@ -293,3 +293,8 @@ export declare class FetchState implements AstroFetchState {
+     invalidateContexts(): void;
+     resetResponseMetadata(): void;
+ }
++
++export interface ContextProvider<T> {
++  create: () => T;
++  finalize?: (value: T) => Promise<void> | void;
++}
+diff --git a/dist/type-utils.d.ts b/dist/type-utils.d.ts
+index c9f2f8c963ee89f9075e2750e47c6c692170dfbf..d30f0ac501a6f4ec6d1457f5427068a5bd780fda 100644
+--- a/dist/type-utils.d.ts
++++ b/dist/type-utils.d.ts
+@@ -15,3 +15,10 @@ export type MapValue<T> = T extends Map<any, infer V> ? V : never;
+ export type DeepPartial<T> = {
+     [P in keyof T]?: T[P] extends (infer U)[] ? DeepPartial<U>[] : T[P] extends object | undefined ? DeepPartial<T[P]> : T[P];
+ };
++
++type KebabCase<S extends string> = S extends `${infer Head}${infer Tail}`
++    ? `${Head extends Lowercase<Head> ? Head : `-${Lowercase<Head>}`}${KebabCase<Tail>}`
++    : S;
++export type KebabKeys<T> = {
++    [K in keyof T as K extends string ? KebabCase<K> : K]: T[K];
++};
+diff --git a/dist/types/public/integrations.d.ts b/dist/types/public/integrations.d.ts
+index 6c227f6a4cacff73b534bce935ff3a60ebc3283d..fbdf9438583b3f75d72064ecdfc8f2e9fbf2dac7 100644
+--- a/dist/types/public/integrations.d.ts
++++ b/dist/types/public/integrations.d.ts
+@@ -447,3 +447,8 @@ export interface IntegrationResolvedRoute extends Pick<RouteData, 'params' | 'pa
+     generate: (data?: any) => string;
+ }
+ export {};
++
++export interface AstroAdapterClientConfig {
++  internalFetchHeaders?: Record<string, string> | (() => Record<string, string>);
++  assetQueryParams?: URLSearchParams;
++}
+diff --git a/package.json b/package.json
+index 8bdd6a849c3f99b156338e498f9e45d9947eae74..71d8a15f1cf83e404fbcf842e495cf56493fb8ed 100644
+--- a/package.json
++++ b/package.json
+@@ -76,7 +76,11 @@
+     "./logger/json": "./dist/core/logger/impls/json.js",
+     "./logger/node": "./dist/core/logger/impls/node.js",
+     "./logger/compose": "./dist/core/logger/impls/compose.js",
+-    "./logger/console": "./dist/core/logger/impls/console.js"
++    "./logger/console": "./dist/core/logger/impls/console.js",
++    "./components/*.astro": {
++      "types": "./components/*.astro.d.ts",
++      "default": "./components/*.astro"
++    }
+   },
+   "imports": {
+     "#astro-internal/ambient-manifest": {
+diff --git a/types/content.d.ts b/types/content.d.ts
+index d27d7242349d1cddb76432f3c5e4ab3f6ba52a80..d2ad4f0e2b991ddac71d1a8ff046c289f19126a2 100644
+--- a/types/content.d.ts
++++ b/types/content.d.ts
+@@ -16,7 +16,7 @@ declare module 'astro:content' {
+ 	 * `import { z } from 'astro:content'` is deprecated and will be removed
+ 	 * in Astro 8. Use `import { z } from 'astro/zod'` instead.
+ 	 */
+-	export const z = zod.z;
++	export const z: typeof zod.z;
+ 
+ 	/** Run `astro dev` or `astro sync` to generate high fidelity types */
+ 	export const getEntryBySlug: (...args: any[]) => any;

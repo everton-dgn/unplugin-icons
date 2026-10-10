@@ -1,0 +1,24 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "types": [
+      "astro/client",
+      "unplugin-icons/types/astro",
+      "unplugin-icons/types/raw-prefix"
+    ],
+    "ignoreDeprecations": "6.0",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": false
+  },
+  "include": [
+    ".astro/types.d.ts",
+    "types.ts",
+    "src/**/*.astro",
+    "platform-types.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "package",
+    "dist"
+  ]
+}
